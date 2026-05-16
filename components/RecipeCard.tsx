@@ -2,6 +2,7 @@ type RecipeCardProps = {
     title: string,
     cuisine: string,
     cookTime: string
+    description: string
 };
 
 export default function RecipeCard(props: RecipeCardProps) {
@@ -10,11 +11,13 @@ export default function RecipeCard(props: RecipeCardProps) {
             <h2 className="text-xl font-semibold">
                 {props.title}
             </h2>
-
             <div className="mt-4 flex justify-between">
                 <span>{props.cuisine}</span>
                 <span>{props.cookTime}</span>
             </div>
+            <p className="text-sm p-2 text-zinc-400">
+                {props.description}
+            </p>
         </div>
     )
 }
