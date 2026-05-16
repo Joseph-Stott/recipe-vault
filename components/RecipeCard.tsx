@@ -1,11 +1,6 @@
-type RecipeCardProps = {
-    title: string,
-    cuisine: string,
-    cookTime: string
-    description: string
-};
+import type { Recipe } from "@/types/recipe"
 
-export default function RecipeCard(props: RecipeCardProps) {
+export default function RecipeCard(props: Recipe) {
     return (
         <div className="w-full max-w-sm rounded-2xl text-center border border-zinc-700 bg-zinc-900 p-6">
             <h2 className="text-xl font-semibold">
