@@ -15,6 +15,8 @@ export default function Home() {
     recipe.description.toLowerCase().includes(normalizedSearch))
   );
 
+
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
       <h1 className="text-3xl font-semibold tracking-tight text-black dark:text-zinc-50">
@@ -24,21 +26,29 @@ export default function Home() {
         Store, organize, and search your favorite recipes
       </p>
       <div className="flex flex-col gap-4">
-        <input
+        <input className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
           type="search"
           placeholder="Search recipes"
           value={searchText}
           onChange={(event) => setSearchText(event.target.value)}
         />
-        {filteredRecipes.map((recipe) => (
-          <RecipeCard
-            key={recipe.title}
-            title={recipe.title}
-            cuisine={recipe.cuisine}
-            cookTime={recipe.cookTime}
-            description={recipe.description}
-          />
-        ))}
+        {
+          filteredRecipes.length === 0 ? (
+            <p className="text-center text-xl text-zinc-400">
+              No recipe found
+            </p>
+          ) : (
+            filteredRecipes.map((recipe) => (
+              <RecipeCard
+                key={recipe.title}
+                title={recipe.title}
+                cuisine={recipe.cuisine}
+                cookTime={recipe.cookTime}
+                description={recipe.description}
+              />
+            ))
+          )
+        }
       </div>
     </main>
   );

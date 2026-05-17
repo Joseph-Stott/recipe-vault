@@ -8,6 +8,8 @@ Recipe Vault is a web application for storing, organizing, and browsing recipes.
 
 - Reusable RecipeCard component
 - Dynamic recipe data passed through component props
+- Search recipes by title, cuisine, and description
+- Display a no-results message when no recipes match the search
 
 ## Tech Stack
 
