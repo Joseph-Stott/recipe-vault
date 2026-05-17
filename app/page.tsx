@@ -1,5 +1,6 @@
 "use client";
 import RecipeCard from "@/components/RecipeCard";
+import SearchBar from "@/components/SearchBar";
 import { recipes } from "@/data/recipes";
 import { useState } from "react";
 
@@ -26,11 +27,9 @@ export default function Home() {
         Store, organize, and search your favorite recipes
       </p>
       <div className="flex flex-col gap-4">
-        <input className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
-          type="search"
-          placeholder="Search recipes"
-          value={searchText}
-          onChange={(event) => setSearchText(event.target.value)}
+        <SearchBar
+          searchText={searchText}
+          setSearchText={setSearchText}
         />
         {
           filteredRecipes.length === 0 ? (
