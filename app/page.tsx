@@ -13,7 +13,7 @@ export default function Home() {
   const filteredRecipes = recipes.filter((recipe) => (
     recipe.title.toLowerCase().includes(normalizedSearch) || 
     recipe.cuisine.toLowerCase().includes(normalizedSearch) || 
-    recipe.description.toLowerCase().includes(normalizedSearch))
+    recipe.timeCategory.toLowerCase().includes(normalizedSearch))
   );
 
 
@@ -39,11 +39,11 @@ export default function Home() {
           ) : (
             filteredRecipes.map((recipe) => (
               <RecipeCard
+                slug={recipe.slug}
                 key={recipe.title}
                 title={recipe.title}
                 cuisine={recipe.cuisine}
-                cookTime={recipe.cookTime}
-                description={recipe.description}
+                timeCategory={recipe.timeCategory}
               />
             ))
           )
