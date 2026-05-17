@@ -1,7 +1,20 @@
+"use client";
 import RecipeCard from "@/components/RecipeCard";
 import { recipes } from "@/data/recipes";
+import { useState } from "react";
 
 export default function Home() {
+  
+  const [searchText, setSearchText] = useState("");
+
+  const normalizedSearch = searchText.toLowerCase();
+
+  const filteredRecipes = recipes.filter((recipe) => (
+    recipe.title.toLowerCase().includes(normalizedSearch) || 
+    recipe.cuisine.toLowerCase().includes(normalizedSearch) || 
+    recipe.description.toLowerCase().includes(normalizedSearch))
+  );
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
       <h1 className="text-3xl font-semibold tracking-tight text-black dark:text-zinc-50">
@@ -11,7 +24,13 @@ export default function Home() {
         Store, organize, and search your favorite recipes
       </p>
       <div className="flex flex-col gap-4">
-        {recipes.map((recipe) => (
+        <input
+          type="search"
+          placeholder="Search recipes"
+          value={searchText}
+          onChange={(event) => setSearchText(event.target.value)}
+        />
+        {filteredRecipes.map((recipe) => (
           <RecipeCard
             key={recipe.title}
             title={recipe.title}
