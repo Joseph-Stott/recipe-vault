@@ -1,4 +1,6 @@
+import AddToGroceryListButton from "@/components/AddToGroceryListButton";
 import { recipes } from "@/data/recipes";
+import { addIngredientsToGroceryList } from "@/lib/groceryList";
 import Link from "next/link";
 
 type DetailPageProps = {
@@ -17,7 +19,7 @@ export default async function DetailPage(props: DetailPageProps) {
         return <p className="text-center text-xl text-zinc-400">No recipe found </p>;
     }
 
-    return(
+    return (
         <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
             <div className="w-full max-w-sm rounded-2xl text-center border border-zinc-700 bg-zinc-900 p-4">
                 <div className="flex flex-col gap-4">
@@ -29,7 +31,7 @@ export default async function DetailPage(props: DetailPageProps) {
                         <section>
                             <h2>Ingredients:</h2>
                             <ul className="list-disc list-inside text-left text-sm">
-                                {recipe.ingredientsList?.map((ingredient) => (<li>{ingredient}</li>))}
+                                {recipe.ingredientsList?.map((ingredient) => (<li key={ingredient}>{ingredient}</li>))}
                             </ul>
                         </section>
                     )}
@@ -37,7 +39,7 @@ export default async function DetailPage(props: DetailPageProps) {
                         <section>
                             <h2>Cook Instructions:</h2>
                             <ol className="list-decimal list-inside text-left text-sm">
-                                {recipe.cookInstructions?.map((instruction) => (<li>{instruction}</li>))}
+                                {recipe.cookInstructions?.map((instruction) => (<li key={instruction}>{instruction}</li>))}
                             </ol>
                         </section>
                     )}
@@ -52,7 +54,9 @@ export default async function DetailPage(props: DetailPageProps) {
                             )}
                         </section>
                     )}
-                
+                    <AddToGroceryListButton
+                        ingredients={recipe.ingredientsList}
+                    />
                     <Link href="/">Back to Recipes</Link>
                 </div>
             </div>

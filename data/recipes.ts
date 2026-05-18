@@ -14,14 +14,14 @@ export const recipes: Recipe[] = [
     slug: "tacos",
     title: "Tacos",
     timeCategory: "fast",
-    ingredientsList: [""],
+    ingredientsList: ["shell", "meat"],
     cookInstructions: [""]
   },
   {
     slug: "spaghetti",
     title: "Spaghetti",
     timeCategory: "slow",
-    ingredientsList: [""],
+    ingredientsList: ["sauce"],
     cookInstructions: [""]
   },
 ];

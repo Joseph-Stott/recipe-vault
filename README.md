@@ -16,6 +16,8 @@ Recipe Vault is a web application for storing, organizing, and browsing recipes.
 - Navigation between homepage and recipe detail pages
 - Clickable recipe cards
 - Color-coded cook time ribbons
+- Grocery list page with localStorage persistance
+- Add recipe ingredients to grocery list
 
 ## Tech Stack
 

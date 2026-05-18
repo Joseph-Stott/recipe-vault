@@ -2,6 +2,7 @@
 import RecipeCard from "@/components/RecipeCard";
 import SearchBar from "@/components/SearchBar";
 import { recipes } from "@/data/recipes";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function Home() {
@@ -24,6 +25,7 @@ export default function Home() {
         Store, organize, and search your favorite recipes
       </p>
       <div className="flex flex-col gap-4">
+        <Link className="text-center" href="/grocery-list">View Grocery List</Link>
         <SearchBar
           searchText={searchText}
           setSearchText={setSearchText}
