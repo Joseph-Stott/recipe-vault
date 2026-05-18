@@ -1,5 +1,4 @@
 "use client";
-
 import { addIngredientsToGroceryList } from "@/lib/groceryList";
 
 type AddToGroceryListButtonProps = {

@@ -9,6 +9,12 @@ type DetailPageProps = {
     }>;
 };
 
+const timeCategoryStyles = {
+    fast: "bg-green-600 text-white",
+    medium: "bg-yellow-500 text-white",
+    slow: "bg-red-600 text-white"
+};
+
 export default async function DetailPage(props: DetailPageProps) {
 
     const params = await props.params;
@@ -21,11 +27,23 @@ export default async function DetailPage(props: DetailPageProps) {
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
-            <div className="w-full max-w-sm rounded-2xl text-center border border-zinc-700 bg-zinc-900 p-4">
+            <div className="relative w-full max-w-sm overflow-hidden rounded-2xl text-center border border-zinc-700 bg-zinc-900 p-4">
                 <div className="flex flex-col gap-4">
-                    <h1 className="flex items-center justify-between">
+                    <h1 className="flex items-center justify-center">
+                        <span 
+                        className={`absolute left-[-34px] top-4 w-32 rotate-315 text-center text-xs font-semibold ${timeCategoryStyles[recipe.timeCategory]}`}
+                        style={{
+                            textShadow: `
+                            -1px -1px 0 black,
+                            1px -1px 0 black,
+                            -1px  1px 0 black,
+                            1px  1px 0 black
+                            `
+                        }}
+                        >
+                            {recipe.timeCategory.charAt(0).toUpperCase() + recipe.timeCategory.slice(1)}
+                        </span>
                         <span>{recipe.title}</span>
-                        <span>{recipe.timeCategory.charAt(0).toUpperCase() + recipe.timeCategory.slice(1) + " cook time"}</span>
                     </h1>
                     {recipe.ingredientsList && (
                         <section>
@@ -54,10 +72,23 @@ export default async function DetailPage(props: DetailPageProps) {
                             )}
                         </section>
                     )}
-                    <AddToGroceryListButton
-                        ingredients={recipe.ingredientsList}
-                    />
-                    <Link href="/">Back to Recipes</Link>
+                    <section className="flex items-center justify-between">
+                        <AddToGroceryListButton
+                            ingredients={recipe.ingredientsList}
+                        />
+                        <Link
+                            href="/grocery-list"
+                            className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
+                        >
+                            View Grocery List
+                        </Link>
+                    </section>
+                    <Link 
+                        href="/"
+                        className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
+                    >
+                        Back to Recipes
+                    </Link>
                 </div>
             </div>
         </main>
