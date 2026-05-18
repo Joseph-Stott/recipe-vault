@@ -11,12 +11,9 @@ export default function Home() {
   const normalizedSearch = searchText.toLowerCase();
 
   const filteredRecipes = recipes.filter((recipe) => (
-    recipe.title.toLowerCase().includes(normalizedSearch) || 
-    recipe.cuisine.toLowerCase().includes(normalizedSearch) || 
+    recipe.title.toLowerCase().includes(normalizedSearch) ||
     recipe.timeCategory.toLowerCase().includes(normalizedSearch))
   );
-
-
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
@@ -42,8 +39,9 @@ export default function Home() {
                 slug={recipe.slug}
                 key={recipe.title}
                 title={recipe.title}
-                cuisine={recipe.cuisine}
                 timeCategory={recipe.timeCategory}
+                ingredientsList={recipe.ingredientsList}
+                cookInstructions={recipe.cookInstructions}
               />
             ))
           )

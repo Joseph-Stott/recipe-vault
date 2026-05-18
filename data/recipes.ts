@@ -2,21 +2,26 @@ import { Recipe } from "@/types/recipe";
 
 export const recipes: Recipe[] = [
   {
-    slug: "chicken-alredo",
+    slug: "chicken-alfredo",
     title: "Chicken Alfredo",
-    cuisine: "Italian",
     timeCategory: "medium",
+    ingredientsList: ["chicken", "alfredo"],
+    cookInstructions: ["Get ingredients","Cook ingredients"],
+    cookBook: "Test Book",
+    pageNumber: 43
   },
   {
     slug: "tacos",
     title: "Tacos",
-    cuisine: "Mexican",
     timeCategory: "fast",
+    ingredientsList: [""],
+    cookInstructions: [""]
   },
   {
     slug: "spaghetti",
     title: "Spaghetti",
-    cuisine: "Italian",
     timeCategory: "slow",
+    ingredientsList: [""],
+    cookInstructions: [""]
   },
 ];
