@@ -28,7 +28,7 @@ export default async function DetailPage(props: DetailPageProps) {
                     {recipe.ingredientsList && (
                         <section>
                             <h2>Ingredients:</h2>
-                            <ul className="list-disc list-inside text-left">
+                            <ul className="list-disc list-inside text-left text-sm">
                                 {recipe.ingredientsList?.map((ingredient) => (<li>{ingredient}</li>))}
                             </ul>
                         </section>
@@ -36,7 +36,7 @@ export default async function DetailPage(props: DetailPageProps) {
                     {recipe.cookInstructions && (
                         <section>
                             <h2>Cook Instructions:</h2>
-                            <ol className="list-decimal list-inside text-left">
+                            <ol className="list-decimal list-inside text-left text-sm">
                                 {recipe.cookInstructions?.map((instruction) => (<li>{instruction}</li>))}
                             </ol>
                         </section>
