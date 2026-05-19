@@ -11,7 +11,7 @@ function createSlug (title: string) {
 
 export default function AddRecipePage() {
     const [title, setTitle] = useState("");
-    const [timeCategory, setTimeCategory] = useState<Recipe["timeCategory"]>("fast");
+    const [timeCategory, setTimeCategory] = useState<Recipe["timeCategory"]>("medium");
     const [ingredientsText, setIngredientsText] = useState("");
     const [cookInstructionsText, setCookInstructionsText] = useState("");
     const [cookBook, setCookBook] = useState("");
@@ -21,7 +21,7 @@ export default function AddRecipePage() {
         <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
             <div className="w-full max-w-sm flex flex-col gap-4 rounded-2xl text-center border border-zinc-700 bg-zinc-900 p-4">
                 <h1 className="flex items-center justify-center">
-                    Add Recipe Page
+                    Add a Recipe
                 </h1>
                 <input 
                     className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
