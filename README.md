@@ -9,7 +9,7 @@ Recipe Vault is a web application for storing, organizing, and browsing recipes.
 - Reusable RecipeCard component
 - Reusable SearchBar component
 - Dynamic recipe detail pages using slugs
-- Search recipes by title and cook time category
+- Search recipes by title, cook time category, and ingredients
 - Display a no-results message when no recipes match the search
 - Render ingredient and cook instruction lists
 - Conditionally render optional recipe metadata
@@ -19,6 +19,9 @@ Recipe Vault is a web application for storing, organizing, and browsing recipes.
 - Grocery list page with localStorage persistance
 - Add recipe ingredients to grocery list
 - Clear grocery list functionality
+- Persistent custom recipe storage using localStorage
+- User-created recipes with dynamic slug generation
+- Dynamic rendering of saved recipes
 
 ## Tech Stack
 

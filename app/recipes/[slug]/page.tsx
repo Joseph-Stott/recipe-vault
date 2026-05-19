@@ -1,13 +1,12 @@
+"use client";
 import AddToGroceryListButton from "@/components/AddToGroceryListButton";
 import { recipes } from "@/data/recipes";
 import { addIngredientsToGroceryList } from "@/lib/groceryList";
 import Link from "next/link";
-
-type DetailPageProps = {
-    params: Promise<{
-        slug: string;
-    }>;
-};
+import { getSavedRecipes } from "@/lib/recipeStorage";
+import { useEffect, useState } from "react";
+import { Recipe } from "@/types/recipe";
+import { useParams } from "next/navigation";
 
 const timeCategoryStyles = {
     fast: "bg-green-600 text-white",
@@ -15,11 +14,19 @@ const timeCategoryStyles = {
     slow: "bg-red-600 text-white"
 };
 
-export default async function DetailPage(props: DetailPageProps) {
+export default function DetailPage() {
 
-    const params = await props.params;
+    const params = useParams();
 
-    const recipe = recipes.find((recipe) => recipe.slug === params.slug);
+    const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([]);
+    
+      useEffect(() => {
+        setSavedRecipes(getSavedRecipes());
+      }, []);
+
+    const allRecipes = [...recipes, ...savedRecipes];
+
+    const recipe = allRecipes.find((recipe) => recipe.slug === params.slug);
 
     if (!recipe) {
         return <p className="text-center text-xl text-zinc-400">No recipe found </p>;
@@ -49,7 +56,7 @@ export default async function DetailPage(props: DetailPageProps) {
                         <section>
                             <h2>Ingredients:</h2>
                             <ul className="list-disc list-inside text-left text-sm">
-                                {recipe.ingredientsList?.map((ingredient) => (<li key={ingredient}>{ingredient}</li>))}
+                                {recipe.ingredientsList.map((ingredient) => (<li key={ingredient}>{ingredient}</li>))}
                             </ul>
                         </section>
                     )}
@@ -57,7 +64,7 @@ export default async function DetailPage(props: DetailPageProps) {
                         <section>
                             <h2>Cook Instructions:</h2>
                             <ol className="list-decimal list-inside text-left text-sm">
-                                {recipe.cookInstructions?.map((instruction) => (<li key={instruction}>{instruction}</li>))}
+                                {recipe.cookInstructions.map((instruction) => (<li key={instruction}>{instruction}</li>))}
                             </ol>
                         </section>
                     )}

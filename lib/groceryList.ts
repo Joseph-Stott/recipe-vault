@@ -11,8 +11,8 @@ export function addIngredientsToGroceryList(ingredients: string[]) {
     const currentGroceryList = getGroceryList();
     const updatedGroceryList = [...currentGroceryList, ...ingredients];
     localStorage.setItem("grocery-list", JSON.stringify(updatedGroceryList))
-}
+};
 
 export function clearGroceryList () {
     localStorage.removeItem("grocery-list");
-}
+};
