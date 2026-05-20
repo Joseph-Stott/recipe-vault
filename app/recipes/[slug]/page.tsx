@@ -7,6 +7,7 @@ import { getSavedRecipes } from "@/lib/recipeStorage";
 import { useEffect, useState } from "react";
 import { Recipe } from "@/types/recipe";
 import { useParams } from "next/navigation";
+import { isFavoriteRecipe, toggleFavoriteRecipe } from "@/lib/favorites";
 
 const timeCategoryStyles = {
     fast: "bg-green-600 text-white",
@@ -19,14 +20,22 @@ export default function DetailPage() {
     const params = useParams();
 
     const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([]);
-    
-      useEffect(() => {
-        setSavedRecipes(getSavedRecipes());
-      }, []);
+
+    const [isFavorite, setIsFavorite] = useState(false);
 
     const allRecipes = [...recipes, ...savedRecipes];
 
     const recipe = allRecipes.find((recipe) => recipe.slug === params.slug);
+    
+    useEffect(() => {
+        setSavedRecipes(getSavedRecipes());
+    }, []);
+    
+    useEffect(() => {
+        if (recipe) {
+            setIsFavorite(isFavoriteRecipe(recipe.slug));
+        }
+    }, [recipe]);
 
     if (!recipe) {
         return <p className="text-center text-xl text-zinc-400">No recipe found </p>;
@@ -36,6 +45,15 @@ export default function DetailPage() {
         <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
             <div className="relative w-full max-w-sm overflow-hidden rounded-2xl text-center border border-zinc-700 bg-zinc-900 p-4">
                 <div className="flex flex-col gap-4">
+                    <button
+                        className="absolute right-4 top-4 cursor-pointer text-2xl"
+                        onClick={() => {
+                            toggleFavoriteRecipe(recipe.slug);
+                            setIsFavorite(!isFavorite);
+                        }}
+                        >
+                        {isFavorite ? "★" : "☆"}
+                    </button>
                     <h1 className="flex items-center justify-center">
                         <span 
                         className={`absolute left-[-34px] top-4 w-32 rotate-315 text-center text-xs font-semibold ${timeCategoryStyles[recipe.timeCategory]}`}

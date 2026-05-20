@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getSavedRecipes } from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
+import { getFavoriteRecipeSlugs } from "@/lib/favorites";
 
 export default function Home() {
   
@@ -15,8 +16,11 @@ export default function Home() {
 
   const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([]);
 
+  const [favoriteRecipeSlugs, setFavoriteRecipeSlugs] = useState<string[]>([]);
+
   useEffect(() => {
     setSavedRecipes(getSavedRecipes());
+    setFavoriteRecipeSlugs(getFavoriteRecipeSlugs())
   }, []);
 
   const allRecipes = [...recipes, ...savedRecipes];
@@ -27,6 +31,21 @@ export default function Home() {
     recipe.ingredientsList.some((ingredient) => ingredient.toLowerCase().includes(normalizedSearch)
     )
   ));
+
+  const sortedRecipes = [...filteredRecipes].sort((a, b) => {
+    const aIsFavorite = favoriteRecipeSlugs.includes(a.slug);
+    const bIsFavorite = favoriteRecipeSlugs.includes(b.slug);
+
+    if (aIsFavorite && !bIsFavorite) {
+      return -1;
+    }
+
+    if (!aIsFavorite && bIsFavorite) {
+      return 1;
+    }
+
+    return 0;
+  });
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
@@ -52,7 +71,7 @@ export default function Home() {
               No recipe found
             </p>
           ) : (
-            filteredRecipes.map((recipe) => (
+            sortedRecipes.map((recipe) => (
               <RecipeCard
                 slug={recipe.slug}
                 key={recipe.slug}
