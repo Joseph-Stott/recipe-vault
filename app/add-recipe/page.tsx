@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { addSavedRecipe } from "@/lib/recipeStorage";
-import { time } from "console";
 import { Recipe } from "@/types/recipe";
 
 function createSlug (title: string) {
@@ -68,16 +67,14 @@ export default function AddRecipePage() {
                         Slow
                     </button>
                 </section>
-                <input 
+                <textarea
                     className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
-                    type="text"
                     placeholder="Ingredients List"
                     value={ingredientsText}
                     onChange={(event) => setIngredientsText(event.target.value)}
                 />
-                <input 
+                <textarea
                     className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
-                    type="text"
                     placeholder="Cook Instructions"
                     value={cookInstructionsText}
                     onChange={(event) => setCookInstructionsText(event.target.value)}
@@ -103,8 +100,8 @@ export default function AddRecipePage() {
                             slug: createSlug(title),
                             title: title,
                             timeCategory: timeCategory,
-                            ingredientsList: ingredientsText.split(",").map((ingredient) => ingredient.trim()),
-                            cookInstructions: cookInstructionsText.split(",").map((cookInstructions) => cookInstructions.trim()),
+                            ingredientsList: ingredientsText.split("\n").map((ingredient) => ingredient.trim()),
+                            cookInstructions: cookInstructionsText.split("\n").map((cookInstructions) => cookInstructions.trim()),
                             cookBook: cookBook,
                             pageNumber: pageNumber ? Number(pageNumber) : undefined
                         };

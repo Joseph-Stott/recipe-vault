@@ -23,10 +23,20 @@ export default function RecipeCard(props: Recipe) {
             >
                 {props.timeCategory.charAt(0).toUpperCase() + props.timeCategory.slice(1)}
             </span>
-
-            <div className="flex justify-center">
+            <div className="relative flex items-center justify-center">
                 <span>{props.title}</span>
+
+                {props.isFavorite && (
+                    <span className="absolute right-4 text-xl leading-none text-zinc-100">
+                    ★
+                    </span>
+                )}
             </div>
+            {props.matchCount !== undefined && props.matchCount > 0 && (
+                <span>
+                    {props.matchCount} grocery {props.matchCount === 1 ? "match" : "matches"}
+                </span>
+            )}
         </Link>
     )
 }

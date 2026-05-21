@@ -6,4 +6,6 @@ export type Recipe = {
     cookInstructions: string[];
     cookBook?: string;
     pageNumber?: number;
+    matchCount?: number;
+    isFavorite?: boolean;
 };

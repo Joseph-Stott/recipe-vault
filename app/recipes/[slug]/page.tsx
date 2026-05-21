@@ -30,7 +30,7 @@ export default function DetailPage() {
     useEffect(() => {
         setSavedRecipes(getSavedRecipes());
     }, []);
-    
+
     useEffect(() => {
         if (recipe) {
             setIsFavorite(isFavoriteRecipe(recipe.slug));
@@ -46,7 +46,13 @@ export default function DetailPage() {
             <div className="relative w-full max-w-sm overflow-hidden rounded-2xl text-center border border-zinc-700 bg-zinc-900 p-4">
                 <div className="flex flex-col gap-4">
                     <button
-                        className="absolute right-4 top-4 cursor-pointer text-2xl"
+                        className={`
+                            absolute right-4 top-4 cursor-pointer text-2xl
+                            transition-all duration-300
+                            hover:scale-125
+                            active:scale-150
+                            ${isFavorite ? "rotate-360 scale-125" : "rotate-0"}
+                        `}
                         onClick={() => {
                             toggleFavoriteRecipe(recipe.slug);
                             setIsFavorite(!isFavorite);

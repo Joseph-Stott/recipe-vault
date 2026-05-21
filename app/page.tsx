@@ -7,6 +7,13 @@ import { useState, useEffect } from "react";
 import { getSavedRecipes } from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
 import { getFavoriteRecipeSlugs } from "@/lib/favorites";
+import { getGroceryList } from "@/lib/groceryList";
+
+function getIngredientMatchCount(recipeIngredients: string[], groceryIngredients: string[]) {
+  return recipeIngredients.filter((ingredient) =>
+    groceryIngredients.includes(ingredient)
+  ).length;
+}
 
 export default function Home() {
   
@@ -18,9 +25,12 @@ export default function Home() {
 
   const [favoriteRecipeSlugs, setFavoriteRecipeSlugs] = useState<string[]>([]);
 
+  const [groceryList, setGroceryList] = useState<string[]>([]);
+
   useEffect(() => {
     setSavedRecipes(getSavedRecipes());
-    setFavoriteRecipeSlugs(getFavoriteRecipeSlugs())
+    setFavoriteRecipeSlugs(getFavoriteRecipeSlugs());
+    setGroceryList(getGroceryList());
   }, []);
 
   const allRecipes = [...recipes, ...savedRecipes];
@@ -36,6 +46,16 @@ export default function Home() {
     const aIsFavorite = favoriteRecipeSlugs.includes(a.slug);
     const bIsFavorite = favoriteRecipeSlugs.includes(b.slug);
 
+    const aIngredientMatches = getIngredientMatchCount(
+      a.ingredientsList,
+      groceryList
+    );
+
+    const bIngredientMatches = getIngredientMatchCount(
+      b.ingredientsList,
+      groceryList
+    );
+
     if (aIsFavorite && !bIsFavorite) {
       return -1;
     }
@@ -44,7 +64,7 @@ export default function Home() {
       return 1;
     }
 
-    return 0;
+    return bIngredientMatches - aIngredientMatches;
   });
 
   return (
@@ -71,16 +91,24 @@ export default function Home() {
               No recipe found
             </p>
           ) : (
-            sortedRecipes.map((recipe) => (
-              <RecipeCard
-                slug={recipe.slug}
-                key={recipe.slug}
-                title={recipe.title}
-                timeCategory={recipe.timeCategory}
-                ingredientsList={recipe.ingredientsList}
-                cookInstructions={recipe.cookInstructions}
-              />
-            ))
+            sortedRecipes.map((recipe) => {
+              const matchCount = getIngredientMatchCount(recipe.ingredientsList, groceryList);
+
+              const isFavorite = favoriteRecipeSlugs.includes(recipe.slug);
+
+              return(
+                <RecipeCard
+                  slug={recipe.slug}
+                  key={recipe.slug}
+                  title={recipe.title}
+                  timeCategory={recipe.timeCategory}
+                  ingredientsList={recipe.ingredientsList}
+                  cookInstructions={recipe.cookInstructions}
+                  matchCount={matchCount}
+                  isFavorite={isFavorite}
+                />
+              );
+            })
           )
         }
         <Link 
