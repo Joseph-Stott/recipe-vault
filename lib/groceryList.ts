@@ -16,3 +16,30 @@ export function addIngredientsToGroceryList(ingredients: string[]) {
 export function clearGroceryList () {
     localStorage.removeItem("grocery-list");
 };
+
+export function getGroceryRecipeSlugs(): string[] {
+    const storedGroceryList = localStorage.getItem("grocery-recipe-slugs");
+    if (!storedGroceryList) {
+        return [];
+    }
+    const parsedGroceryList = JSON.parse(storedGroceryList);
+    return parsedGroceryList;
+}
+
+export function addRecipeSlugToGroceryList(slug: string) {
+    const currentGroceryList = getGroceryRecipeSlugs();
+
+    const inGroceryList = currentGroceryList.includes(slug);
+
+    if (inGroceryList) {
+        return;
+    }
+
+    const updatedGroceryList = [...currentGroceryList, slug];
+
+    localStorage.setItem("grocery-recipe-slugs", JSON.stringify(updatedGroceryList));
+}
+
+export function clearGroceryRecipeSlugs() {
+    localStorage.removeItem("grocery-recipe-slugs");
+}

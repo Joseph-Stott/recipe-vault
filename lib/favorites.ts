@@ -4,7 +4,7 @@ export function getFavoriteRecipeSlugs(): string[] {
         return [];
     }
     const parsedFavoriteList = JSON.parse(storedFavoriteList);
-    return parsedFavoriteList
+    return parsedFavoriteList;
 }
 
 export function toggleFavoriteRecipe(slug: string) {

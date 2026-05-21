@@ -26,3 +26,13 @@ export function updateSavedRecipe(updatedRecipe: Recipe) {
 
     localStorage.setItem("saved-recipes", JSON.stringify(updatedRecipes))
 };
+
+export function deleteSavedRecipe(slug: string) {
+    const currentRecipes = getSavedRecipes();
+
+    const updatedRecipes = currentRecipes.filter(
+        (recipe) => recipe.slug !== slug
+    );
+
+    localStorage.setItem("saved-recipes", JSON.stringify(updatedRecipes))
+};

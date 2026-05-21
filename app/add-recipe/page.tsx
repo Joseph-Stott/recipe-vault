@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { addSavedRecipe } from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
+import { useRouter } from "next/navigation";
 
 function createSlug (title: string) {
     return title.toLowerCase().trim().replaceAll(" ", "-");
@@ -15,6 +16,8 @@ export default function AddRecipePage() {
     const [cookInstructionsText, setCookInstructionsText] = useState("");
     const [cookBook, setCookBook] = useState("");
     const [pageNumber, setPageNumber] = useState("");
+
+    const router = useRouter();
 
     return(
         <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
@@ -118,8 +121,13 @@ export default function AddRecipePage() {
                             cookBook: cookBook,
                             pageNumber: pageNumber ? Number(pageNumber) : undefined
                         };
+
+                        const confirmed = confirm("Add to recipe list?");
+                        if(!confirmed) {
+                            return;
+                        }
                         addSavedRecipe(newRecipe);
-                        alert("Added to Recipe");
+                        router.push("/");
                     }}
                 >
                     Add Recipe

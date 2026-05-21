@@ -8,6 +8,7 @@ import { getSavedRecipes } from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
 import { getFavoriteRecipeSlugs } from "@/lib/favorites";
 import { getGroceryList } from "@/lib/groceryList";
+import { getGroceryRecipeSlugs } from "@/lib/groceryList";
 
 function getIngredientMatchCount(recipeIngredients: string[], groceryIngredients: string[]) {
   return recipeIngredients.filter((ingredient) =>
@@ -27,10 +28,13 @@ export default function Home() {
 
   const [groceryList, setGroceryList] = useState<string[]>([]);
 
+  const [groceryRecipeSlugs, setGroceryRecipeSlugs] = useState<string[]>([]);
+
   useEffect(() => {
     setSavedRecipes(getSavedRecipes());
     setFavoriteRecipeSlugs(getFavoriteRecipeSlugs());
     setGroceryList(getGroceryList());
+    setGroceryRecipeSlugs(getGroceryRecipeSlugs());
   }, []);
 
   const allRecipes = [...recipes, ...savedRecipes];
@@ -46,6 +50,9 @@ export default function Home() {
     const aIsFavorite = favoriteRecipeSlugs.includes(a.slug);
     const bIsFavorite = favoriteRecipeSlugs.includes(b.slug);
 
+    const aInGroceryList = groceryRecipeSlugs.includes(a.slug);
+    const bInGroceryList = groceryRecipeSlugs.includes(b.slug);
+
     const aIngredientMatches = getIngredientMatchCount(
       a.ingredientsList,
       groceryList
@@ -55,6 +62,14 @@ export default function Home() {
       b.ingredientsList,
       groceryList
     );
+
+    if (aInGroceryList && !bInGroceryList) {
+      return -1;
+    }
+
+    if (!aInGroceryList && bInGroceryList) {
+      return 1;
+    }
 
     if (aIsFavorite && !bIsFavorite) {
       return -1;

@@ -2,6 +2,7 @@
 import { clearGroceryList, getGroceryList } from "@/lib/groceryList";
 import Link from "next/link";
 import { useState } from "react";
+import { clearGroceryRecipeSlugs } from "@/lib/groceryList";
 
 export default function GroceryListPage() {
     const [groceryList, setGroceryList] = useState(getGroceryList());
@@ -32,6 +33,7 @@ export default function GroceryListPage() {
                         onClick={() => {
                             clearGroceryList();
                             setGroceryList([]);
+                            clearGroceryRecipeSlugs();
                         }}
                     >
                         Clear Grocery List

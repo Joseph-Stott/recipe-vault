@@ -115,6 +115,7 @@ export default function DetailPage() {
                     )}
                     <section className="flex items-center justify-between">
                         <AddToGroceryListButton
+                            slug={recipe.slug}
                             ingredients={recipe.ingredientsList}
                         />
                         <Link
