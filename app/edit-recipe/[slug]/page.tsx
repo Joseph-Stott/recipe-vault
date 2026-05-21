@@ -1,14 +1,16 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
-import { addSavedRecipe } from "@/lib/recipeStorage";
+import { useEffect, useState } from "react";
 import { Recipe } from "@/types/recipe";
+import { useParams } from "next/navigation";
+import { recipes } from "@/data/recipes";
+import { getSavedRecipes, updateSavedRecipe } from "@/lib/recipeStorage";
 
-function createSlug (title: string) {
-    return title.toLowerCase().trim().replaceAll(" ", "-");
-}
+export default function EditRecipePage() {
+    const params = useParams();
 
-export default function AddRecipePage() {
+    const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([]);
+
     const [title, setTitle] = useState("");
     const [timeCategory, setTimeCategory] = useState<Recipe["timeCategory"]>("medium");
     const [ingredientsText, setIngredientsText] = useState("");
@@ -16,11 +18,38 @@ export default function AddRecipePage() {
     const [cookBook, setCookBook] = useState("");
     const [pageNumber, setPageNumber] = useState("");
 
+    const allRecipes = [...recipes, ...savedRecipes];
+
+    const recipe = allRecipes.find((recipe) => recipe.slug === params.slug);
+
+    useEffect(() => {
+        setSavedRecipes(getSavedRecipes());
+    }, []);
+
+    useEffect(() => {
+        if (recipe) {
+            setTitle(recipe.title);
+            setTimeCategory(recipe.timeCategory);
+            setIngredientsText(recipe.ingredientsList.join("\n"));
+            setCookInstructionsText(
+            recipe.cookInstructions
+                ? recipe.cookInstructions.join("\n")
+                : ""
+            );
+            setCookBook(recipe.cookBook || "");
+            setPageNumber(
+            recipe.pageNumber
+                ? recipe.pageNumber.toString()
+                : ""
+            );
+        }
+    }, [recipe]);
+
     return(
         <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
             <div className="w-full max-w-sm flex flex-col gap-4 rounded-2xl text-center border border-zinc-700 bg-zinc-900 p-4">
                 <h1 className="flex items-center justify-center">
-                    Add a Recipe
+                    Edit a Recipe
                 </h1>
                 <input 
                     className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
@@ -96,6 +125,10 @@ export default function AddRecipePage() {
                 <button
                     className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
                     onClick={() => {
+                        if (!recipe) {
+                            alert("Recipe not found");
+                            return;
+                        }
                         if (!title.trim()) {
                             alert("Recipe title is required");
                             return;
@@ -105,7 +138,7 @@ export default function AddRecipePage() {
                             return;
                         }
                         const newRecipe = {
-                            slug: createSlug(title),
+                            slug: recipe.slug,
                             title: title,
                             timeCategory: timeCategory,
                             ingredientsList: ingredientsText.split("\n").map((ingredient) => ingredient.trim()),
@@ -118,11 +151,11 @@ export default function AddRecipePage() {
                             cookBook: cookBook,
                             pageNumber: pageNumber ? Number(pageNumber) : undefined
                         };
-                        addSavedRecipe(newRecipe);
-                        alert("Added to Recipe");
+                        updateSavedRecipe(newRecipe);
+                        alert("Updated Recipe");
                     }}
                 >
-                    Add Recipe
+                    Update Recipe
                 </button>
                 <Link 
                     href="/"

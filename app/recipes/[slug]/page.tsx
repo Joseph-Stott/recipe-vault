@@ -60,7 +60,7 @@ export default function DetailPage() {
                         >
                         {isFavorite ? "★" : "☆"}
                     </button>
-                    <h1 className="flex items-center justify-center">
+                    <h1 className="flex items-center justify-center gap-2">
                         <span 
                         className={`absolute left-[-34px] top-4 w-32 rotate-315 text-center text-xs font-semibold ${timeCategoryStyles[recipe.timeCategory]}`}
                         style={{
@@ -75,6 +75,16 @@ export default function DetailPage() {
                             {recipe.timeCategory.charAt(0).toUpperCase() + recipe.timeCategory.slice(1)}
                         </span>
                         <span>{recipe.title}</span>
+                        <Link
+                            href={`/edit-recipe/${recipe.slug}`}
+                            className="cursor-pointer text-lg"
+                            >
+                            <span className="inline-block scale-x-[-1]">
+                                <span className="inline-block transition-transform hover:scale-125">
+                                ✎
+                                </span>
+                            </span>
+                        </Link>
                     </h1>
                     {recipe.ingredientsList && (
                         <section>

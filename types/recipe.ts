@@ -3,7 +3,7 @@ export type Recipe = {
     title: string;
     timeCategory: "fast" | "medium" | "slow";
     ingredientsList: string[];
-    cookInstructions: string[];
+    cookInstructions?: string[];
     cookBook?: string;
     pageNumber?: number;
     matchCount?: number;
