@@ -37,7 +37,11 @@ export default function Home() {
     setGroceryRecipeSlugs(getGroceryRecipeSlugs());
   }, []);
 
-  const allRecipes = [...recipes, ...savedRecipes];
+  const allRecipesWithDuplicates = [...savedRecipes, ...recipes];
+
+  const allRecipes = allRecipesWithDuplicates.filter((recipe, index, array) =>
+    array.findIndex((currentRecipe) => currentRecipe.slug === recipe.slug) === index
+  );
 
   const filteredRecipes = allRecipes.filter((recipe) => (
     recipe.title.toLowerCase().includes(normalizedSearch) ||
@@ -92,18 +96,22 @@ export default function Home() {
           <h2 className="mb-3 text-center text-sm font-semibold text-zinc-400">
             Recipes in Grocery List
           </h2>
-
           <div className="flex flex-wrap justify-center gap-4">
-            {groceryRecipes.map((recipe) => (
-            <RecipeCard
-              key={recipe.slug}
-              slug={recipe.slug}
-              title={recipe.title}
-              timeCategory={recipe.timeCategory}
-              ingredientsList={recipe.ingredientsList}
-              cookInstructions={recipe.cookInstructions}
-            />
-            ))}
+            {groceryRecipes.map((recipe) => { 
+              const isFavorite = favoriteRecipeSlugs.includes(recipe.slug);
+
+              return(
+                <RecipeCard
+                  key={recipe.slug}
+                  slug={recipe.slug}
+                  title={recipe.title}
+                  timeCategory={recipe.timeCategory}
+                  ingredientsList={recipe.ingredientsList}
+                  cookInstructions={recipe.cookInstructions}
+                  isFavorite={isFavorite}
+                />
+              );
+            })}
           </div>
         </section>
       )}

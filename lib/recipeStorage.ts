@@ -18,13 +18,20 @@ export function addSavedRecipe(recipe: Recipe) {
 export function updateSavedRecipe(updatedRecipe: Recipe) {
     const currentRecipes = getSavedRecipes();
 
+    const recipeAlreadySaved = currentRecipes.some(
+        (recipe) => recipe.slug === updatedRecipe.slug
+    );
+    if (!recipeAlreadySaved) {
+        const updatedRecipes = [...currentRecipes, updatedRecipe];
+        localStorage.setItem("saved-recipes", JSON.stringify(updatedRecipes))
+        return;
+    }
     const updatedRecipes = currentRecipes.map((recipe) =>
         recipe.slug === updatedRecipe.slug
             ? updatedRecipe
             : recipe
     );
-
-    localStorage.setItem("saved-recipes", JSON.stringify(updatedRecipes))
+    localStorage.setItem("saved-recipes", JSON.stringify(updatedRecipes));
 };
 
 export function deleteSavedRecipe(slug: string) {

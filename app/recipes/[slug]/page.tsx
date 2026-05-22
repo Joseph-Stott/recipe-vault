@@ -23,7 +23,11 @@ export default function DetailPage() {
 
     const [isFavorite, setIsFavorite] = useState(false);
 
-    const allRecipes = [...recipes, ...savedRecipes];
+    const allRecipesWithDuplicates = [...savedRecipes, ...recipes];
+
+    const allRecipes = allRecipesWithDuplicates.filter((recipe, index, array) =>
+        array.findIndex((currentRecipe) => currentRecipe.slug === recipe.slug) === index
+    );
 
     const recipe = allRecipes.find((recipe) => recipe.slug === params.slug);
     
