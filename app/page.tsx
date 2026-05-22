@@ -45,8 +45,11 @@ export default function Home() {
     recipe.ingredientsList.some((ingredient) => ingredient.toLowerCase().includes(normalizedSearch)
     )
   ));
+  const groceryRecipes = allRecipes.filter((recipe) => groceryRecipeSlugs.includes(recipe.slug));
 
-  const sortedRecipes = [...filteredRecipes].sort((a, b) => {
+  const nonGroceryFilteredRecipes = filteredRecipes.filter((recipe) => !groceryRecipeSlugs.includes(recipe.slug));
+  
+  const sortedRecipes = [...nonGroceryFilteredRecipes].sort((a, b) => {
     const aIsFavorite = favoriteRecipeSlugs.includes(a.slug);
     const bIsFavorite = favoriteRecipeSlugs.includes(b.slug);
 
@@ -84,6 +87,26 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
+      {groceryRecipes.length > 0 && (
+        <section className="mb-8 w-full max-w-6xl">
+          <h2 className="mb-3 text-center text-sm font-semibold text-zinc-400">
+            Recipes in Grocery List
+          </h2>
+
+          <div className="flex flex-wrap justify-center gap-4">
+            {groceryRecipes.map((recipe) => (
+            <RecipeCard
+              key={recipe.slug}
+              slug={recipe.slug}
+              title={recipe.title}
+              timeCategory={recipe.timeCategory}
+              ingredientsList={recipe.ingredientsList}
+              cookInstructions={recipe.cookInstructions}
+            />
+            ))}
+          </div>
+        </section>
+      )}
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl text-center font-semibold tracking-tight text-black dark:text-zinc-50">
           Recipe Vault
