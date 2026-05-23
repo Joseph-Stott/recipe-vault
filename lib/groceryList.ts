@@ -43,3 +43,11 @@ export function addRecipeSlugToGroceryList(slug: string) {
 export function clearGroceryRecipeSlugs() {
     localStorage.removeItem("grocery-recipe-slugs");
 }
+
+export function removeIngredientsFromGroceryList(ingredientsToRemove: string[]) {
+    const currentGroceryList = getGroceryList();
+    
+    const updatedGroceryList = [...currentGroceryList];
+
+    // if (updatedGroceryList.includes(currentGroceryList))
+}

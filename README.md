@@ -16,12 +16,33 @@ Recipe Vault is a web application for storing, organizing, and browsing recipes.
 - Navigation between homepage and recipe detail pages
 - Clickable recipe cards
 - Color-coded cook time ribbons
-- Grocery list page with localStorage persistance
-- Add recipe ingredients to grocery list
-- Clear grocery list functionality
 - Persistent custom recipe storage using localStorage
-- User-created recipes with dynamic slug generation
-- Dynamic rendering of saved recipes
+- User-created recipes with automatic slug generation
+- Dynamic rendering and overriding of saved recipes
+- Recipe editing with persistent localStorage updates
+- Recipe deletion with confirmation prompts
+- Automatic prioritization of edited recipes over built-in recipes
+- De-duplication of recipe overrides using shared slugs
+- Favorite recipe tracking and persistence
+- Grocery list page with localStorage persistence
+- Add recipe ingredients to persistent grocery list
+- Grocery recipe tracking using recipe slugs
+- Prevent duplicate grocery recipe entries
+- Dedicated grocery recipe section displayed at the top of the homepage
+- Dynamic recipe sorting based on grocery list ingredients and favorites
+- Dynamic grocery ingredient match counting
+- Clear grocery list and grocery recipe tracking
+- Confirmation prompts for add, edit, delete, and clear actions
+- Responsive recipe card wrapping for grocery recipe containers
+- Separate rendering of grocery-tracked recipes from the main recipe feed
+
+## Planed Features (ToDo)
+
+- Ingredient quantity parsing and merging
+- Individual grocery recipe removal
+- Toast notifications replacing alert/confirm dialogs
+- Advanced grocery list grouping and measurement handling
+- Favorite recipe prioritization improvements
 
 ## Tech Stack
 
