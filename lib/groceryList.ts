@@ -49,5 +49,28 @@ export function removeIngredientsFromGroceryList(ingredientsToRemove: string[]) 
     
     const updatedGroceryList = [...currentGroceryList];
 
-    // if (updatedGroceryList.includes(currentGroceryList))
+    ingredientsToRemove.forEach((ingredientToRemove) => {
+        const indexToRemove = updatedGroceryList.findIndex(
+            (ingredient) => ingredient === ingredientToRemove
+        );
+
+        if (indexToRemove !== -1) {
+            updatedGroceryList.splice(indexToRemove, 1);
+        }
+    });
+
+    localStorage.setItem("grocery-list", JSON.stringify(updatedGroceryList));
+}
+
+export function removeRecipeSlugFromGroceryList(slug: string) {
+    const currentGroceryRecipeSlugs = getGroceryRecipeSlugs();
+
+    const updatedGroceryRecipeSlugs = currentGroceryRecipeSlugs.filter(
+        (recipeSlug) => recipeSlug !== slug
+    );
+
+    localStorage.setItem(
+        "grocery-recipe-slugs",
+        JSON.stringify(updatedGroceryRecipeSlugs)
+    );
 }

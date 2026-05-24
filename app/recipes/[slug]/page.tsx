@@ -1,5 +1,5 @@
 "use client";
-import AddToGroceryListButton from "@/components/AddToGroceryListButton";
+import GroceryListButton from "@/components/GroceryListButton";
 import { recipes } from "@/data/recipes";
 import { addIngredientsToGroceryList } from "@/lib/groceryList";
 import Link from "next/link";
@@ -118,7 +118,7 @@ export default function DetailPage() {
                         </section>
                     )}
                     <section className="flex items-center justify-between">
-                        <AddToGroceryListButton
+                        <GroceryListButton
                             slug={recipe.slug}
                             ingredients={recipe.ingredientsList}
                         />
