@@ -37,8 +37,11 @@ export default function Home() {
     setGroceryRecipeSlugs(getGroceryRecipeSlugs());
   }, []);
 
+  // Saved recipes are placed first so edited recipes override
+  // built-in recipes with matching slugs
   const allRecipesWithDuplicates = [...savedRecipes, ...recipes];
-
+  
+  // Remove duplicate recipe slugs while keeping the saved override version
   const allRecipes = allRecipesWithDuplicates.filter((recipe, index, array) =>
     array.findIndex((currentRecipe) => currentRecipe.slug === recipe.slug) === index
   );

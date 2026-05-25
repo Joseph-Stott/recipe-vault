@@ -26,7 +26,7 @@ Recipe Vault is a web application for storing, organizing, and browsing recipes.
 - Favorite recipe tracking and persistence
 - Grocery list page with localStorage persistence
 - Add recipe ingredients to persistent grocery list
-- Grocery recipe tracking using recipe slugs
+- Persistent grocery recipe tracking using recipe slugs
 - Prevent duplicate grocery recipe entries
 - Dedicated grocery recipe section displayed at the top of the homepage
 - Dynamic recipe sorting based on grocery list ingredients and favorites
