@@ -49,6 +49,8 @@ export function removeIngredientsFromGroceryList(ingredientsToRemove: string[]) 
     
     const updatedGroceryList = [...currentGroceryList];
 
+    // Remove only the first matching occurrence so shared ingredients
+    // from other recipes remain in the grocery list
     ingredientsToRemove.forEach((ingredientToRemove) => {
         const indexToRemove = updatedGroceryList.findIndex(
             (ingredient) => ingredient === ingredientToRemove
