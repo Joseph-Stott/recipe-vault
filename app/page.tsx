@@ -40,7 +40,7 @@ export default function Home() {
   // Saved recipes are placed first so edited recipes override
   // built-in recipes with matching slugs
   const allRecipesWithDuplicates = [...savedRecipes, ...recipes];
-  
+
   // Remove duplicate recipe slugs while keeping the saved override version
   const allRecipes = allRecipesWithDuplicates.filter((recipe, index, array) =>
     array.findIndex((currentRecipe) => currentRecipe.slug === recipe.slug) === index
@@ -118,6 +118,9 @@ export default function Home() {
           </div>
         </section>
       )}
+      
+      <div className="mb-8 w-full max-w-6xl border-b border-zinc-800" />
+
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl text-center font-semibold tracking-tight text-black dark:text-zinc-50">
           Recipe Vault
