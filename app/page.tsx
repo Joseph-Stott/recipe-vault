@@ -95,9 +95,9 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
       {groceryRecipes.length > 0 && (
-        <section className="mb-8 w-full max-w-6xl">
+        <section className="mb-8 w-full max-w-6xl rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4">
           <h2 className="mb-3 text-center text-sm font-semibold text-zinc-400">
-            Recipes in Grocery List
+            🛒 Recipes in Grocery List
           </h2>
           <div className="flex flex-wrap justify-center gap-4">
             {groceryRecipes.map((recipe) => { 
@@ -118,7 +118,7 @@ export default function Home() {
           </div>
         </section>
       )}
-      
+
       <div className="mb-8 w-full max-w-6xl border-b border-zinc-800" />
 
       <div className="flex flex-col gap-4">
