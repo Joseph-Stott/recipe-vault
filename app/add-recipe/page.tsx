@@ -1,9 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { addSavedRecipe } from "@/lib/recipeStorage";
+import { addSavedRecipe, getSavedRecipes } from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
 import { useRouter } from "next/navigation";
+import { recipes } from "@/data/recipes";
 
 function createSlug (title: string) {
     return title.toLowerCase().trim().replaceAll(" ", "-");
@@ -107,8 +108,22 @@ export default function AddRecipePage() {
                             alert("Recipe ingredients are required");
                             return;
                         }
+
+                        const newSlug = createSlug(title);
+
+                        const allRecipesWithDuplicates = [...getSavedRecipes(), ...recipes];
+
+                        const slugAlreadyExists = allRecipesWithDuplicates.some(
+                            (recipe) => recipe.slug === newSlug
+                        );
+
+                        if (slugAlreadyExists) {
+                          alert("A recipe with this title already exists");
+                          return;  
+                        };
+
                         const newRecipe = {
-                            slug: createSlug(title),
+                            slug: newSlug,
                             title: title,
                             timeCategory: timeCategory,
                             ingredientsList: ingredientsText.split("\n").map((ingredient) => ingredient.trim()),
