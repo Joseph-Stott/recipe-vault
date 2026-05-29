@@ -1,10 +1,10 @@
 "use client";
-import Link from "next/link";
 import { useState } from "react";
 import { addSavedRecipe, getSavedRecipes } from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
 import { useRouter } from "next/navigation";
 import { recipes } from "@/data/recipes";
+import RecipeForm from "@/components/RecipeForm";
 
 function createSlug (title: string) {
     return title.toLowerCase().trim().replaceAll(" ", "-");
@@ -26,80 +26,21 @@ export default function AddRecipePage() {
                 <h1 className="flex items-center justify-center">
                     Add a Recipe
                 </h1>
-                <input 
-                    className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
-                    type="text"
-                    placeholder="Add Title"
-                    value={title}
-                    onChange={(event) => setTitle(event.target.value)}
-                />
-                <section className="flex flex-row justify-center gap-2">
-                    <button
-                        className={`cursor-pointer rounded-lg border px-3 py-2 text-sm font-medium ${
-                            timeCategory === "fast"
-                                ? "bg-green-600 border-green-500"
-                                : "border-zinc-600 hover:bg-zinc-800"
-                        }`}
-                        onClick={() => {
-                            setTimeCategory("fast");
-                        }}
-                    >
-                        Fast
-                    </button>
-                    <button
-                        className={`cursor-pointer rounded-lg border px-3 py-2 text-sm font-medium ${
-                            timeCategory === "medium"
-                                ? "bg-yellow-600 border-yellow-500"
-                                : "border-zinc-600 hover:bg-zinc-800"
-                        }`}
-                        onClick={() => {
-                            setTimeCategory("medium");
-                        }}
-                    >
-                        Medium
-                    </button>
-                    <button
-                        className={`cursor-pointer rounded-lg border px-3 py-2 text-sm font-medium ${
-                            timeCategory === "slow"
-                                ? "bg-red-600 border-red-500"
-                                : "border-zinc-600 hover:bg-zinc-800"
-                        }`}
-                        onClick={() => {
-                            setTimeCategory("slow");
-                        }}
-                    >
-                        Slow
-                    </button>
-                </section>
-                <textarea
-                    className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
-                    placeholder="Ingredients List"
-                    value={ingredientsText}
-                    onChange={(event) => setIngredientsText(event.target.value)}
-                />
-                <textarea
-                    className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
-                    placeholder="Cook Instructions"
-                    value={cookInstructionsText}
-                    onChange={(event) => setCookInstructionsText(event.target.value)}
-                />
-                <input 
-                    className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
-                    type="text"
-                    placeholder="Book title"
-                    value={cookBook}
-                    onChange={(event) => setCookBook(event.target.value)}
-                />
-                <input 
-                    className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
-                    type="text"
-                    placeholder="Page number"
-                    value={pageNumber}
-                    onChange={(event) => setPageNumber(event.target.value)}
-                />
-                <button
-                    className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
-                    onClick={() => {
+                <RecipeForm
+                    title={title}
+                    setTitle={setTitle}
+                    timeCategory={timeCategory}
+                    setTimeCategory={setTimeCategory}
+                    ingredientsText={ingredientsText}
+                    setIngredientsText={setIngredientsText}
+                    cookInstructionsText={cookInstructionsText}
+                    setCookInstructionsText={setCookInstructionsText}
+                    cookBook={cookBook}
+                    setCookBook={setCookBook}
+                    pageNumber={pageNumber}
+                    setPageNumber={setPageNumber}
+                    submitButtonText="Add Recipe"
+                    onSubmit={() => {
                         if (!title.trim()) {
                             alert("Recipe title is required");
                             return;
@@ -111,6 +52,8 @@ export default function AddRecipePage() {
 
                         const newSlug = createSlug(title);
 
+                        // Prevent users from creating recipes that would generate
+                        // a duplicate slug and conflict with existing recipes
                         const allRecipesWithDuplicates = [...getSavedRecipes(), ...recipes];
 
                         const slugAlreadyExists = allRecipesWithDuplicates.some(
@@ -144,15 +87,7 @@ export default function AddRecipePage() {
                         addSavedRecipe(newRecipe);
                         router.push("/");
                     }}
-                >
-                    Add Recipe
-                </button>
-                <Link 
-                    href="/"
-                    className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
-                >
-                    Back to recipes
-                </Link>
+                />
             </div>
         </main>
     )

@@ -1,11 +1,11 @@
 "use client";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Recipe } from "@/types/recipe";
 import { useParams } from "next/navigation";
 import { recipes } from "@/data/recipes";
 import { getSavedRecipes, updateSavedRecipe, deleteSavedRecipe } from "@/lib/recipeStorage";
 import { useRouter } from "next/navigation";
+import RecipeForm from "@/components/RecipeForm";
 
 export default function EditRecipePage() {
     const params = useParams();
@@ -22,7 +22,7 @@ export default function EditRecipePage() {
     // Saved recipes are placed first so edited recipes override
     // built-in recipes with matching slugs
     const allRecipesWithDuplicates = [...savedRecipes, ...recipes];
-    
+
     // Remove duplicate recipe slugs while keeping the saved override version
     const allRecipes = allRecipesWithDuplicates.filter((recipe, index, array) =>
         array.findIndex((currentRecipe) => currentRecipe.slug === recipe.slug) === index
@@ -83,7 +83,57 @@ export default function EditRecipePage() {
                     >
                     🗑️
                 </button>
-                <input 
+                <RecipeForm
+                    title={title}
+                    setTitle={setTitle}
+                    timeCategory={timeCategory}
+                    setTimeCategory={setTimeCategory}
+                    ingredientsText={ingredientsText}
+                    setIngredientsText={setIngredientsText}
+                    cookInstructionsText={cookInstructionsText}
+                    setCookInstructionsText={setCookInstructionsText}
+                    cookBook={cookBook}
+                    setCookBook={setCookBook}
+                    pageNumber={pageNumber}
+                    setPageNumber={setPageNumber}
+                    submitButtonText="Update Recipe"
+                    onSubmit= {() => {
+                        if (!recipe) {
+                            alert("Recipe not found");
+                            return;
+                        }
+                        if (!title.trim()) {
+                            alert("Recipe title is required");
+                            return;
+                        }
+                        if (!ingredientsText.trim()) {
+                            alert("Recipe ingredients are required");
+                            return;
+                        }
+                        const newRecipe = {
+                            slug: recipe.slug,
+                            title: title,
+                            timeCategory: timeCategory,
+                            ingredientsList: ingredientsText.split("\n").map((ingredient) => ingredient.trim()),
+                            cookInstructions: cookInstructionsText.trim()
+                                ? cookInstructionsText
+                                    .split("\n")
+                                    .map((instruction) => instruction.trim())
+                                    .filter((instruction) => instruction !== "")
+                                : undefined,
+                            cookBook: cookBook,
+                            pageNumber: pageNumber ? Number(pageNumber) : undefined
+                        };
+                        const confirmed = confirm("Are you sure you want to update recipe?");
+                        if(!confirmed) {
+                            return;
+                        }
+                        updateSavedRecipe(newRecipe);
+                        router.refresh();
+                        router.push("/");
+                    }}
+                />
+                {/* <input 
                     className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                     type="text"
                     placeholder="Add Title"
@@ -200,7 +250,7 @@ export default function EditRecipePage() {
                     className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
                 >
                     Back to recipes
-                </Link>
+                </Link> */}
             </div>
         </main>
     )
