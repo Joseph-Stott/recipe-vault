@@ -38,7 +38,9 @@ export default function GroceryListPage() {
                 <section>
                     <ul>
                         {groceryList.map((ingredient, index) => (
-                            <li key={`${ingredient}-${index}`}>{ingredient}</li>
+                            <li key={`${ingredient.amount}-${ingredient.unit}-${ingredient.name}-${index}`}>
+                                {ingredient.amount} {ingredient.unit} {ingredient.name}
+                            </li>
                         ))}
                     </ul>
                 </section>

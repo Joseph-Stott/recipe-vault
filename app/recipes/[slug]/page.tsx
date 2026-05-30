@@ -48,9 +48,7 @@ export default function DetailPage() {
         return <p className="text-center text-xl text-zinc-400">No recipe found </p>;
     }
 
-    const groceryIngredients = recipe.structuredIngredients
-        ? recipe.structuredIngredients.map((ingredient) => ingredient.name)
-        : recipe.ingredientsList;
+    const groceryIngredients = recipe.structuredIngredients ?? [];
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">

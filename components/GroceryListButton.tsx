@@ -8,10 +8,11 @@ import {
  } from "@/lib/groceryList";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Ingredient } from "@/types/recipe";
 
 type GroceryListButtonProps = {
     slug: string;
-    ingredients: string[];
+    ingredients: Ingredient[];
 }
 
 export default function GroceryListButton(props: GroceryListButtonProps) {

@@ -1,4 +1,6 @@
-export function getGroceryList(): string[] {
+import { Ingredient } from "@/types/recipe";
+
+export function getGroceryList(): Ingredient[] {
     const storedGroceryList = localStorage.getItem("grocery-list");
     if (!storedGroceryList) {
         return [];
@@ -7,7 +9,7 @@ export function getGroceryList(): string[] {
     return parsedGroceryList
 };
 
-export function addIngredientsToGroceryList(ingredients: string[]) {
+export function addIngredientsToGroceryList(ingredients: Ingredient[]) {
     const currentGroceryList = getGroceryList();
     const updatedGroceryList = [...currentGroceryList, ...ingredients];
     localStorage.setItem("grocery-list", JSON.stringify(updatedGroceryList))
@@ -44,7 +46,7 @@ export function clearGroceryRecipeSlugs() {
     localStorage.removeItem("grocery-recipe-slugs");
 }
 
-export function removeIngredientsFromGroceryList(ingredientsToRemove: string[]) {
+export function removeIngredientsFromGroceryList(ingredientsToRemove: Ingredient[]) {
     const currentGroceryList = getGroceryList();
     
     const updatedGroceryList = [...currentGroceryList];
@@ -53,7 +55,10 @@ export function removeIngredientsFromGroceryList(ingredientsToRemove: string[]) 
     // from other recipes remain in the grocery list
     ingredientsToRemove.forEach((ingredientToRemove) => {
         const indexToRemove = updatedGroceryList.findIndex(
-            (ingredient) => ingredient === ingredientToRemove
+            (ingredient) =>
+                ingredient.amount === ingredientToRemove.amount &&
+                ingredient.unit === ingredientToRemove.unit &&
+                ingredient.name === ingredientToRemove.name
         );
 
         if (indexToRemove !== -1) {

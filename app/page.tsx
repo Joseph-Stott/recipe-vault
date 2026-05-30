@@ -43,7 +43,9 @@ export default function Home() {
   useEffect(() => {
     setSavedRecipes(getSavedRecipes());
     setFavoriteRecipeSlugs(getFavoriteRecipeSlugs());
-    setGroceryList(getGroceryList());
+    setGroceryList(
+      getGroceryList().map((ingredient) => ingredient.name)
+    );
     setGroceryRecipeSlugs(getGroceryRecipeSlugs());
   }, []);
 
