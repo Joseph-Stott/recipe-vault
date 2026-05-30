@@ -23,7 +23,7 @@ function getIngredientNames(recipe: Recipe) {
     );
   }
 
-  return recipe.ingredientsList;
+  return recipe.ingredientsList ?? [];
 }
 
 export default function Home() {
