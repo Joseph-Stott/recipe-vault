@@ -1,5 +1,6 @@
 import { Recipe } from "@/types/recipe";
 import Link from "next/link";
+import BackButton from "./BackButton";
 
 type RecipeFormProps = {
     title: string;
@@ -98,12 +99,7 @@ export default function RecipeForm(props: RecipeFormProps) {
             >
                 {props.submitButtonText}
             </button>
-            <Link 
-                href="/"
-                className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
-            >
-                Back to recipes
-            </Link>
+            <BackButton/>
         </>
     )
 }

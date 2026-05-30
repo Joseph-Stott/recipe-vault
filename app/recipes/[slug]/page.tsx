@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Recipe } from "@/types/recipe";
 import { useParams } from "next/navigation";
 import { isFavoriteRecipe, toggleFavoriteRecipe } from "@/lib/favorites";
+import BackButton from "@/components/BackButton";
 
 const timeCategoryStyles = {
     fast: "bg-green-600 text-white",
@@ -132,12 +133,7 @@ export default function DetailPage() {
                             View Grocery List
                         </Link>
                     </section>
-                    <Link 
-                        href="/"
-                        className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
-                    >
-                        Back to Recipes
-                    </Link>
+                    <BackButton/>
                 </div>
             </div>
         </main>

@@ -1,9 +1,9 @@
 "use client";
 import { clearGroceryList, getGroceryList } from "@/lib/groceryList";
-import Link from "next/link";
 import { useState } from "react";
 import { clearGroceryRecipeSlugs } from "@/lib/groceryList";
 import { useRouter } from "next/navigation";
+import BackButton from "@/components/BackButton";
 
 export default function GroceryListPage() {
     const [groceryList, setGroceryList] = useState(getGroceryList());
@@ -43,12 +43,7 @@ export default function GroceryListPage() {
                     </ul>
                 </section>
                 <section>
-                    <Link 
-                        href="/"
-                        className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
-                    >
-                        Back to Recipes
-                    </Link>
+                    <BackButton/>
                 </section>
             </div>
         </main>
