@@ -14,7 +14,6 @@ export default function EditRecipePage() {
 
     const [title, setTitle] = useState("");
     const [timeCategory, setTimeCategory] = useState<Recipe["timeCategory"]>("medium");
-    const [ingredientsText, setIngredientsText] = useState("");
     const [structuredIngredients, setStructuredIngredients] = useState<Ingredient[]>([]);
     const [cookInstructionsText, setCookInstructionsText] = useState("");
     const [cookBook, setCookBook] = useState("");
@@ -41,7 +40,6 @@ export default function EditRecipePage() {
         if (recipe) {
             setTitle(recipe.title);
             setTimeCategory(recipe.timeCategory);
-            setIngredientsText(recipe.ingredientsList.join("\n"));
             setStructuredIngredients(recipe.structuredIngredients || []);
             setCookInstructionsText(
             recipe.cookInstructions
@@ -90,8 +88,6 @@ export default function EditRecipePage() {
                     setTitle={setTitle}
                     timeCategory={timeCategory}
                     setTimeCategory={setTimeCategory}
-                    ingredientsText={ingredientsText}
-                    setIngredientsText={setIngredientsText}
                     structuredIngredients={structuredIngredients}
                     setStructuredIngredients={setStructuredIngredients}
                     cookInstructionsText={cookInstructionsText}
@@ -110,10 +106,6 @@ export default function EditRecipePage() {
                             alert("Recipe title is required");
                             return;
                         }
-                        if (!ingredientsText.trim()) {
-                            alert("Recipe ingredients are required");
-                            return;
-                        }
 
                         const filteredStructuredIngredients = structuredIngredients.filter(
                             (ingredient) =>
@@ -121,12 +113,17 @@ export default function EditRecipePage() {
                                 ingredient.unit.trim() !== "" ||
                                 ingredient.name.trim() !== ""
                         );
-                        
+
+                        if (filteredStructuredIngredients.length === 0) {
+                            alert("At least one (structured) ingredient is required");
+                            return;
+                        }
+
                         const newRecipe = {
                             slug: recipe.slug,
                             title: title,
                             timeCategory: timeCategory,
-                            ingredientsList: ingredientsText.split("\n").map((ingredient) => ingredient.trim()),
+                            ingredientsList: filteredStructuredIngredients.map((ingredient) => ingredient.name),
                             structuredIngredients: filteredStructuredIngredients.length > 0
                                 ? filteredStructuredIngredients
                                 : undefined,

@@ -16,6 +16,16 @@ function getIngredientMatchCount(recipeIngredients: string[], groceryIngredients
   ).length;
 }
 
+function getIngredientNames(recipe: Recipe) {
+  if (recipe.structuredIngredients) {
+    return recipe.structuredIngredients.map(
+      (ingredient) => ingredient.name
+    );
+  }
+
+  return recipe.ingredientsList;
+}
+
 export default function Home() {
   
   const [searchText, setSearchText] = useState("");
@@ -49,9 +59,10 @@ export default function Home() {
   const filteredRecipes = allRecipes.filter((recipe) => (
     recipe.title.toLowerCase().includes(normalizedSearch) ||
     recipe.timeCategory.toLowerCase().includes(normalizedSearch) ||
-    recipe.ingredientsList.some((ingredient) => ingredient.toLowerCase().includes(normalizedSearch)
+    getIngredientNames(recipe).some((ingredient) => ingredient.toLowerCase().includes(normalizedSearch)
     )
   ));
+
   const groceryRecipes = allRecipes.filter((recipe) => groceryRecipeSlugs.includes(recipe.slug));
 
   const nonGroceryFilteredRecipes = filteredRecipes.filter((recipe) => !groceryRecipeSlugs.includes(recipe.slug));
@@ -64,12 +75,12 @@ export default function Home() {
     const bInGroceryList = groceryRecipeSlugs.includes(b.slug);
 
     const aIngredientMatches = getIngredientMatchCount(
-      a.ingredientsList,
+      getIngredientNames(a),
       groceryList
     );
 
     const bIngredientMatches = getIngredientMatchCount(
-      b.ingredientsList,
+      getIngredientNames(b),
       groceryList
     );
 
@@ -109,8 +120,6 @@ export default function Home() {
                   slug={recipe.slug}
                   title={recipe.title}
                   timeCategory={recipe.timeCategory}
-                  ingredientsList={recipe.ingredientsList}
-                  cookInstructions={recipe.cookInstructions}
                   isFavorite={isFavorite}
                 />
               );
@@ -144,7 +153,10 @@ export default function Home() {
             </p>
           ) : (
             sortedRecipes.map((recipe) => {
-              const matchCount = getIngredientMatchCount(recipe.ingredientsList, groceryList);
+              const matchCount = getIngredientMatchCount(
+                getIngredientNames(recipe),
+                groceryList
+              );
 
               const isFavorite = favoriteRecipeSlugs.includes(recipe.slug);
 
@@ -154,8 +166,6 @@ export default function Home() {
                   key={recipe.slug}
                   title={recipe.title}
                   timeCategory={recipe.timeCategory}
-                  ingredientsList={recipe.ingredientsList}
-                  cookInstructions={recipe.cookInstructions}
                   matchCount={matchCount}
                   isFavorite={isFavorite}
                 />

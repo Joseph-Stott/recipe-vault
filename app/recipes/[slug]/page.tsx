@@ -1,7 +1,6 @@
 "use client";
 import GroceryListButton from "@/components/GroceryListButton";
 import { recipes } from "@/data/recipes";
-import { addIngredientsToGroceryList } from "@/lib/groceryList";
 import Link from "next/link";
 import { getSavedRecipes } from "@/lib/recipeStorage";
 import { useEffect, useState } from "react";
@@ -48,6 +47,10 @@ export default function DetailPage() {
     if (!recipe) {
         return <p className="text-center text-xl text-zinc-400">No recipe found </p>;
     }
+
+    const groceryIngredients = recipe.structuredIngredients
+        ? recipe.structuredIngredients.map((ingredient) => ingredient.name)
+        : recipe.ingredientsList;
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
@@ -139,7 +142,7 @@ export default function DetailPage() {
                     <section className="flex items-center justify-between">
                         <GroceryListButton
                             slug={recipe.slug}
-                            ingredients={recipe.ingredientsList}
+                            ingredients={groceryIngredients}
                         />
                         <Link
                             href="/grocery-list"

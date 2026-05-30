@@ -1,4 +1,3 @@
-import type { Recipe } from "@/types/recipe"
 import Link from "next/link"
 
 const timeCategoryStyles = {
@@ -7,7 +6,15 @@ const timeCategoryStyles = {
     slow: "bg-red-600 text-white"
 };
 
-export default function RecipeCard(props: Recipe) {
+type RecipeCardProps = {
+    slug: string;
+    title: string;
+    timeCategory: "fast" | "medium" | "slow";
+    matchCount?: number;
+    isFavorite?: boolean;
+};
+
+export default function RecipeCard(props: RecipeCardProps) {
     return (
         <Link href={`/recipes/${props.slug}`} className="relative w-full max-w-sm  overflow-hidden hover:border-zinc-500 hover:bg-zinc-800 transition-colors duration-200 rounded-2xl text-center border border-zinc-700 bg-zinc-900 p-4">
             <span 

@@ -13,7 +13,6 @@ function createSlug (title: string) {
 export default function AddRecipePage() {
     const [title, setTitle] = useState("");
     const [timeCategory, setTimeCategory] = useState<Recipe["timeCategory"]>("medium");
-    const [ingredientsText, setIngredientsText] = useState("");
     const [structuredIngredients, setStructuredIngredients] = useState<Ingredient[]>([]);
     const [cookInstructionsText, setCookInstructionsText] = useState("");
     const [cookBook, setCookBook] = useState("");
@@ -32,8 +31,6 @@ export default function AddRecipePage() {
                     setTitle={setTitle}
                     timeCategory={timeCategory}
                     setTimeCategory={setTimeCategory}
-                    ingredientsText={ingredientsText}
-                    setIngredientsText={setIngredientsText}
                     structuredIngredients={structuredIngredients}
                     setStructuredIngredients={setStructuredIngredients}
                     cookInstructionsText={cookInstructionsText}
@@ -46,10 +43,6 @@ export default function AddRecipePage() {
                     onSubmit={() => {
                         if (!title.trim()) {
                             alert("Recipe title is required");
-                            return;
-                        }
-                        if (!ingredientsText.trim()) {
-                            alert("Recipe ingredients are required");
                             return;
                         }
 
@@ -75,11 +68,16 @@ export default function AddRecipePage() {
                                 ingredient.name.trim() !== ""
                         );
 
+                        if (filteredStructuredIngredients.length === 0) {
+                            alert("At least one (structured) ingredient is required");
+                            return;
+                        }
+
                         const newRecipe = {
                             slug: newSlug,
                             title: title,
                             timeCategory: timeCategory,
-                            ingredientsList: ingredientsText.split("\n").map((ingredient) => ingredient.trim()),
+                            ingredientsList: filteredStructuredIngredients.map((ingredient) => ingredient.name),
                             structuredIngredients: filteredStructuredIngredients.length > 0 
                                 ? filteredStructuredIngredients
                                 : undefined,
