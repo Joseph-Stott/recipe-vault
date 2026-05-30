@@ -1,8 +1,15 @@
+export type Ingredient = {
+    amount: number | "";
+    unit: string;
+    name: string;
+};
+
 export type Recipe = {
     slug: string;
     title: string;
     timeCategory: "fast" | "medium" | "slow";
     ingredientsList: string[];
+    structuredIngredients?: Ingredient[];
     cookInstructions?: string[];
     cookBook?: string;
     pageNumber?: number;

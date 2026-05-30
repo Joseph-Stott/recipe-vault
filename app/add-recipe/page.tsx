@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { addSavedRecipe, getSavedRecipes } from "@/lib/recipeStorage";
-import { Recipe } from "@/types/recipe";
+import { Recipe, Ingredient } from "@/types/recipe";
 import { useRouter } from "next/navigation";
 import { recipes } from "@/data/recipes";
 import RecipeForm from "@/components/RecipeForm";
@@ -14,6 +14,7 @@ export default function AddRecipePage() {
     const [title, setTitle] = useState("");
     const [timeCategory, setTimeCategory] = useState<Recipe["timeCategory"]>("medium");
     const [ingredientsText, setIngredientsText] = useState("");
+    const [structuredIngredients, setStructuredIngredients] = useState<Ingredient[]>([]);
     const [cookInstructionsText, setCookInstructionsText] = useState("");
     const [cookBook, setCookBook] = useState("");
     const [pageNumber, setPageNumber] = useState("");
@@ -33,6 +34,8 @@ export default function AddRecipePage() {
                     setTimeCategory={setTimeCategory}
                     ingredientsText={ingredientsText}
                     setIngredientsText={setIngredientsText}
+                    structuredIngredients={structuredIngredients}
+                    setStructuredIngredients={setStructuredIngredients}
                     cookInstructionsText={cookInstructionsText}
                     setCookInstructionsText={setCookInstructionsText}
                     cookBook={cookBook}
@@ -65,11 +68,21 @@ export default function AddRecipePage() {
                           return;  
                         };
 
+                        const filteredStructuredIngredients = structuredIngredients.filter(
+                            (ingredient) =>
+                                ingredient.amount !== "" ||
+                                ingredient.unit.trim() !== "" ||
+                                ingredient.name.trim() !== ""
+                        );
+
                         const newRecipe = {
                             slug: newSlug,
                             title: title,
                             timeCategory: timeCategory,
                             ingredientsList: ingredientsText.split("\n").map((ingredient) => ingredient.trim()),
+                            structuredIngredients: filteredStructuredIngredients.length > 0 
+                                ? filteredStructuredIngredients
+                                : undefined,
                             cookInstructions: cookInstructionsText.trim()
                                 ? cookInstructionsText
                                     .split("\n")

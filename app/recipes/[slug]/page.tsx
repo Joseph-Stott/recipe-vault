@@ -94,13 +94,28 @@ export default function DetailPage() {
                             </span>
                         </Link>
                     </h1>
-                    {recipe.ingredientsList && (
+                    {recipe.structuredIngredients && recipe.structuredIngredients.length > 0 ? (
                         <section>
                             <h2>Ingredients:</h2>
                             <ul className="list-disc list-inside text-left text-sm">
-                                {recipe.ingredientsList.map((ingredient) => (<li key={ingredient}>{ingredient}</li>))}
+                            {recipe.structuredIngredients.map((ingredient, index) => (
+                                <li key={index}>
+                                {ingredient.amount} {ingredient.unit} {ingredient.name}
+                                </li>
+                            ))}
                             </ul>
                         </section>
+                        ) : (
+                        recipe.ingredientsList && (
+                            <section>
+                            <h2>Ingredients:</h2>
+                            <ul className="list-disc list-inside text-left text-sm">
+                                {recipe.ingredientsList.map((ingredient) => (
+                                <li key={ingredient}>{ingredient}</li>
+                                ))}
+                            </ul>
+                            </section>
+                        )
                     )}
                     {recipe.cookInstructions && (
                         <section>

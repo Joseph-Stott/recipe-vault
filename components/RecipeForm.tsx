@@ -1,4 +1,4 @@
-import { Recipe } from "@/types/recipe";
+import { Recipe, Ingredient } from "@/types/recipe";
 import BackButton from "./BackButton";
 
 type RecipeFormProps = {
@@ -8,6 +8,8 @@ type RecipeFormProps = {
     setTimeCategory: (timeCategory: Recipe["timeCategory"]) => void;
     ingredientsText: string;
     setIngredientsText: (ingredientsText: string) => void;
+    structuredIngredients: Ingredient[];
+    setStructuredIngredients: (structuredIngredients: Ingredient[]) => void;
     cookInstructionsText: string;
     setCookInstructionsText: (cookInstructionsText: string) => void;
     cookBook: string;
@@ -25,6 +27,8 @@ export default function RecipeForm({
     setTimeCategory,
     ingredientsText,
     setIngredientsText,
+    structuredIngredients,
+    setStructuredIngredients,
     cookInstructionsText,
     setCookInstructionsText,
     cookBook,
@@ -34,6 +38,31 @@ export default function RecipeForm({
     submitButtonText,
     onSubmit
 }: RecipeFormProps) {
+    function updateStructuredIngredient(
+        index: number,
+        field: keyof Ingredient,
+        value: string
+    ) {
+        const updatedIngredients = [...structuredIngredients];
+
+        updatedIngredients[index] = {
+            ...updatedIngredients[index],
+            [field]: value
+        };
+
+        setStructuredIngredients(updatedIngredients);
+    }
+
+    function removeStructuredIngredient (
+        index: number
+    ) {
+        const updatedIngredients = structuredIngredients.filter(
+            (_, ingredientIndex) => ingredientIndex !== index
+        );
+
+        setStructuredIngredients(updatedIngredients);
+    }
+
     return(
         <>
             <input 
@@ -87,6 +116,63 @@ export default function RecipeForm({
                 value={ingredientsText}
                 onChange={(event) => setIngredientsText(event.target.value)}
             />
+            <section className="flex flex-col gap-2">
+                <h2 className="text-sm font-semibold text-zinc-300">
+                    Structured Ingredients
+                </h2>
+
+                <button
+                    className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
+                    onClick={() => {
+                        setStructuredIngredients([
+                            ...structuredIngredients,
+                            { amount: "", unit: "", name: "" }
+                        ]);
+                    }}
+                >
+                    Add Ingredient
+                </button>
+                {structuredIngredients.map((ingredient, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                        <input
+                            className="w-16 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm"
+                            type="text"
+                            placeholder="Amt"
+                            value={ingredient.amount}
+                            onChange={(event) =>
+                                updateStructuredIngredient(index, "amount", event.target.value)
+                            }
+                        />
+
+                        <input
+                            className="w-20 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm"
+                            type="text"
+                            placeholder="Unit"
+                            value={ingredient.unit}
+                            onChange={(event) =>
+                                updateStructuredIngredient(index, "unit", event.target.value)
+                            }
+                        />
+
+                        <input
+                            className="w-40 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm"
+                            type="text"
+                            placeholder="Ingredient"
+                            value={ingredient.name}
+                            onChange={(event) =>
+                                updateStructuredIngredient(index, "name", event.target.value)
+                            }
+                        />
+
+                        <button
+                            className="w-10 rounded-lg border border-red-600 text-red-400 hover:bg-red-950"
+                            onClick={() => removeStructuredIngredient(index)}
+                        >
+                            X
+                        </button>
+                    </div>
+                ))}
+            </section>
             <textarea
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 placeholder="Cook Instructions"
