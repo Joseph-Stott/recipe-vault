@@ -133,7 +133,7 @@ export default function DetailPage() {
                             View Grocery List
                         </Link>
                     </section>
-                    <BackButton/>
+                    <BackButton />
                 </div>
             </div>
         </main>

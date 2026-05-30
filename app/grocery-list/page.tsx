@@ -43,7 +43,7 @@ export default function GroceryListPage() {
                     </ul>
                 </section>
                 <section>
-                    <BackButton/>
+                    <BackButton />
                 </section>
             </div>
         </main>

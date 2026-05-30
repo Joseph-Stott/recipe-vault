@@ -1,5 +1,4 @@
 import { Recipe } from "@/types/recipe";
-import Link from "next/link";
 import BackButton from "./BackButton";
 
 type RecipeFormProps = {
@@ -19,49 +18,64 @@ type RecipeFormProps = {
     onSubmit: () => void;
 };
 
-export default function RecipeForm(props: RecipeFormProps) {
+export default function RecipeForm({
+    title,
+    setTitle,
+    timeCategory,
+    setTimeCategory,
+    ingredientsText,
+    setIngredientsText,
+    cookInstructionsText,
+    setCookInstructionsText,
+    cookBook,
+    setCookBook,
+    pageNumber,
+    setPageNumber,
+    submitButtonText,
+    onSubmit
+}: RecipeFormProps) {
     return(
         <>
             <input 
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 type="text"
                 placeholder="Add Title"
-                value={props.title}
-                onChange={(event) => props.setTitle(event.target.value)}
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
             />
             <section className="flex flex-row justify-center gap-2">
                 <button
                     className={`cursor-pointer rounded-lg border px-3 py-2 text-sm font-medium ${
-                        props.timeCategory === "fast"
+                        timeCategory === "fast"
                             ? "bg-green-600 border-green-500"
                             : "border-zinc-600 hover:bg-zinc-800"
                     }`}
                     onClick={() => {
-                        props.setTimeCategory("fast");
+                        setTimeCategory("fast");
                     }}
                 >
                     Fast
                 </button>
                 <button
                     className={`cursor-pointer rounded-lg border px-3 py-2 text-sm font-medium ${
-                        props.timeCategory === "medium"
+                        timeCategory === "medium"
                             ? "bg-yellow-600 border-yellow-500"
                             : "border-zinc-600 hover:bg-zinc-800"
                     }`}
                     onClick={() => {
-                        props.setTimeCategory("medium");
+                        setTimeCategory("medium");
                     }}
                 >
                     Medium
                 </button>
                 <button
                     className={`cursor-pointer rounded-lg border px-3 py-2 text-sm font-medium ${
-                        props.timeCategory === "slow"
+                        timeCategory === "slow"
                             ? "bg-red-600 border-red-500"
                             : "border-zinc-600 hover:bg-zinc-800"
                     }`}
                     onClick={() => {
-                        props.setTimeCategory("slow");
+                        setTimeCategory("slow");
                     }}
                 >
                     Slow
@@ -70,36 +84,36 @@ export default function RecipeForm(props: RecipeFormProps) {
             <textarea
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 placeholder="Ingredients List"
-                value={props.ingredientsText}
-                onChange={(event) => props.setIngredientsText(event.target.value)}
+                value={ingredientsText}
+                onChange={(event) => setIngredientsText(event.target.value)}
             />
             <textarea
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 placeholder="Cook Instructions"
-                value={props.cookInstructionsText}
-                onChange={(event) => props.setCookInstructionsText(event.target.value)}
+                value={cookInstructionsText}
+                onChange={(event) => setCookInstructionsText(event.target.value)}
             />
             <input 
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 type="text"
                 placeholder="Book title"
-                value={props.cookBook}
-                onChange={(event) => props.setCookBook(event.target.value)}
+                value={cookBook}
+                onChange={(event) => setCookBook(event.target.value)}
             />
             <input 
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 type="text"
                 placeholder="Page number"
-                value={props.pageNumber}
-                onChange={(event) => props.setPageNumber(event.target.value)}
+                value={pageNumber}
+                onChange={(event) => setPageNumber(event.target.value)}
             />
             <button
                 className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
-                onClick={props.onSubmit}
+                onClick={onSubmit}
             >
-                {props.submitButtonText}
+                {submitButtonText}
             </button>
-            <BackButton/>
+            <BackButton />
         </>
     )
 }
