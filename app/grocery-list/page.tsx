@@ -13,6 +13,14 @@ export default function GroceryListPage() {
         setGroceryList(getGroceryList());
     }, []);
 
+    const sortedGroceryList = [...groceryList].sort((a, b) => {
+        if (a.checked === b.checked) {
+            return 0;
+        }
+
+        return a.checked ? 1 : -1;
+    });
+
     return (
         <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
             <div className=" relative w-full max-w-sm rounded-2xl text-center border border-zinc-700 bg-zinc-900 p-4 space-y-4">
@@ -40,14 +48,14 @@ export default function GroceryListPage() {
                 </button>
                 <section>
                     <ul>
-                        {groceryList.map((ingredient, index) => (
-                            <li key={`${ingredient.amount}-${ingredient.unit}-${ingredient.name}-${index}`}>
+                        {sortedGroceryList.map((ingredient) => (
+                            <li key={ingredient.id}>
                                 <label className="flex items-center gap-2">
                                     <input
                                         type="checkbox"
                                         checked={ingredient.checked}
                                         onChange={() => {
-                                            const updatedGroceryList = toggleGroceryItemChecked(index);
+                                            const updatedGroceryList = toggleGroceryItemChecked(ingredient.id);
                                             setGroceryList(updatedGroceryList);
                                         }}
                                     />

@@ -1,6 +1,7 @@
 import { Ingredient } from "@/types/recipe";
 
 export type GroceryListItem = Ingredient & {
+    id: string;
     checked: boolean;
 };
 
@@ -11,8 +12,9 @@ export function getGroceryList(): GroceryListItem[] {
     }
     const parsedGroceryList = JSON.parse(storedGroceryList);
 
-    return parsedGroceryList.map((ingredient: Ingredient & { checked?: boolean}) => ({
+    return parsedGroceryList.map((ingredient: Ingredient & { id?: string; checked?: boolean}, index: number) => ({
         ...ingredient,
+        id: ingredient.id ?? `${ingredient.amount}-${ingredient.unit}-${ingredient.name}-${index}`,
         checked: ingredient.checked ?? false,
     }));
 };
@@ -22,6 +24,7 @@ export function addIngredientsToGroceryList(ingredients: Ingredient[]) {
 
     const newGroceryItems: GroceryListItem[] = ingredients.map((ingredient) => ({
         ...ingredient,
+        id: crypto.randomUUID(),
         checked: false,
     }));
 
@@ -30,11 +33,11 @@ export function addIngredientsToGroceryList(ingredients: Ingredient[]) {
     localStorage.setItem("grocery-list", JSON.stringify(updatedGroceryList))
 };
 
-export function toggleGroceryItemChecked(index: number) {
+export function toggleGroceryItemChecked(id: string) {
     const currentGroceryList = getGroceryList();
 
-    const updatedGroceryList = currentGroceryList.map((ingredient, currentIndex) => {
-        if (currentIndex !== index) {
+    const updatedGroceryList = currentGroceryList.map((ingredient) => {
+        if (ingredient.id !== id) {
             return ingredient;
         }
 
