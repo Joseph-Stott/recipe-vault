@@ -1,5 +1,5 @@
 "use client";
-import { clearGroceryList, getGroceryList, clearGroceryRecipeSlugs, toggleGroceryItemChecked, type GroceryListItem } from "@/lib/groceryList";
+import { clearGroceryList, getGroceryList, clearGroceryRecipeSlugs, toggleGroceryItemChecked, clearCheckedGroceryItems, type GroceryListItem } from "@/lib/groceryList";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import BackButton from "@/components/BackButton";
@@ -67,7 +67,21 @@ export default function GroceryListPage() {
                         ))}
                     </ul>
                 </section>
-                <section>
+                <section className="flex justify-center gap-2">
+                    <button
+                        className="rounded-lg border border-zinc-600 px-3 py-2 text-sm hover:bg-zinc-800"
+                        onClick={() => {
+                            const confirmed = confirm("Remove the selected items?");
+                            if (!confirmed) {
+                                return;
+                            }
+
+                            const updatedGroceryList = clearCheckedGroceryItems();
+                            setGroceryList(updatedGroceryList);
+                        }}
+                    >
+                        Clear Purchased Items
+                    </button>
                     <BackButton />
                 </section>
             </div>

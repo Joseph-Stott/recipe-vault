@@ -118,3 +118,15 @@ export function removeRecipeSlugFromGroceryList(slug: string) {
         JSON.stringify(updatedGroceryRecipeSlugs)
     );
 }
+
+export function clearCheckedGroceryItems() {
+    const currentGroceryList = getGroceryList();
+
+    const updatedGroceryList = currentGroceryList.filter(
+        (ingredient) => !ingredient.checked
+    );
+
+    localStorage.setItem("grocery-list", JSON.stringify(updatedGroceryList));
+
+    return updatedGroceryList;
+}
