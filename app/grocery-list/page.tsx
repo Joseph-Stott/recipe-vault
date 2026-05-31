@@ -51,7 +51,7 @@ export default function GroceryListPage() {
                                             setGroceryList(updatedGroceryList);
                                         }}
                                     />
-                                    <span>
+                                    <span className={ingredient.checked ? "line-through text-zinc-500" : ""}>
                                         {ingredient.amount} {ingredient.unit} {ingredient.name}
                                     </span>
                                 </label>
