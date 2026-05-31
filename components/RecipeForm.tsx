@@ -6,8 +6,6 @@ type RecipeFormProps = {
     setTitle: (title: string) => void;
     timeCategory: Recipe["timeCategory"];
     setTimeCategory: (timeCategory: Recipe["timeCategory"]) => void;
-    ingredientsText: string;
-    setIngredientsText: (ingredientsText: string) => void;
     structuredIngredients: Ingredient[];
     setStructuredIngredients: (structuredIngredients: Ingredient[]) => void;
     cookInstructionsText: string;
@@ -25,8 +23,6 @@ export default function RecipeForm({
     setTitle,
     timeCategory,
     setTimeCategory,
-    ingredientsText,
-    setIngredientsText,
     structuredIngredients,
     setStructuredIngredients,
     cookInstructionsText,
@@ -110,12 +106,6 @@ export default function RecipeForm({
                     Slow
                 </button>
             </section>
-            <textarea
-                className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
-                placeholder="Ingredients List"
-                value={ingredientsText}
-                onChange={(event) => setIngredientsText(event.target.value)}
-            />
             <section className="flex flex-col gap-2">
                 <h2 className="text-sm font-semibold text-zinc-300">
                     Structured Ingredients

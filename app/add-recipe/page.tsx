@@ -77,10 +77,7 @@ export default function AddRecipePage() {
                             slug: newSlug,
                             title: title,
                             timeCategory: timeCategory,
-                            ingredientsList: filteredStructuredIngredients.map((ingredient) => ingredient.name),
-                            structuredIngredients: filteredStructuredIngredients.length > 0 
-                                ? filteredStructuredIngredients
-                                : undefined,
+                            structuredIngredients: filteredStructuredIngredients,
                             cookInstructions: cookInstructionsText.trim()
                                 ? cookInstructionsText
                                     .split("\n")

@@ -17,13 +17,9 @@ function getIngredientMatchCount(recipeIngredients: string[], groceryIngredients
 }
 
 function getIngredientNames(recipe: Recipe) {
-  if (recipe.structuredIngredients) {
-    return recipe.structuredIngredients.map(
+    return recipe.structuredIngredients?.map(
       (ingredient) => ingredient.name
-    );
-  }
-
-  return recipe.ingredientsList ?? [];
+    ) ?? [];
 }
 
 export default function Home() {

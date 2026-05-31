@@ -8,8 +8,7 @@ export type Recipe = {
     slug: string;
     title: string;
     timeCategory: "fast" | "medium" | "slow";
-    ingredientsList?: string[];
-    structuredIngredients?: Ingredient[];
+    structuredIngredients: Ingredient[];
     cookInstructions?: string[];
     cookBook?: string;
     pageNumber?: number;

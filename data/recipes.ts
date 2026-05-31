@@ -5,7 +5,6 @@ export const recipes: Recipe[] = [
     slug: "chicken-alfredo",
     title: "Chicken Alfredo",
     timeCategory: "medium",
-    ingredientsList: ["chicken", "alfredo sauce", "fettuccine", "parmesan"],
     structuredIngredients: [
       { amount: 2, unit: "pieces", name: "chicken breast" },
       { amount: 12, unit: "oz", name: "fettuccine" },
@@ -25,7 +24,6 @@ export const recipes: Recipe[] = [
     slug: "spaghetti",
     title: "Spaghetti",
     timeCategory: "slow",
-    ingredientsList: ["spaghetti noodles", "tomato sauce", "ground beef"],
     structuredIngredients: [
       { amount: 12, unit: "oz", name: "spaghetti noodles" },
       { amount: 1, unit: "jar", name: "tomato sauce" },
@@ -41,7 +39,6 @@ export const recipes: Recipe[] = [
     slug: "chicken-quesadillas",
     title: "Chicken Quesadillas",
     timeCategory: "fast",
-    ingredientsList: ["tortillas", "chicken", "cheese"],
     structuredIngredients: [
       { amount: 4, unit: "pieces", name: "tortillas" },
       { amount: 2, unit: "cups", name: "chicken" },
@@ -57,7 +54,6 @@ export const recipes: Recipe[] = [
     slug: "beef-stew",
     title: "Beef Stew",
     timeCategory: "slow",
-    ingredientsList: ["beef", "potatoes", "carrots", "broth"],
     structuredIngredients: [
       { amount: 2, unit: "lb", name: "beef" },
       { amount: 3, unit: "pieces", name: "potatoes" },
@@ -74,7 +70,6 @@ export const recipes: Recipe[] = [
     slug: "grilled-cheese",
     title: "Grilled Cheese",
     timeCategory: "fast",
-    ingredientsList: ["bread", "cheese", "butter"],
     structuredIngredients: [
       { amount: 2, unit: "slices", name: "bread" },
       { amount: 2, unit: "slices", name: "cheese" },
@@ -90,7 +85,6 @@ export const recipes: Recipe[] = [
     slug: "fried-rice",
     title: "Fried Rice",
     timeCategory: "medium",
-    ingredientsList: ["rice", "eggs", "soy sauce", "vegetables"],
     structuredIngredients: [
       { amount: 2, unit: "cups", name: "rice" },
       { amount: 2, unit: "pieces", name: "eggs" },
@@ -107,7 +101,6 @@ export const recipes: Recipe[] = [
     slug: "chili",
     title: "Chili",
     timeCategory: "slow",
-    ingredientsList: ["ground beef", "beans", "tomatoes", "onion"],
     structuredIngredients: [
       { amount: 1, unit: "lb", name: "ground beef" },
       { amount: 2, unit: "cans", name: "beans" },
@@ -124,7 +117,6 @@ export const recipes: Recipe[] = [
     slug: "caesar-salad",
     title: "Caesar Salad",
     timeCategory: "fast",
-    ingredientsList: ["lettuce", "croutons", "parmesan", "caesar dressing"],
     structuredIngredients: [
       { amount: 1, unit: "head", name: "lettuce" },
       { amount: 1, unit: "cup", name: "croutons" },
@@ -141,7 +133,6 @@ export const recipes: Recipe[] = [
     slug: "pancakes",
     title: "Pancakes",
     timeCategory: "medium",
-    ingredientsList: ["flour", "milk", "eggs", "syrup"],
     structuredIngredients: [
       { amount: 1, unit: "cup", name: "flour" },
       { amount: 1, unit: "cup", name: "milk" },
@@ -158,7 +149,6 @@ export const recipes: Recipe[] = [
     slug: "baked-salmon",
     title: "Baked Salmon",
     timeCategory: "medium",
-    ingredientsList: ["salmon", "lemon", "garlic"],
     structuredIngredients: [
       { amount: 2, unit: "fillets", name: "salmon" },
       { amount: 1, unit: "piece", name: "lemon" },
@@ -174,7 +164,6 @@ export const recipes: Recipe[] = [
     slug: "mac-and-cheese",
     title: "Mac and Cheese",
     timeCategory: "medium",
-    ingredientsList: ["macaroni", "cheese", "milk", "butter"],
     structuredIngredients: [
       { amount: 2, unit: "cups", name: "macaroni" },
       { amount: 2, unit: "cups", name: "cheese" },
@@ -191,7 +180,6 @@ export const recipes: Recipe[] = [
     slug: "tacos",
     title: "Tacos",
     timeCategory: "fast",
-    ingredientsList: ["tortillas", "ground beef", "lettuce", "cheese"],
     structuredIngredients: [
       { amount: 6, unit: "pieces", name: "tortillas" },
       { amount: 1, unit: "lb", name: "ground beef" },
@@ -208,7 +196,6 @@ export const recipes: Recipe[] = [
     slug: "vegetable-stir-fry",
     title: "Vegetable Stir Fry",
     timeCategory: "fast",
-    ingredientsList: ["broccoli", "bell pepper", "carrots", "soy sauce"],
     structuredIngredients: [
       { amount: 2, unit: "cups", name: "broccoli" },
       { amount: 1, unit: "piece", name: "bell pepper" },
@@ -225,7 +212,6 @@ export const recipes: Recipe[] = [
     slug: "breakfast-burrito",
     title: "Breakfast Burrito",
     timeCategory: "fast",
-    ingredientsList: ["tortilla", "eggs", "potatoes", "cheese"],
     structuredIngredients: [
       { amount: 1, unit: "piece", name: "tortilla" },
       { amount: 2, unit: "pieces", name: "eggs" },
