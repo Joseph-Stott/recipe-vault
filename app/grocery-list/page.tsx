@@ -1,14 +1,17 @@
 "use client";
-import { clearGroceryList, getGroceryList } from "@/lib/groceryList";
-import { useState } from "react";
-import { clearGroceryRecipeSlugs } from "@/lib/groceryList";
+import { clearGroceryList, getGroceryList, clearGroceryRecipeSlugs, toggleGroceryItemChecked, type GroceryListItem } from "@/lib/groceryList";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import BackButton from "@/components/BackButton";
 
 export default function GroceryListPage() {
-    const [groceryList, setGroceryList] = useState(getGroceryList());
+    const [groceryList, setGroceryList] = useState<GroceryListItem[]>([]);
 
     const router = useRouter();
+
+    useEffect(() => {
+        setGroceryList(getGroceryList());
+    }, []);
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
@@ -39,7 +42,19 @@ export default function GroceryListPage() {
                     <ul>
                         {groceryList.map((ingredient, index) => (
                             <li key={`${ingredient.amount}-${ingredient.unit}-${ingredient.name}-${index}`}>
-                                {ingredient.amount} {ingredient.unit} {ingredient.name}
+                                <label className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={ingredient.checked}
+                                        onChange={() => {
+                                            const updatedGroceryList = toggleGroceryItemChecked(index);
+                                            setGroceryList(updatedGroceryList);
+                                        }}
+                                    />
+                                    <span>
+                                        {ingredient.amount} {ingredient.unit} {ingredient.name}
+                                    </span>
+                                </label>
                             </li>
                         ))}
                     </ul>

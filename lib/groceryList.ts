@@ -1,19 +1,53 @@
 import { Ingredient } from "@/types/recipe";
 
-export function getGroceryList(): Ingredient[] {
+export type GroceryListItem = Ingredient & {
+    checked: boolean;
+};
+
+export function getGroceryList(): GroceryListItem[] {
     const storedGroceryList = localStorage.getItem("grocery-list");
     if (!storedGroceryList) {
         return [];
     }
     const parsedGroceryList = JSON.parse(storedGroceryList);
-    return parsedGroceryList
+
+    return parsedGroceryList.map((ingredient: Ingredient & { checked?: boolean}) => ({
+        ...ingredient,
+        checked: ingredient.checked ?? false,
+    }));
 };
 
 export function addIngredientsToGroceryList(ingredients: Ingredient[]) {
     const currentGroceryList = getGroceryList();
-    const updatedGroceryList = [...currentGroceryList, ...ingredients];
+
+    const newGroceryItems: GroceryListItem[] = ingredients.map((ingredient) => ({
+        ...ingredient,
+        checked: false,
+    }));
+
+    const updatedGroceryList = [...currentGroceryList, ...newGroceryItems];
+
     localStorage.setItem("grocery-list", JSON.stringify(updatedGroceryList))
 };
+
+export function toggleGroceryItemChecked(index: number) {
+    const currentGroceryList = getGroceryList();
+
+    const updatedGroceryList = currentGroceryList.map((ingredient, currentIndex) => {
+        if (currentIndex !== index) {
+            return ingredient;
+        }
+
+        return {
+            ...ingredient,
+            checked: !ingredient.checked,
+        };
+    });
+
+    localStorage.setItem("grocery-list", JSON.stringify(updatedGroceryList));
+
+    return updatedGroceryList;
+}
 
 export function clearGroceryList () {
     localStorage.removeItem("grocery-list");
