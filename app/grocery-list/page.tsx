@@ -4,6 +4,18 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import BackButton from "@/components/BackButton";
 
+type DisplayGroceryItem = GroceryListItem & {
+    ids: string[];
+};
+
+function normalizeUnit(unit: string) {
+    return unit.toLowerCase().trim().replace(/s$/, "");
+}
+
+function normalizeName(name: string) {
+    return name.toLowerCase().trim();
+}
+
 export default function GroceryListPage() {
     const [groceryList, setGroceryList] = useState<GroceryListItem[]>([]);
 
@@ -20,6 +32,36 @@ export default function GroceryListPage() {
 
         return a.checked ? 1 : -1;
     });
+
+    const hasCheckedItems = groceryList.some((ingredient) => ingredient.checked);
+    
+    const combinedGroceryList = sortedGroceryList.reduce<DisplayGroceryItem[]>(
+    (combinedItems, ingredient) => {
+        const matchingItem = combinedItems.find(
+            (item) =>
+                normalizeName(item.name) === normalizeName(ingredient.name) &&
+                normalizeUnit(item.unit) === normalizeUnit(ingredient.unit) &&
+                item.checked === ingredient.checked &&
+                !Number.isNaN(Number(item.amount)) &&
+                !Number.isNaN(Number(ingredient.amount))
+        );
+
+        if (!matchingItem) {
+            combinedItems.push({
+                ...ingredient,
+                ids: [ingredient.id],
+            });
+
+            return combinedItems;
+        }
+
+        matchingItem.amount = Number(matchingItem.amount) + Number(ingredient.amount);
+        matchingItem.ids.push(ingredient.id);
+
+        return combinedItems;
+    },
+    []
+);
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
@@ -48,7 +90,7 @@ export default function GroceryListPage() {
                 </button>
                 <section>
                     <ul>
-                        {sortedGroceryList.map((ingredient) => (
+                        {combinedGroceryList.map((ingredient) => (
                             <li key={ingredient.id}>
                                 <label className="flex items-center gap-2">
                                     <input
@@ -68,20 +110,22 @@ export default function GroceryListPage() {
                     </ul>
                 </section>
                 <section className="flex justify-center gap-2">
-                    <button
-                        className="rounded-lg border border-zinc-600 px-3 py-2 text-sm hover:bg-zinc-800"
-                        onClick={() => {
-                            const confirmed = confirm("Remove the selected items?");
-                            if (!confirmed) {
-                                return;
-                            }
+                    {hasCheckedItems && (
+                        <button
+                            className="rounded-lg border border-zinc-600 px-3 py-2 text-sm hover:bg-zinc-800"
+                            onClick={() => {
+                                const confirmed = confirm("Remove the selected items?");
+                                if (!confirmed) {
+                                    return;
+                                }
 
-                            const updatedGroceryList = clearCheckedGroceryItems();
-                            setGroceryList(updatedGroceryList);
-                        }}
-                    >
-                        Clear Purchased Items
-                    </button>
+                                const updatedGroceryList = clearCheckedGroceryItems();
+                                setGroceryList(updatedGroceryList);
+                            }}
+                        >
+                            Clear Purchased Items
+                        </button>
+                    )}
                     <BackButton />
                 </section>
             </div>
