@@ -8,10 +8,12 @@ type DisplayGroceryItem = GroceryListItem & {
     ids: string[];
 };
 
+// Used so "cup" and "cups" can combine
 function normalizeUnit(unit: string) {
     return unit.toLowerCase().trim().replace(/s$/, "");
 }
 
+// Used so "Milk" and "milk" can combine
 function normalizeName(name: string) {
     return name.toLowerCase().trim();
 }
@@ -36,32 +38,32 @@ export default function GroceryListPage() {
     const hasCheckedItems = groceryList.some((ingredient) => ingredient.checked);
     
     const combinedGroceryList = sortedGroceryList.reduce<DisplayGroceryItem[]>(
-    (combinedItems, ingredient) => {
-        const matchingItem = combinedItems.find(
-            (item) =>
-                normalizeName(item.name) === normalizeName(ingredient.name) &&
-                normalizeUnit(item.unit) === normalizeUnit(ingredient.unit) &&
-                item.checked === ingredient.checked &&
-                !Number.isNaN(Number(item.amount)) &&
-                !Number.isNaN(Number(ingredient.amount))
-        );
+        (combinedItems, ingredient) => {
+            const matchingItem = combinedItems.find(
+                (item) =>
+                    normalizeName(item.name) === normalizeName(ingredient.name) &&
+                    normalizeUnit(item.unit) === normalizeUnit(ingredient.unit) &&
+                    item.checked === ingredient.checked &&
+                    !Number.isNaN(Number(item.amount)) &&
+                    !Number.isNaN(Number(ingredient.amount))
+            );
 
-        if (!matchingItem) {
-            combinedItems.push({
-                ...ingredient,
-                ids: [ingredient.id],
-            });
+            if (!matchingItem) {
+                combinedItems.push({
+                    ...ingredient,
+                    ids: [ingredient.id],
+                });
+
+                return combinedItems;
+            }
+
+            matchingItem.amount = Number(matchingItem.amount) + Number(ingredient.amount);
+            matchingItem.ids.push(ingredient.id);
 
             return combinedItems;
-        }
-
-        matchingItem.amount = Number(matchingItem.amount) + Number(ingredient.amount);
-        matchingItem.ids.push(ingredient.id);
-
-        return combinedItems;
-    },
-    []
-);
+        },
+        []
+    );
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
