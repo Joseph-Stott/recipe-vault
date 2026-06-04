@@ -62,9 +62,12 @@ export default function RecipeForm({
     const lastIngredient = structuredIngredients[structuredIngredients.length - 1];
 
     const lastIngredientIsEmpty =
-        lastIngredient.amount === "" &&
-        lastIngredient.unit.trim() === "" &&
-        lastIngredient.name.trim() === "";
+        !lastIngredient ||
+        (
+            lastIngredient.amount === "" &&
+            lastIngredient.unit.trim() === "" &&
+            lastIngredient.name.trim() === ""
+        );
 
     return(
         <>

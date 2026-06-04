@@ -95,6 +95,21 @@ export default function DetailPage() {
                             </span>
                         </Link>
                     </h1>
+                    {(recipe.cookBook || recipe.pageNumber) && (
+                        <section className="text-sm text-zinc-400">
+                            {recipe.cookBook && (
+                                <span>{recipe.cookBook}</span>
+                            )}
+
+                            {recipe.cookBook && recipe.pageNumber && (
+                                <span> • </span>
+                            )}
+
+                            {recipe.pageNumber && (
+                                <span>page {recipe.pageNumber}</span>
+                            )}
+                        </section>
+                    )}
                     {recipe.structuredIngredients &&(
                         <section>
                             <h2>Ingredients:</h2>
@@ -123,17 +138,6 @@ export default function DetailPage() {
                             <ol className="list-decimal list-inside text-left text-sm">
                                 {recipe.cookInstructions.map((instruction) => (<li key={instruction}>{instruction}</li>))}
                             </ol>
-                        </section>
-                    )}
-                    {(recipe.cookBook || recipe.pageNumber) && (
-                        <section className="flex justify-center gap-2">
-                            {recipe.cookBook && (
-                                <span>{recipe.cookBook}</span>
-                            )}
-
-                            {recipe.pageNumber && (
-                                <span>page {recipe.pageNumber}</span>
-                            )}
                         </section>
                     )}
                     <section className="flex items-center justify-between">
