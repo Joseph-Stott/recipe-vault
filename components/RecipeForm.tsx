@@ -59,6 +59,13 @@ export default function RecipeForm({
         setStructuredIngredients(updatedIngredients);
     }
 
+    const lastIngredient = structuredIngredients[structuredIngredients.length - 1];
+
+    const lastIngredientIsEmpty =
+        lastIngredient.amount === "" &&
+        lastIngredient.unit.trim() === "" &&
+        lastIngredient.name.trim() === "";
+
     return(
         <>
             <input 
@@ -112,7 +119,8 @@ export default function RecipeForm({
                 </h2>
 
                 <button
-                    className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
+                    className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
+                    disabled={lastIngredientIsEmpty}
                     onClick={() => {
                         setStructuredIngredients([
                             ...structuredIngredients,
