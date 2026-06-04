@@ -98,10 +98,19 @@ export default function DetailPage() {
                     {recipe.structuredIngredients &&(
                         <section>
                             <h2>Ingredients:</h2>
-                            <ul className="list-disc list-inside text-left text-sm">
+                            <ul className="text-left text-sm">
                             {recipe.structuredIngredients.map((ingredient, index) => (
-                                <li key={index}>
-                                {ingredient.amount} {ingredient.unit} {ingredient.name}
+                                <li
+                                    key={index}
+                                    className="flex gap-2 py-0.5"
+                                >
+                                    <span className="w-20 shrink-0">
+                                        {ingredient.amount} {ingredient.unit}
+                                    </span>
+
+                                    <span>
+                                        {ingredient.name}
+                                    </span>
                                 </li>
                             ))}
                             </ul>
