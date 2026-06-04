@@ -7,7 +7,12 @@ import { recipes } from "@/data/recipes";
 import RecipeForm from "@/components/RecipeForm";
 
 function createSlug (title: string) {
-    return title.toLowerCase().trim().replaceAll(" ", "-");
+    return title
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
 }
 
 export default function AddRecipePage() {
