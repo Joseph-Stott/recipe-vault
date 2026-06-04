@@ -18,7 +18,13 @@ function createSlug (title: string) {
 export default function AddRecipePage() {
     const [title, setTitle] = useState("");
     const [timeCategory, setTimeCategory] = useState<Recipe["timeCategory"]>("medium");
-    const [structuredIngredients, setStructuredIngredients] = useState<Ingredient[]>([]);
+    const [structuredIngredients, setStructuredIngredients] = useState<Ingredient[]>([
+        {
+            amount: "",
+            unit: "",
+            name: ""
+        },
+    ]);
     const [cookInstructionsText, setCookInstructionsText] = useState("");
     const [cookBook, setCookBook] = useState("");
     const [pageNumber, setPageNumber] = useState("");
