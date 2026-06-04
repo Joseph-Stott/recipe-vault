@@ -52,6 +52,29 @@ export function toggleGroceryItemChecked(id: string) {
     return updatedGroceryList;
 }
 
+export function toggleGroceryItemsChecked(ids: string[]) {
+    const currentGroceryList = getGroceryList();
+
+    const shouldCheckItems = currentGroceryList.some(
+        (ingredient) => ids.includes(ingredient.id) && !ingredient.checked
+    );
+
+    const updatedGroceryList = currentGroceryList.map((ingredient) => {
+        if (!ids.includes(ingredient.id)) {
+            return ingredient;
+        }
+
+        return {
+            ...ingredient,
+            checked: shouldCheckItems,
+        };
+    });
+
+    localStorage.setItem("grocery-list", JSON.stringify(updatedGroceryList));
+
+    return updatedGroceryList;
+}
+
 export function clearGroceryList () {
     localStorage.removeItem("grocery-list");
 };

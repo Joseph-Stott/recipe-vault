@@ -1,5 +1,5 @@
 "use client";
-import { clearGroceryList, getGroceryList, clearGroceryRecipeSlugs, toggleGroceryItemChecked, clearCheckedGroceryItems, type GroceryListItem } from "@/lib/groceryList";
+import { clearGroceryList, getGroceryList, clearGroceryRecipeSlugs, toggleGroceryItemsChecked, clearCheckedGroceryItems, type GroceryListItem } from "@/lib/groceryList";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import BackButton from "@/components/BackButton";
@@ -16,6 +16,14 @@ function normalizeUnit(unit: string) {
 // Used so "Milk" and "milk" can combine
 function normalizeName(name: string) {
     return name.toLowerCase().trim();
+}
+
+function formatUnit(amount: number | "", unit: string) {
+    if (amount === 1 || amount === "") {
+        return normalizeUnit(unit);
+    }
+
+    return `${normalizeUnit(unit)}s`;
 }
 
 export default function GroceryListPage() {
@@ -99,12 +107,12 @@ export default function GroceryListPage() {
                                         type="checkbox"
                                         checked={ingredient.checked}
                                         onChange={() => {
-                                            const updatedGroceryList = toggleGroceryItemChecked(ingredient.id);
+                                            const updatedGroceryList = toggleGroceryItemsChecked(ingredient.ids);
                                             setGroceryList(updatedGroceryList);
                                         }}
                                     />
                                     <span className={ingredient.checked ? "line-through text-zinc-500" : ""}>
-                                        {ingredient.amount} {ingredient.unit} {ingredient.name}
+                                        {ingredient.amount} {formatUnit(ingredient.amount, ingredient.unit)} {ingredient.name}
                                     </span>
                                 </label>
                             </li>
