@@ -147,7 +147,7 @@ export default function Home() {
         {
           filteredRecipes.length === 0 ? (
             <p className="text-center text-xl text-zinc-400">
-              No recipe found
+              No recipes match your search
             </p>
           ) : (
             sortedRecipes.map((recipe) => {

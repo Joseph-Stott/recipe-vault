@@ -79,6 +79,13 @@ export default function GroceryListPage() {
                 <h1 className="text-2xl">
                     Grocery List
                 </h1>
+
+                {combinedGroceryList.length === 0 && (
+                    <p className="text-zinc-400">
+                        Your grocery list is empty
+                    </p>
+                )}
+                
                 <button
                     className={`
                         absolute right-4 top-4 cursor-pointer text-base
