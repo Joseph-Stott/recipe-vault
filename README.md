@@ -1,71 +1,168 @@
 # Recipe Vault
 
-## Description
+## Overview
 
-Recipe Vault is a web application for storing, organizing, and browsing recipes.
+Recipe Vault is a recipe management web application built with Next.js, React, TypeScript, and Tailwind CSS.
 
-## Current Functionality
+Users can create, edit, organize, and browse recipes while generating a grocery list directly from recipe ingredients. The application persists user data using localStorage and demonstrates component-based architecture, structured data modeling, dynamic routing, and client-side state management.
 
-- Reusable RecipeCard component
-- Reusable SearchBar component
-- Dynamic recipe detail pages using slugs
-- Search recipes by title, cook time category, and ingredients
-- Display a no-results message when no recipes match the search
-- Render ingredient and cook instruction lists
-- Conditionally render optional recipe metadata
-- Navigation between homepage and recipe detail pages
-- Clickable recipe cards
-- Color-coded cook time ribbons
-- Persistent custom recipe storage using localStorage
-- User-created recipes with automatic slug generation
-- Dynamic rendering and overriding of saved recipes
-- Recipe editing with persistent localStorage updates
-- Recipe deletion with confirmation prompts
-- Automatic prioritization of edited recipes over built-in recipes
-- De-duplication of recipe overrides using shared slugs
-- Favorite recipe tracking and persistence
-- Grocery list page with localStorage persistence
-- Add recipe ingredients to persistent grocery list
-- Persistent grocery recipe tracking using recipe slugs
-- Prevent duplicate grocery recipe entries
-- Dedicated grocery recipe section displayed at the top of the homepage
-- Dynamic recipe sorting based on grocery list ingredients and favorites
-- Dynamic grocery ingredient match counting
-- Clear grocery list and grocery recipe tracking
-- Confirmation prompts for add, edit, delete, and clear actions
-- Responsive recipe card wrapping for grocery recipe containers
-- Separate rendering of grocery-tracked recipes from the main recipe feed
-- Dynamically switch between adding and removing recipes from grocery list
-- Remove recipe-specific ingredients from the grocery list while preserving shared ingredients
-- Validation to prevent creation of duplicate recipe slugs
+## Key Features
 
-## Planed Features (ToDo)
+### Recipe Management
 
-- Ingredient quantity parsing and merging
-- Individual grocery recipe removal
-- Toast notifications replacing alert/confirm dialogs
-- Advanced grocery list grouping and measurement handling
-- Favorite recipe prioritization improvements
+* Create custom recipes
+* Edit existing recipes
+* Delete recipes
+* Favorite recipes
+* Automatic slug generation from recipe titles
+* Dynamic recipe detail pages
+* Persistent recipe storage using localStorage
 
-## Tech Stack
+### Structured Ingredient System
 
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
+Ingredients are stored as structured objects rather than plain text.
 
-## Getting Started
+```ts
+type Ingredient = {
+    amount: number | "";
+    unit: string;
+    name: string;
+};
+```
 
-First, run the development server:
+This enables:
+
+* Ingredient validation
+* Ingredient aggregation
+* Flexible ingredient display
+* Grocery list generation
+* Future measurement-based enhancements
+
+### Grocery List
+
+* Add recipe ingredients to a grocery list
+* Remove recipe ingredients from a grocery list
+* Persistent grocery list storage
+* Persistent grocery recipe tracking
+* Prevent duplicate grocery recipe entries
+* Grocery ingredient match counting
+* Purchased item tracking
+* Clear purchased items
+* Automatic sorting of checked and unchecked items
+* Ingredient aggregation
+
+Example:
+
+```text
+1 cup milk
+3 cups milk
+```
+
+Displays as:
+
+```text
+4 cups milk
+```
+
+### Search and Organization
+
+* Search recipes by title
+* Search recipes by ingredient name
+* Search recipes by time category
+* Dynamic filtering
+* Grocery match indicators
+* Favorite recipe prioritization
+* Grocery recipe prioritization
+* Empty-state messaging
+
+### Recipe Details
+
+* Structured ingredient display
+* Cookbook support
+* Page number support
+* Cook instruction rendering
+* Favorite toggling
+* Grocery list integration
+
+## Technical Highlights
+
+### Reusable Components
+
+* RecipeCard
+* RecipeForm
+* SearchBar
+* BackButton
+
+### Dynamic Routing
+
+Recipe detail pages are generated using dynamic routes:
+
+```text
+/recipes/[slug]
+```
+
+### Client-Side Persistence
+
+The application uses localStorage to persist:
+
+* User-created recipes
+* Favorite recipes
+* Grocery lists
+* Grocery recipe tracking
+
+### Data Modeling
+
+A structured ingredient model replaced a previous string-based ingredient system, enabling aggregation, validation, and more flexible rendering throughout the application.
+
+## Technology Stack
+
+* Next.js App Router
+* React
+* TypeScript
+* Tailwind CSS
+* localStorage
+
+## Project Structure
+
+```text
+app/
+components/
+data/
+lib/
+types/
+```
+
+## Future Improvements
+
+* Toast notifications
+* Improved measurement conversion and aggregation
+* Individual grocery recipe removal controls
+* Database-backed persistence
+* User accounts
+* Cloud synchronization
+
+## Running the Project
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
+
+```text
+http://localhost:3000
+```
+
+in your browser.
+
+## Purpose
+
+Recipe Vault is an ongoing portfolio project focused on learning modern web development through incremental feature development, refactoring, and user experience improvements.
