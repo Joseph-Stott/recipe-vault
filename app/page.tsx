@@ -7,8 +7,7 @@ import { useState, useEffect } from "react";
 import { getSavedRecipes } from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
 import { getFavoriteRecipeSlugs } from "@/lib/favorites";
-import { getGroceryList } from "@/lib/groceryList";
-import { getGroceryRecipeSlugs } from "@/lib/groceryList";
+import { getGroceryList, getGroceryRecipeSlugs, removeRecipeFromGroceryList } from "@/lib/groceryList";
 
 function getIngredientMatchCount(recipeIngredients: string[], groceryIngredients: string[]) {
   return recipeIngredients.filter((ingredient) =>
@@ -109,16 +108,45 @@ export default function Home() {
             🛒 Recipes in Grocery List
           </h2>
           <div className="flex flex-wrap justify-center gap-4">
-            {groceryRecipes.map((recipe) => { 
-              const isFavorite = favoriteRecipeSlugs.includes(recipe.slug);
-
+            {groceryRecipes.map((recipe) => {
               return(
                 <RecipeCard
-                  key={recipe.slug}
+                  key={recipe.slug} 
                   slug={recipe.slug}
                   title={recipe.title}
                   timeCategory={recipe.timeCategory}
-                  isFavorite={isFavorite}
+                  actionButton={
+                    <button
+                      className="text-zinc-400 hover:text-zinc-100"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        const confirmed = confirm(
+                          `Remove "${recipe.title}" from grocery list?`
+                        );
+
+                        if (!confirmed) {
+                          return;
+                        }
+
+                        removeRecipeFromGroceryList(
+                          recipe.slug,
+                          recipe.structuredIngredients
+                        );
+
+                        setGroceryRecipeSlugs(getGroceryRecipeSlugs());
+
+                        setGroceryList(
+                          getGroceryList().map(
+                            (ingredient) => ingredient.name
+                          )
+                        );
+                      }}
+                    >
+                      ✕
+                    </button>
+                  }
                 />
               );
             })}
@@ -175,7 +203,7 @@ export default function Home() {
           href="/add-recipe"
           className="cursor-pointer text-center fixed bottom-6 right-6 rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
         >
-            Add Recipe
+          Add Recipe
         </Link>
       </div>
     </main>

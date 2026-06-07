@@ -1,4 +1,5 @@
 import Link from "next/link"
+import type { ReactNode } from "react";
 
 const timeCategoryStyles = {
     fast: "bg-green-600 text-white",
@@ -12,6 +13,7 @@ type RecipeCardProps = {
     timeCategory: "fast" | "medium" | "slow";
     matchCount?: number;
     isFavorite?: boolean;
+    actionButton?: ReactNode;
 };
 
 export default function RecipeCard(props: RecipeCardProps) {
@@ -37,6 +39,12 @@ export default function RecipeCard(props: RecipeCardProps) {
                     {props.isFavorite && (
                         <span className="absolute right-4 text-xl leading-none text-zinc-100">
                             ★
+                        </span>
+                    )}
+
+                    {props.actionButton && (
+                        <span className="absolute right-4 text-lg leading-none">
+                            {props.actionButton}
                         </span>
                     )}
                 </div>

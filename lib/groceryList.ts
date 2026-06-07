@@ -142,6 +142,11 @@ export function removeRecipeSlugFromGroceryList(slug: string) {
     );
 }
 
+export function removeRecipeFromGroceryList(slug: string, ingredients: Ingredient[]) {
+    removeIngredientsFromGroceryList(ingredients);
+    removeRecipeSlugFromGroceryList(slug);
+}
+
 export function clearCheckedGroceryItems() {
     const currentGroceryList = getGroceryList();
 
