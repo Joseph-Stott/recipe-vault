@@ -6,6 +6,24 @@ Recipe Vault is a recipe management web application built with Next.js, React, T
 
 Users can create, edit, organize, and browse recipes while generating a grocery list directly from recipe ingredients. The application persists user data using localStorage and demonstrates component-based architecture, structured data modeling, dynamic routing, and client-side state management.
 
+## Screenshots
+
+### Homepage
+
+![Homepage](public/screenshots/homepage.png)
+
+### Recipe Detail
+
+![Recipe Detail](public/screenshots/recipe-detail.png)
+
+### Grocery List
+
+![Grocery List](public/screenshots/grocery-list.png)
+
+### Add Recipe
+
+![Add Recipe](public/screenshots/add-recipe.png)
+
 ## Key Features
 
 ### Recipe Management
