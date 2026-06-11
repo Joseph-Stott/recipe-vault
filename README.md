@@ -154,7 +154,6 @@ types/
 
 * Toast notifications
 * Improved measurement conversion and aggregation
-* Individual grocery recipe removal controls
 * Database-backed persistence
 * User accounts
 * Cloud synchronization
