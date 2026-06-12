@@ -28,6 +28,7 @@ export default function AddRecipePage() {
     const [cookInstructionsText, setCookInstructionsText] = useState("");
     const [cookBook, setCookBook] = useState("");
     const [pageNumber, setPageNumber] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     const router = useRouter();
 
@@ -53,7 +54,7 @@ export default function AddRecipePage() {
                     submitButtonText="Add Recipe"
                     onSubmit={() => {
                         if (!title.trim()) {
-                            alert("Recipe title is required");
+                            setErrorMessage("Recipe title is required");
                             return;
                         }
 
@@ -68,7 +69,7 @@ export default function AddRecipePage() {
                         );
 
                         if (slugAlreadyExists) {
-                          alert("A recipe with this title already exists");
+                          setErrorMessage("A recipe with this title already exists");
                           return;  
                         };
 
@@ -80,7 +81,7 @@ export default function AddRecipePage() {
                         );
 
                         if (filteredStructuredIngredients.length === 0) {
-                            alert("At least one (structured) ingredient is required");
+                            setErrorMessage("At least one ingredient is required");
                             return;
                         }
 
@@ -106,6 +107,8 @@ export default function AddRecipePage() {
                         addSavedRecipe(newRecipe);
                         router.push("/");
                     }}
+                    errorMessage={errorMessage}
+                    setErrorMessage={setErrorMessage}
                 />
             </div>
         </main>

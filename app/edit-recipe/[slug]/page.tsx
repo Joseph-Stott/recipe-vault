@@ -11,13 +11,13 @@ export default function EditRecipePage() {
     const params = useParams();
 
     const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([]);
-
     const [title, setTitle] = useState("");
     const [timeCategory, setTimeCategory] = useState<Recipe["timeCategory"]>("medium");
     const [structuredIngredients, setStructuredIngredients] = useState<Ingredient[]>([]);
     const [cookInstructionsText, setCookInstructionsText] = useState("");
     const [cookBook, setCookBook] = useState("");
     const [pageNumber, setPageNumber] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     // Saved recipes are placed first so edited recipes override
     // built-in recipes with matching slugs
@@ -69,7 +69,7 @@ export default function EditRecipePage() {
                     `}
                     onClick={() => {
                         if (!recipe) {
-                            alert("Recipe not found");
+                            setErrorMessage("Recipe not found");
                             return;
                         }
                         const confirmed = confirm("Are you sure you want to delete this recipe?");
@@ -99,11 +99,11 @@ export default function EditRecipePage() {
                     submitButtonText="Update Recipe"
                     onSubmit= {() => {
                         if (!recipe) {
-                            alert("Recipe not found");
+                            setErrorMessage("Recipe not found");
                             return;
                         }
                         if (!title.trim()) {
-                            alert("Recipe title is required");
+                            setErrorMessage("Recipe title is required");
                             return;
                         }
 
@@ -115,7 +115,7 @@ export default function EditRecipePage() {
                         );
 
                         if (filteredStructuredIngredients.length === 0) {
-                            alert("At least one (structured) ingredient is required");
+                            setErrorMessage("At least one ingredient is required");
                             return;
                         }
 
@@ -141,6 +141,8 @@ export default function EditRecipePage() {
                         router.refresh();
                         router.push("/");
                     }}
+                    errorMessage={errorMessage}
+                    setErrorMessage={setErrorMessage}
                 />
             </div>
         </main>
