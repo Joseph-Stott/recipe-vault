@@ -1,6 +1,5 @@
 "use client";
 import GroceryListButton from "@/components/GroceryListButton";
-import { recipes } from "@/data/recipes";
 import Link from "next/link";
 import { getSavedRecipes } from "@/lib/recipeStorage";
 import { useEffect, useState } from "react";
@@ -8,6 +7,7 @@ import { Recipe } from "@/types/recipe";
 import { useParams } from "next/navigation";
 import { isFavoriteRecipe, toggleFavoriteRecipe } from "@/lib/favorites";
 import BackButton from "@/components/BackButton";
+import { getAllRecipes } from "@/lib/recipeService";
 
 const timeCategoryStyles = {
     fast: "bg-green-600 text-white",
@@ -23,14 +23,7 @@ export default function DetailPage() {
 
     const [isFavorite, setIsFavorite] = useState(false);
 
-    // Saved recipes are placed first so edited recipes override
-    // built-in recipes with matching slugs
-    const allRecipesWithDuplicates = [...savedRecipes, ...recipes];
-
-    // Remove duplicate recipe slugs while keeping the saved override version
-    const allRecipes = allRecipesWithDuplicates.filter((recipe, index, array) =>
-        array.findIndex((currentRecipe) => currentRecipe.slug === recipe.slug) === index
-    );
+    const allRecipes = getAllRecipes(savedRecipes);
 
     const recipe = allRecipes.find((recipe) => recipe.slug === params.slug);
     

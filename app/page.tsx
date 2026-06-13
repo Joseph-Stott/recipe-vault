@@ -1,7 +1,6 @@
 "use client";
 import RecipeCard from "@/components/RecipeCard";
 import SearchBar from "@/components/SearchBar";
-import { recipes } from "@/data/recipes";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getSavedRecipes } from "@/lib/recipeStorage";
@@ -9,6 +8,7 @@ import { Recipe } from "@/types/recipe";
 import { getFavoriteRecipeSlugs } from "@/lib/favorites";
 import { getGroceryList, getGroceryRecipeSlugs, removeRecipeFromGroceryList } from "@/lib/groceryList";
 import { getIngredientNames } from "@/lib/recipeUtils";
+import { getAllRecipes } from "@/lib/recipeService";
 
 function getIngredientMatchCount(recipeIngredients: string[], groceryIngredients: string[]) {
   return recipeIngredients.filter((ingredient) =>
@@ -39,14 +39,7 @@ export default function Home() {
     setGroceryRecipeSlugs(getGroceryRecipeSlugs());
   }, []);
 
-  // Saved recipes are placed first so edited recipes override
-  // built-in recipes with matching slugs
-  const allRecipesWithDuplicates = [...savedRecipes, ...recipes];
-
-  // Remove duplicate recipe slugs while keeping the saved override version
-  const allRecipes = allRecipesWithDuplicates.filter((recipe, index, array) =>
-    array.findIndex((currentRecipe) => currentRecipe.slug === recipe.slug) === index
-  );
+  const allRecipes = getAllRecipes(savedRecipes);
 
   const filteredRecipes = allRecipes.filter((recipe) => (
     recipe.title.toLowerCase().includes(normalizedSearch) ||

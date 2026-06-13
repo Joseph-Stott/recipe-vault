@@ -2,10 +2,10 @@
 import { useEffect, useState } from "react";
 import { Recipe, Ingredient } from "@/types/recipe";
 import { useParams } from "next/navigation";
-import { recipes } from "@/data/recipes";
 import { getSavedRecipes, updateSavedRecipe, deleteSavedRecipe } from "@/lib/recipeStorage";
 import { useRouter } from "next/navigation";
 import RecipeForm from "@/components/RecipeForm";
+import { getAllRecipes } from "@/lib/recipeService";
 
 export default function EditRecipePage() {
     const params = useParams();
@@ -19,14 +19,7 @@ export default function EditRecipePage() {
     const [pageNumber, setPageNumber] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
-    // Saved recipes are placed first so edited recipes override
-    // built-in recipes with matching slugs
-    const allRecipesWithDuplicates = [...savedRecipes, ...recipes];
-
-    // Remove duplicate recipe slugs while keeping the saved override version
-    const allRecipes = allRecipesWithDuplicates.filter((recipe, index, array) =>
-        array.findIndex((currentRecipe) => currentRecipe.slug === recipe.slug) === index
-    );
+    const allRecipes = getAllRecipes(savedRecipes);
 
     const recipe = allRecipes.find((recipe) => recipe.slug === params.slug);
 
