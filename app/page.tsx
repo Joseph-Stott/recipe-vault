@@ -8,17 +8,12 @@ import { getSavedRecipes } from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
 import { getFavoriteRecipeSlugs } from "@/lib/favorites";
 import { getGroceryList, getGroceryRecipeSlugs, removeRecipeFromGroceryList } from "@/lib/groceryList";
+import { getIngredientNames } from "@/lib/recipeUtils";
 
 function getIngredientMatchCount(recipeIngredients: string[], groceryIngredients: string[]) {
   return recipeIngredients.filter((ingredient) =>
     groceryIngredients.includes(ingredient)
   ).length;
-}
-
-function getIngredientNames(recipe: Recipe) {
-    return recipe.structuredIngredients?.map(
-      (ingredient) => ingredient.name
-    ) ?? [];
 }
 
 export default function Home() {
