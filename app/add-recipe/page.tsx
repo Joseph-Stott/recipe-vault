@@ -6,15 +6,7 @@ import { useRouter } from "next/navigation";
 import { recipes } from "@/data/recipes";
 import RecipeForm from "@/components/RecipeForm";
 import { validateRecipeForm } from "@/lib/recipeValidation";
-
-function createSlug (title: string) {
-    return title
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9\s-]/g, "")
-        .replace(/\s+/g, "-")
-        .replace(/-+/g, "-");
-}
+import { createSlug } from "@/lib/recipeUtils";
 
 export default function AddRecipePage() {
     const [title, setTitle] = useState("");

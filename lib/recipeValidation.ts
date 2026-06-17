@@ -1,4 +1,5 @@
 import { Ingredient } from "@/types/recipe";
+import { createSlug } from "@/lib/recipeUtils";
 
 type RecipeValidationInput = {
     title: string;
@@ -20,12 +21,7 @@ export function validateRecipeForm(input: RecipeValidationInput): RecipeValidati
         messages.push("Recipe title is required");
     }
 
-    const slug = input.title
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9\s-]/g, "")
-        .replace(/\s+/g, "-")
-        .replace(/-+/g, "-");
+    const slug = createSlug(input.title);
 
     const slugAlreadyExists = input.existingSlugs?.some(
         (existingSlug) =>
