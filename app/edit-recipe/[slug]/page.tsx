@@ -96,10 +96,14 @@ export default function EditRecipePage() {
                             setErrorMessages(["Recipe not found"]);
                             return;
                         }
+
+                        const existingSlugs = allRecipes.map((recipe) => recipe.slug);
                         
                         const validation = validateRecipeForm({
                             title,
                             structuredIngredients,
+                            existingSlugs,
+                            currentSlug: recipe.slug,
                         });
 
                         if (!validation.valid) {
@@ -121,6 +125,7 @@ export default function EditRecipePage() {
                             cookBook: cookBook,
                             pageNumber: pageNumber ? Number(pageNumber) : undefined
                         };
+                        
                         const confirmed = confirm("Are you sure you want to update recipe?");
                         if(!confirmed) {
                             return;

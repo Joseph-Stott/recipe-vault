@@ -3,6 +3,8 @@ import { Ingredient } from "@/types/recipe";
 type RecipeValidationInput = {
     title: string;
     structuredIngredients: Ingredient[];
+    existingSlugs?: string[];
+    currentSlug?: string;
 };
 
 type RecipeValidationResult = {
@@ -16,6 +18,23 @@ export function validateRecipeForm(input: RecipeValidationInput): RecipeValidati
 
     if (!input.title.trim()) {
         messages.push("Recipe title is required");
+    }
+
+    const slug = input.title
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
+
+    const slugAlreadyExists = input.existingSlugs?.some(
+        (existingSlug) =>
+            existingSlug === slug &&
+            existingSlug !== input.currentSlug
+    );
+
+    if (slugAlreadyExists) {
+        messages.push("A recipe with this title already exists");
     }
 
     const filteredStructuredIngredients = input.structuredIngredients.filter(

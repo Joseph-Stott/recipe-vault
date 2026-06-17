@@ -54,9 +54,14 @@ export default function AddRecipePage() {
                     setPageNumber={setPageNumber}
                     submitButtonText="Add Recipe"
                     onSubmit={() => {
+                        const existingSlugs = [...getSavedRecipes(), ...recipes].map(
+                            (recipe) => recipe.slug
+                        );
+
                         const validation = validateRecipeForm({
                             title,
                             structuredIngredients,
+                            existingSlugs,
                         });
 
                         if (!validation.valid) {
@@ -66,19 +71,6 @@ export default function AddRecipePage() {
 
                         const newSlug = createSlug(title);
 
-                        // Prevent users from creating recipes that would generate
-                        // a duplicate slug and conflict with existing recipes
-                        const allRecipesWithDuplicates = [...getSavedRecipes(), ...recipes];
-
-                        const slugAlreadyExists = allRecipesWithDuplicates.some(
-                            (recipe) => recipe.slug === newSlug
-                        );
-
-                        if (slugAlreadyExists) {
-                          setErrorMessages(["A recipe with this title already exists"]);
-                          return;  
-                        };
-                        
                         const newRecipe = {
                             slug: newSlug,
                             title: title,
