@@ -96,20 +96,14 @@ export default function EditRecipePage() {
                             setErrorMessages(["Recipe not found"]);
                             return;
                         }
-                        if (!title.trim()) {
-                            setErrorMessages(["Recipe title is required"]);
-                            return;
-                        }
+                        
+                        const validation = validateRecipeForm({
+                            title,
+                            structuredIngredients,
+                        });
 
-                        const filteredStructuredIngredients = structuredIngredients.filter(
-                            (ingredient) =>
-                                ingredient.amount !== "" ||
-                                ingredient.unit.trim() !== "" ||
-                                ingredient.name.trim() !== ""
-                        );
-
-                        if (filteredStructuredIngredients.length === 0) {
-                            setErrorMessages(["At least one ingredient is required"]);
+                        if (!validation.valid) {
+                            setErrorMessages(validation.messages);
                             return;
                         }
 
@@ -117,7 +111,7 @@ export default function EditRecipePage() {
                             slug: recipe.slug,
                             title: title,
                             timeCategory: timeCategory,
-                            structuredIngredients: filteredStructuredIngredients,
+                            structuredIngredients: validation.filteredIngredients,
                             cookInstructions: cookInstructionsText.trim()
                                 ? cookInstructionsText
                                     .split("\n")

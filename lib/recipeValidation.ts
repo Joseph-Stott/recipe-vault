@@ -8,6 +8,7 @@ type RecipeValidationInput = {
 type RecipeValidationResult = {
     valid: boolean;
     messages: string[];
+    filteredIngredients: Ingredient[];
 };
 
 export function validateRecipeForm(input: RecipeValidationInput): RecipeValidationResult {
@@ -30,6 +31,7 @@ export function validateRecipeForm(input: RecipeValidationInput): RecipeValidati
 
     return {
         valid: messages.length === 0,
-        messages
+        messages,
+        filteredIngredients: filteredStructuredIngredients,
     };
 }

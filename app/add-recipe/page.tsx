@@ -60,7 +60,7 @@ export default function AddRecipePage() {
                         });
 
                         if (!validation.valid) {
-                            setErrorMessages(validation.messages.join("\n"));
+                            setErrorMessages(validation.messages);
                             return;
                         }
 
@@ -75,22 +75,15 @@ export default function AddRecipePage() {
                         );
 
                         if (slugAlreadyExists) {
-                          setErrorMessages("A recipe with this title already exists");
+                          setErrorMessages(["A recipe with this title already exists"]);
                           return;  
                         };
-
-                        const filteredStructuredIngredients = structuredIngredients.filter(
-                            (ingredient) =>
-                                ingredient.amount !== "" ||
-                                ingredient.unit.trim() !== "" ||
-                                ingredient.name.trim() !== ""
-                        );
-
+                        
                         const newRecipe = {
                             slug: newSlug,
                             title: title,
                             timeCategory: timeCategory,
-                            structuredIngredients: filteredStructuredIngredients,
+                            structuredIngredients: validation.filteredIngredients,
                             cookInstructions: cookInstructionsText.trim()
                                 ? cookInstructionsText
                                     .split("\n")
@@ -108,8 +101,8 @@ export default function AddRecipePage() {
                         addSavedRecipe(newRecipe);
                         router.push("/");
                     }}
-                    errorMessage={errorMessage}
-                    setErrorMessage={setErrorMessage}
+                    errorMessages={errorMessages}
+                    setErrorMessages={setErrorMessages}
                 />
             </div>
         </main>

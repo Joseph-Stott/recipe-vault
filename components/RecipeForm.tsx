@@ -17,7 +17,7 @@ type RecipeFormProps = {
     submitButtonText: string;
     onSubmit: () => void;
     errorMessages: string[];
-    setErrorMessages: (message: string[]) => void;
+    setErrorMessages: (messages: string[]) => void;
 };
 
 export default function RecipeForm({
