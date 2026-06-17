@@ -5,6 +5,7 @@ import { Recipe, Ingredient } from "@/types/recipe";
 import { useRouter } from "next/navigation";
 import { recipes } from "@/data/recipes";
 import RecipeForm from "@/components/RecipeForm";
+import { validateRecipeForm } from "@/lib/recipeValidation";
 
 function createSlug (title: string) {
     return title
@@ -28,7 +29,7 @@ export default function AddRecipePage() {
     const [cookInstructionsText, setCookInstructionsText] = useState("");
     const [cookBook, setCookBook] = useState("");
     const [pageNumber, setPageNumber] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
+    const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
     const router = useRouter();
 
@@ -53,8 +54,13 @@ export default function AddRecipePage() {
                     setPageNumber={setPageNumber}
                     submitButtonText="Add Recipe"
                     onSubmit={() => {
-                        if (!title.trim()) {
-                            setErrorMessage("Recipe title is required");
+                        const validation = validateRecipeForm({
+                            title,
+                            structuredIngredients,
+                        });
+
+                        if (!validation.valid) {
+                            setErrorMessages(validation.messages.join("\n"));
                             return;
                         }
 
@@ -69,7 +75,7 @@ export default function AddRecipePage() {
                         );
 
                         if (slugAlreadyExists) {
-                          setErrorMessage("A recipe with this title already exists");
+                          setErrorMessages("A recipe with this title already exists");
                           return;  
                         };
 
@@ -79,11 +85,6 @@ export default function AddRecipePage() {
                                 ingredient.unit.trim() !== "" ||
                                 ingredient.name.trim() !== ""
                         );
-
-                        if (filteredStructuredIngredients.length === 0) {
-                            setErrorMessage("At least one ingredient is required");
-                            return;
-                        }
 
                         const newRecipe = {
                             slug: newSlug,

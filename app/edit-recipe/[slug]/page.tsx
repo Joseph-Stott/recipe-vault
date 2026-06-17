@@ -6,6 +6,7 @@ import { getSavedRecipes, updateSavedRecipe, deleteSavedRecipe } from "@/lib/rec
 import { useRouter } from "next/navigation";
 import RecipeForm from "@/components/RecipeForm";
 import { getAllRecipes } from "@/lib/recipeService";
+import { validateRecipeForm } from "@/lib/recipeValidation";
 
 export default function EditRecipePage() {
     const params = useParams();
@@ -17,7 +18,7 @@ export default function EditRecipePage() {
     const [cookInstructionsText, setCookInstructionsText] = useState("");
     const [cookBook, setCookBook] = useState("");
     const [pageNumber, setPageNumber] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
+    const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
     const allRecipes = getAllRecipes(savedRecipes);
 
@@ -62,7 +63,7 @@ export default function EditRecipePage() {
                     `}
                     onClick={() => {
                         if (!recipe) {
-                            setErrorMessage("Recipe not found");
+                            setErrorMessages(["Recipe not found"]);
                             return;
                         }
                         const confirmed = confirm("Are you sure you want to delete this recipe?");
@@ -92,11 +93,11 @@ export default function EditRecipePage() {
                     submitButtonText="Update Recipe"
                     onSubmit= {() => {
                         if (!recipe) {
-                            setErrorMessage("Recipe not found");
+                            setErrorMessages(["Recipe not found"]);
                             return;
                         }
                         if (!title.trim()) {
-                            setErrorMessage("Recipe title is required");
+                            setErrorMessages(["Recipe title is required"]);
                             return;
                         }
 
@@ -108,7 +109,7 @@ export default function EditRecipePage() {
                         );
 
                         if (filteredStructuredIngredients.length === 0) {
-                            setErrorMessage("At least one ingredient is required");
+                            setErrorMessages(["At least one ingredient is required"]);
                             return;
                         }
 
@@ -134,8 +135,8 @@ export default function EditRecipePage() {
                         router.refresh();
                         router.push("/");
                     }}
-                    errorMessage={errorMessage}
-                    setErrorMessage={setErrorMessage}
+                    errorMessages={errorMessages}
+                    setErrorMessages={setErrorMessages}
                 />
             </div>
         </main>

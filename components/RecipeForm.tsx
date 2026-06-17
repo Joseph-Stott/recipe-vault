@@ -16,8 +16,8 @@ type RecipeFormProps = {
     setPageNumber: (pageNumber: string) => void;
     submitButtonText: string;
     onSubmit: () => void;
-    errorMessage: string;
-    setErrorMessage: (message: string) => void;
+    errorMessages: string[];
+    setErrorMessages: (message: string[]) => void;
 };
 
 export default function RecipeForm({
@@ -35,8 +35,8 @@ export default function RecipeForm({
     setPageNumber,
     submitButtonText,
     onSubmit,
-    errorMessage,
-    setErrorMessage
+    errorMessages,
+    setErrorMessages
 }: RecipeFormProps) {
     function updateStructuredIngredient(
         index: number,
@@ -82,7 +82,7 @@ export default function RecipeForm({
                 value={title}
                 onChange={(event) => {
                     setTitle(event.target.value);
-                    setErrorMessage("");
+                    setErrorMessages([]);
                 }}
             />
             <section className="flex flex-row justify-center gap-2">
@@ -202,10 +202,12 @@ export default function RecipeForm({
                 value={pageNumber}
                 onChange={(event) => setPageNumber(event.target.value)}
             />
-            {errorMessage && (
-                <p className="text-sm text-red-400">
-                    {errorMessage}
-                </p>
+            {errorMessages.length > 0 && (
+                <ul className="text-sm text-red-400">
+                    {errorMessages.map((message) => (
+                        <li key={message}>{message}</li>
+                    ))}
+                </ul>
             )}
             <button
                 className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
