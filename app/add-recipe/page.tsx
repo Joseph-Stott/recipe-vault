@@ -7,6 +7,7 @@ import { recipes } from "@/data/recipes";
 import RecipeForm from "@/components/RecipeForm";
 import { validateRecipeForm } from "@/lib/recipeValidation";
 import { createSlug } from "@/lib/recipeUtils";
+import { buildRecipeFromForm } from "@/lib/recipeService";
 
 export default function AddRecipePage() {
     const [title, setTitle] = useState("");
@@ -63,20 +64,15 @@ export default function AddRecipePage() {
 
                         const newSlug = createSlug(title);
 
-                        const newRecipe = {
+                        const newRecipe = buildRecipeFromForm({
                             slug: newSlug,
-                            title: title,
-                            timeCategory: timeCategory,
+                            title,
+                            timeCategory,
                             structuredIngredients: validation.filteredIngredients,
-                            cookInstructions: cookInstructionsText.trim()
-                                ? cookInstructionsText
-                                    .split("\n")
-                                    .map((instruction) => instruction.trim())
-                                    .filter((instruction) => instruction !== "")
-                                : undefined,
-                            cookBook: cookBook,
-                            pageNumber: pageNumber ? Number(pageNumber) : undefined
-                        };
+                            cookInstructionsText,
+                            cookBook,
+                            pageNumber,
+                        });
 
                         const confirmed = confirm("Add to recipe list?");
                         if(!confirmed) {

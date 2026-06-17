@@ -2,10 +2,10 @@
 import { useEffect, useState } from "react";
 import { Recipe, Ingredient } from "@/types/recipe";
 import { useParams } from "next/navigation";
-import { getSavedRecipes, updateSavedRecipe, deleteSavedRecipe } from "@/lib/recipeStorage";
 import { useRouter } from "next/navigation";
+import { getSavedRecipes, updateSavedRecipe, deleteSavedRecipe } from "@/lib/recipeStorage";
 import RecipeForm from "@/components/RecipeForm";
-import { getAllRecipes } from "@/lib/recipeService";
+import { getAllRecipes, buildRecipeFromForm } from "@/lib/recipeService";
 import { validateRecipeForm } from "@/lib/recipeValidation";
 
 export default function EditRecipePage() {
@@ -111,21 +111,16 @@ export default function EditRecipePage() {
                             return;
                         }
 
-                        const newRecipe = {
+                        const newRecipe = buildRecipeFromForm({
                             slug: recipe.slug,
-                            title: title,
-                            timeCategory: timeCategory,
+                            title,
+                            timeCategory,
                             structuredIngredients: validation.filteredIngredients,
-                            cookInstructions: cookInstructionsText.trim()
-                                ? cookInstructionsText
-                                    .split("\n")
-                                    .map((instruction) => instruction.trim())
-                                    .filter((instruction) => instruction !== "")
-                                : undefined,
-                            cookBook: cookBook,
-                            pageNumber: pageNumber ? Number(pageNumber) : undefined
-                        };
-                        
+                            cookInstructionsText,
+                            cookBook,
+                            pageNumber,
+                        });
+
                         const confirmed = confirm("Are you sure you want to update recipe?");
                         if(!confirmed) {
                             return;
