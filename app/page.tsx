@@ -48,17 +48,24 @@ export default function Home() {
     )
   ));
 
-  const groceryRecipes = allRecipes.filter((recipe) => groceryRecipeSlugs.includes(recipe.slug));
+  const groceryRecipes = filteredRecipes.filter((recipe) => 
+    groceryRecipeSlugs.includes(recipe.slug)
+  );
 
-  const nonGroceryFilteredRecipes = filteredRecipes.filter((recipe) => !groceryRecipeSlugs.includes(recipe.slug));
-  
-  const sortedRecipes = [...nonGroceryFilteredRecipes].sort((a, b) => {
-    const aIsFavorite = favoriteRecipeSlugs.includes(a.slug);
-    const bIsFavorite = favoriteRecipeSlugs.includes(b.slug);
+  const favoriteRecipes = filteredRecipes.filter(
+    (recipe) =>
+        favoriteRecipeSlugs.includes(recipe.slug) &&
+        !groceryRecipeSlugs.includes(recipe.slug)
+  );
 
-    const aInGroceryList = groceryRecipeSlugs.includes(a.slug);
-    const bInGroceryList = groceryRecipeSlugs.includes(b.slug);
+  const nonSectionFilteredRecipes = filteredRecipes.filter(
+    (recipe) =>
+        !groceryRecipeSlugs.includes(recipe.slug) &&
+        !favoriteRecipeSlugs.includes(recipe.slug)
+  );
 
+  const sortedRecipes = [...nonSectionFilteredRecipes].sort((a, b) => {
+    
     const aIngredientMatches = getIngredientMatchCount(
       getIngredientNames(a),
       groceryList
@@ -68,22 +75,6 @@ export default function Home() {
       getIngredientNames(b),
       groceryList
     );
-
-    if (aInGroceryList && !bInGroceryList) {
-      return -1;
-    }
-
-    if (!aInGroceryList && bInGroceryList) {
-      return 1;
-    }
-
-    if (aIsFavorite && !bIsFavorite) {
-      return -1;
-    }
-
-    if (!aIsFavorite && bIsFavorite) {
-      return 1;
-    }
 
     return bIngredientMatches - aIngredientMatches;
   });
@@ -142,6 +133,33 @@ export default function Home() {
         </section>
       )}
 
+      {favoriteRecipes.length > 0 && (
+        <section className="mb-8 w-full max-w-6xl rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4">
+          <h2 className="mb-3 text-center text-sm font-semibold text-zinc-400">
+            ⭐ Favorite Recipes
+          </h2>
+          <div className="flex flex-wrap justify-center gap-4">
+            {favoriteRecipes.map((recipe) => {
+              const matchCount = getIngredientMatchCount(
+                getIngredientNames(recipe),
+                groceryList
+              );
+
+              return(
+                <RecipeCard
+                  key={recipe.slug}
+                  slug={recipe.slug}
+                  title={recipe.title}
+                  timeCategory={recipe.timeCategory}
+                  isFavorite={true}
+                  matchCount={matchCount}
+                />
+              );
+            })}
+          </div>
+        </section>
+      )}
+
       <div className="mb-8 w-full max-w-6xl border-b border-zinc-800" />
 
       <div className="flex flex-col gap-4">
@@ -172,8 +190,6 @@ export default function Home() {
                 groceryList
               );
 
-              const isFavorite = favoriteRecipeSlugs.includes(recipe.slug);
-
               return(
                 <RecipeCard
                   slug={recipe.slug}
@@ -181,7 +197,6 @@ export default function Home() {
                   title={recipe.title}
                   timeCategory={recipe.timeCategory}
                   matchCount={matchCount}
-                  isFavorite={isFavorite}
                 />
               );
             })
