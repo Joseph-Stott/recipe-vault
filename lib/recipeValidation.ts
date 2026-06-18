@@ -23,6 +23,10 @@ export function validateRecipeForm(input: RecipeValidationInput): RecipeValidati
 
     const slug = createSlug(input.title);
 
+    if (!slug) {
+        messages.push("Recipe title must contain letters or numbers");
+    }
+
     const slugAlreadyExists = input.existingSlugs?.some(
         (existingSlug) =>
             existingSlug === slug &&
