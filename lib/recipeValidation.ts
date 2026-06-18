@@ -37,20 +37,35 @@ export function validateRecipeForm(input: RecipeValidationInput): RecipeValidati
         messages.push("A recipe with this title already exists");
     }
 
-    const filteredStructuredIngredients = input.structuredIngredients.filter(
+    const completeIngredients = input.structuredIngredients.filter(
         (ingredient) =>
-            ingredient.amount !== "" ||
-            ingredient.unit.trim() !== "" ||
+            ingredient.amount !== "" &&
+            ingredient.unit.trim() !== "" &&
             ingredient.name.trim() !== ""
     );
 
-    if (filteredStructuredIngredients.length === 0) {
-        messages.push("At least one ingredient is required");
+    const partialIngredients = input.structuredIngredients.filter((ingredient) => {
+        const hasAmount = ingredient.amount !== "";
+        const hasUnit = ingredient.unit.trim() !== "";
+        const hasName = ingredient.name.trim() !== "";
+
+        const hasAnyField = hasAmount || hasUnit || hasName;
+        const hasAllFields = hasAmount && hasUnit && hasName;
+
+        return hasAnyField && !hasAllFields;
+    });
+
+    if (completeIngredients.length === 0) {
+        messages.push("At least one complete ingredient is required");
+    }
+
+    if (partialIngredients.length > 0) {
+        messages.push("Ingredient rows must include amount, unit, and name");
     }
 
     return {
         valid: messages.length === 0,
         messages,
-        filteredIngredients: filteredStructuredIngredients,
+        filteredIngredients: completeIngredients,
     };
 }
