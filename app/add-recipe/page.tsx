@@ -3,11 +3,10 @@ import { useState } from "react";
 import { addSavedRecipe, getSavedRecipes } from "@/lib/recipeStorage";
 import { Recipe, Ingredient } from "@/types/recipe";
 import { useRouter } from "next/navigation";
-import { recipes } from "@/data/recipes";
 import RecipeForm from "@/components/RecipeForm";
 import { validateRecipeForm } from "@/lib/recipeValidation";
 import { createSlug } from "@/lib/recipeUtils";
-import { buildRecipeFromForm } from "@/lib/recipeService";
+import { buildRecipeFromForm, getAllRecipes } from "@/lib/recipeService";
 
 export default function AddRecipePage() {
     const [title, setTitle] = useState("");
@@ -47,7 +46,7 @@ export default function AddRecipePage() {
                     setPageNumber={setPageNumber}
                     submitButtonText="Add Recipe"
                     onSubmit={() => {
-                        const existingSlugs = [...getSavedRecipes(), ...recipes].map(
+                        const existingSlugs = getAllRecipes(getSavedRecipes()).map(
                             (recipe) => recipe.slug
                         );
 
