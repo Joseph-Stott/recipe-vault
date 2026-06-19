@@ -84,7 +84,7 @@ export default function Home() {
       {groceryRecipes.length > 0 && (
         <section className="mb-8 w-full max-w-6xl rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4">
           <h2 className="mb-3 text-center text-sm font-semibold text-zinc-400">
-            🛒 Recipes in Grocery List
+            🛒 Recipes in Grocery List ({groceryRecipes.length})
           </h2>
           <div className="flex flex-wrap justify-center gap-4">
             {groceryRecipes.map((recipe) => {
@@ -136,7 +136,7 @@ export default function Home() {
       {favoriteRecipes.length > 0 && (
         <section className="mb-8 w-full max-w-6xl rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4">
           <h2 className="mb-3 text-center text-sm font-semibold text-zinc-400">
-            ⭐ Favorite Recipes
+            ⭐ Favorite Recipes ({favoriteRecipes.length})
           </h2>
           <div className="flex flex-wrap justify-center gap-4">
             {favoriteRecipes.map((recipe) => {
@@ -159,9 +159,6 @@ export default function Home() {
           </div>
         </section>
       )}
-
-      <div className="mb-8 w-full max-w-6xl border-b border-zinc-800" />
-
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl text-center font-semibold tracking-tight text-black dark:text-zinc-50">
           Recipe Vault
