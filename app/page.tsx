@@ -166,6 +166,9 @@ export default function Home() {
         <p className="mt-4 max-w-md text-center text-lg leading-8 text-zinc-600 dark:text-zinc-400">
           Store, organize, and search your favorite recipes
         </p>
+        <p className="text-center text-sm text-zinc-500">
+          {allRecipes.length} recipes available
+        </p>
         <Link 
           className="w-full max-w-sm rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-center font-medium hover:border-zinc-500 hover:bg-zinc-800 transition-colors duration-200"
           href="/grocery-list">
