@@ -81,13 +81,17 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
-      {groceryRecipes.length > 0 && (
-        <section className="mb-8 w-full max-w-6xl rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4">
-          <h2 className="mb-3 text-center text-sm font-semibold text-zinc-400">
-            🛒 Recipes in Grocery List ({groceryRecipes.length})
-          </h2>
-          <div className="flex flex-wrap justify-center gap-4">
-            {groceryRecipes.map((recipe) => {
+      <section className="mb-8 w-full max-w-6xl rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4">
+        <h2 className="mb-3 text-center text-sm font-semibold text-zinc-400">
+          🛒 Recipes in Grocery List ({groceryRecipes.length})
+        </h2>
+        <div className="flex flex-wrap justify-center gap-4">
+          {groceryRecipes.length == 0 ? (
+            <p className="text-sm text-zinc-500">
+              No recipes added to grocery list
+            </p>
+          ) : (
+            groceryRecipes.map((recipe) => {
               return(
                 <RecipeCard
                   key={recipe.slug} 
@@ -128,11 +132,10 @@ export default function Home() {
                   }
                 />
               );
-            })}
-          </div>
-        </section>
-      )}
-
+            })
+          )}
+        </div>
+      </section>
       <section className="mb-8 w-full max-w-6xl rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4">
         <h2 className="mb-3 text-center text-sm font-semibold text-zinc-400">
           ⭐ Favorite Recipes ({favoriteRecipes.length})
@@ -163,7 +166,6 @@ export default function Home() {
           )}
         </div>
       </section>
-      
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl text-center font-semibold tracking-tight text-black dark:text-zinc-50">
           Recipe Vault
