@@ -167,7 +167,7 @@ export default function Home() {
           Store, organize, and search your favorite recipes
         </p>
         <p className="text-center text-sm text-zinc-500">
-          {allRecipes.length} recipes available
+          {allRecipes.length} recipe{allRecipes.length === 1 ? "" : "s"} available
         </p>
         <Link 
           className="w-full max-w-sm rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-center font-medium hover:border-zinc-500 hover:bg-zinc-800 transition-colors duration-200"
@@ -179,7 +179,7 @@ export default function Home() {
           setSearchText={setSearchText}
         />
         <p className="text-center text-sm text-zinc-500">
-          {filteredRecipes.length} recipes found
+          {filteredRecipes.length} recipe{filteredRecipes.length === 1 ? "" : "s"} found
         </p>
         {
           filteredRecipes.length === 0 ? (
