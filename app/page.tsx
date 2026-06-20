@@ -178,6 +178,9 @@ export default function Home() {
           searchText={searchText}
           setSearchText={setSearchText}
         />
+        <p className="text-center text-sm text-zinc-500">
+          {filteredRecipes.length} recipes found
+        </p>
         {
           filteredRecipes.length === 0 ? (
             <p className="text-center text-xl text-zinc-400">
