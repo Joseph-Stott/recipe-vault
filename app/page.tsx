@@ -186,7 +186,10 @@ export default function Home() {
           setSearchText={setSearchText}
         />
         <p className="text-center text-sm text-zinc-500">
-          {filteredRecipes.length} recipe{filteredRecipes.length === 1 ? "" : "s"} found
+          {!searchText
+            ? `${filteredRecipes.length} recipe${filteredRecipes.length === 1 ? "" : "s"} found`
+            : `${filteredRecipes.length} recipe${filteredRecipes.length === 1 ? "" : "s"} found for "${searchText}"`
+          }
         </p>
         {
           filteredRecipes.length === 0 ? (
