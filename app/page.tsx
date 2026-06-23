@@ -58,6 +58,20 @@ export default function Home() {
         !groceryRecipeSlugs.includes(recipe.slug)
   );
 
+  const sortedFavoriteRecipes = [...favoriteRecipes].sort((a, b) => {
+    const aIngredientMatches = getIngredientMatchCount(
+      getIngredientNames(a),
+      groceryList
+    );
+
+    const bIngredientMatches = getIngredientMatchCount(
+      getIngredientNames(b),
+      groceryList
+    );
+
+    return bIngredientMatches - aIngredientMatches;
+  });
+
   const nonSectionFilteredRecipes = filteredRecipes.filter(
     (recipe) =>
         !groceryRecipeSlugs.includes(recipe.slug) &&
@@ -86,7 +100,7 @@ export default function Home() {
           🛒 Recipes in Grocery List ({groceryRecipes.length})
         </h2>
         <div className="flex flex-wrap justify-center gap-4">
-          {groceryRecipes.length == 0 ? (
+          {groceryRecipes.length === 0 ? (
             <p className="text-sm text-zinc-500">
               No recipes added to grocery list
             </p>
@@ -146,7 +160,7 @@ export default function Home() {
               No favorite recipes yet
             </p>
           ) : (
-            favoriteRecipes.map((recipe) => {
+            sortedFavoriteRecipes.map((recipe) => {
               const matchCount = getIngredientMatchCount(
                 getIngredientNames(recipe),
                 groceryList
