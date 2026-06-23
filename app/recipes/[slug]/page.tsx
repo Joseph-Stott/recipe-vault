@@ -48,6 +48,7 @@ export default function DetailPage() {
             <div className="relative w-full max-w-sm overflow-hidden rounded-2xl text-center border border-zinc-700 bg-zinc-900 p-4">
                 <div className="flex flex-col gap-4">
                     <button
+                    title={isFavorite ? "Remove from favorites" : "Add to favorites"}
                         className={`
                             absolute right-4 top-4 cursor-pointer text-2xl
                             transition-all duration-300
@@ -78,6 +79,7 @@ export default function DetailPage() {
                         </span>
                         <span>{recipe.title}</span>
                         <Link
+                            title="Edit recipe"
                             href={`/edit-recipe/${recipe.slug}`}
                             className="cursor-pointer text-lg"
                             >

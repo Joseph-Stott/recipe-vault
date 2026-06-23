@@ -114,6 +114,7 @@ export default function Home() {
                   timeCategory={recipe.timeCategory}
                   actionButton={
                     <button
+                    title="Remove from grocery list"
                       className="text-zinc-400 hover:text-zinc-100"
                       onClick={(event) => {
                         event.preventDefault();
