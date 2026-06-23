@@ -101,7 +101,7 @@ export default function Home() {
         </h2>
         <div className="flex flex-wrap justify-center gap-4">
           {groceryRecipes.length === 0 ? (
-            <p className="text-sm text-zinc-500">
+            <p className="text-center text-sm italic text-zinc-500">
               No recipes added to grocery list
             </p>
           ) : (
@@ -156,7 +156,7 @@ export default function Home() {
         </h2>
         <div className="flex flex-wrap justify-center gap-4">
           {favoriteRecipes.length === 0 ? (
-            <p className="text-sm text-zinc-500">
+            <p className="text-center text-sm italic text-zinc-500">
               No favorite recipes yet
             </p>
           ) : (
