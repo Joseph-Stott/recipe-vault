@@ -174,6 +174,7 @@ export default function RecipeForm({
                         />
 
                         <button
+                            title="Remove ingredient row"
                             className="w-10 rounded-lg border border-red-600 text-red-400 hover:bg-red-950 disabled:cursor-not-allowed disabled:opacity-40"
                             disabled={structuredIngredients.length === 1}
                             onClick={() => removeStructuredIngredient(index)}
