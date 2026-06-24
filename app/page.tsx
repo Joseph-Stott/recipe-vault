@@ -192,6 +192,7 @@ export default function Home() {
           {allRecipes.length} recipe{allRecipes.length === 1 ? "" : "s"} available
         </p>
         <Link 
+          title="View grocery list"
           className="w-full max-w-sm rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-center font-medium hover:border-zinc-500 hover:bg-zinc-800 transition-colors duration-200"
           href="/grocery-list">
             View Grocery List
