@@ -125,10 +125,11 @@ export default function RecipeForm({
             </section>
             <section className="flex flex-col gap-2">
                 <h2 className="text-sm font-semibold text-zinc-300">
-                    Structured Ingredients
+                    Ingredients
                 </h2>
 
                 <button
+                    title="Add another ingredient row"
                     className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
                     disabled={lastIngredientIsEmpty}
                     onClick={() => {
