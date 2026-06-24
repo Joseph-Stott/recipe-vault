@@ -87,6 +87,7 @@ export default function RecipeForm({
             />
             <section className="flex flex-row justify-center gap-2">
                 <button
+                    title="Quick recipe"
                     className={`cursor-pointer rounded-lg border px-3 py-2 text-sm font-medium ${
                         timeCategory === "fast"
                             ? "bg-green-600 border-green-500"
@@ -99,6 +100,7 @@ export default function RecipeForm({
                     Fast
                 </button>
                 <button
+                    title="Moderate preparation time"
                     className={`cursor-pointer rounded-lg border px-3 py-2 text-sm font-medium ${
                         timeCategory === "medium"
                             ? "bg-yellow-600 border-yellow-500"
@@ -111,6 +113,7 @@ export default function RecipeForm({
                     Medium
                 </button>
                 <button
+                    title="Longer cooking time"
                     className={`cursor-pointer rounded-lg border px-3 py-2 text-sm font-medium ${
                         timeCategory === "slow"
                             ? "bg-red-600 border-red-500"
