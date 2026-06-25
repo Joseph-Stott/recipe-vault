@@ -188,20 +188,27 @@ export default function Home() {
         <p className="mt-4 max-w-md text-center text-lg leading-8 text-zinc-600 dark:text-zinc-400">
           Store, organize, and search your favorite recipes
         </p>
-        <p className="text-center text-sm text-zinc-500">
+        <p 
+          title="Total recipes available"
+          className="text-center text-sm text-zinc-500"
+        >
           {allRecipes.length} recipe{allRecipes.length === 1 ? "" : "s"} available
         </p>
         <Link 
           title="View grocery list"
           className="w-full max-w-sm rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-center font-medium hover:border-zinc-500 hover:bg-zinc-800 transition-colors duration-200"
-          href="/grocery-list">
-            View Grocery List
+          href="/grocery-list"
+        >
+          View Grocery List
         </Link>
         <SearchBar
           searchText={searchText}
           setSearchText={setSearchText}
         />
-        <p className="text-center text-sm text-zinc-500">
+        <p
+          title="Recipes matching the current search"
+          className="text-center text-sm text-zinc-500"
+        >
           {!searchText
             ? `${filteredRecipes.length} recipe${filteredRecipes.length === 1 ? "" : "s"} found`
             : `${filteredRecipes.length} recipe${filteredRecipes.length === 1 ? "" : "s"} found for "${searchText}"`
