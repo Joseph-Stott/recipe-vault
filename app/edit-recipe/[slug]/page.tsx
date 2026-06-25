@@ -56,7 +56,8 @@ export default function EditRecipePage() {
                     Edit a Recipe
                 </h1>
                 <button
-                title="Delete recipe"
+                    title="Delete recipe"
+                    aria-label="Delete recipe"
                     className={`
                         absolute right-4 top-4 cursor-pointer text-base
                         transition-all duration-300
@@ -75,7 +76,7 @@ export default function EditRecipePage() {
                         router.refresh();
                         router.push("/");
                     }}
-                    >
+                >
                     🗑️
                 </button>
                 <RecipeForm
