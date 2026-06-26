@@ -76,6 +76,7 @@ export default function RecipeForm({
     return(
         <>
             <input 
+                title="Recipe title"
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 type="text"
                 placeholder="Add Title"
@@ -188,12 +189,14 @@ export default function RecipeForm({
                 ))}
             </section>
             <textarea
+            title="Recipe cooking instructions"
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 placeholder="Cook Instructions"
                 value={cookInstructionsText}
                 onChange={(event) => setCookInstructionsText(event.target.value)}
             />
             <input 
+                title="Cookbook title"
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 type="text"
                 placeholder="Book title"
@@ -201,6 +204,7 @@ export default function RecipeForm({
                 onChange={(event) => setCookBook(event.target.value)}
             />
             <input 
+                title="Cookbook page number"
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 type="text"
                 placeholder="Page number"
