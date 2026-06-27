@@ -68,7 +68,7 @@ export default function EditRecipePage() {
                             setErrorMessages(["Recipe not found"]);
                             return;
                         }
-                        const confirmed = confirm("Are you sure you want to delete this recipe?");
+                        const confirmed = confirm("Delete this recipe? This action cannot be undone.");
                         if (!confirmed){
                             return;
                         }
@@ -123,7 +123,7 @@ export default function EditRecipePage() {
                             pageNumber,
                         });
 
-                        const confirmed = confirm("Are you sure you want to update recipe?");
+                        const confirmed = confirm("Save changes to this recipe?");
                         if(!confirmed) {
                             return;
                         }

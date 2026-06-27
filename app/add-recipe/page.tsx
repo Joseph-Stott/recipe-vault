@@ -73,7 +73,7 @@ export default function AddRecipePage() {
                             pageNumber,
                         });
 
-                        const confirmed = confirm("Add to recipe list?");
+                        const confirmed = confirm("Add this recipe to your collection?");
                         if(!confirmed) {
                             return;
                         }
