@@ -76,6 +76,7 @@ export default function RecipeForm({
     return(
         <>
             <input 
+                spellCheck={false}
                 title="Recipe title"
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 type="text"
@@ -148,6 +149,7 @@ export default function RecipeForm({
                 {structuredIngredients.map((ingredient, index) => (
                     <div key={index} className="flex items-center gap-2">
                         <input
+                            spellCheck={false}
                             className="w-16 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm"
                             type="text"
                             placeholder="Amt"
@@ -158,6 +160,7 @@ export default function RecipeForm({
                         />
 
                         <input
+                            spellCheck={false}
                             className="w-20 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm"
                             type="text"
                             placeholder="Unit"
@@ -189,13 +192,14 @@ export default function RecipeForm({
                 ))}
             </section>
             <textarea
-            title="Recipe cooking instructions"
+                title="Recipe cooking instructions"
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 placeholder="Cook Instructions"
                 value={cookInstructionsText}
                 onChange={(event) => setCookInstructionsText(event.target.value)}
             />
             <input 
+                spellCheck={false}
                 title="Cookbook title"
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 type="text"
@@ -204,6 +208,7 @@ export default function RecipeForm({
                 onChange={(event) => setCookBook(event.target.value)}
             />
             <input 
+                spellCheck={false}
                 title="Cookbook page number"
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 type="text"
