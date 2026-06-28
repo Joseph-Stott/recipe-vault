@@ -189,7 +189,7 @@ export default function RecipeForm({
                             disabled={structuredIngredients.length === 1}
                             onClick={() => removeStructuredIngredient(index)}
                         >
-                            X
+                            ✕
                         </button>
                     </div>
                 ))}
