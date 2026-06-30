@@ -20,7 +20,7 @@ export default function Home() {
   
   const [searchText, setSearchText] = useState("");
 
-  const normalizedSearch = searchText.toLowerCase();
+  const normalizedSearch = searchText.trim().toLowerCase();
 
   const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([]);
 
