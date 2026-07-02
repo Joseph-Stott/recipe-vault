@@ -9,6 +9,7 @@ import { getFavoriteRecipeSlugs } from "@/lib/favorites";
 import { getGroceryList, getGroceryRecipeSlugs, removeRecipeFromGroceryList } from "@/lib/groceryList";
 import { getIngredientNames } from "@/lib/recipeUtils";
 import { getAllRecipes } from "@/lib/recipeService";
+import FavoriteRecipesSection from "@/components/FavoriteRecipesSection";
 
 function getIngredientMatchCount(recipeIngredients: string[], groceryIngredients: string[]) {
   return recipeIngredients.filter((ingredient) =>
@@ -114,7 +115,7 @@ export default function Home() {
                   timeCategory={recipe.timeCategory}
                   actionButton={
                     <button
-                    title="Remove from grocery list"
+                      title="Remove from grocery list"
                       className="text-zinc-400 hover:text-zinc-100"
                       onClick={(event) => {
                         event.preventDefault();
@@ -151,36 +152,10 @@ export default function Home() {
           )}
         </div>
       </section>
-      <section className="mb-8 w-full max-w-6xl rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4">
-        <h2 className="mb-3 text-center text-sm font-semibold text-zinc-400">
-          ⭐ Favorite Recipes ({favoriteRecipes.length})
-        </h2>
-        <div className="flex flex-wrap justify-center gap-4">
-          {favoriteRecipes.length === 0 ? (
-            <p className="text-center text-sm italic text-zinc-500">
-              No favorite recipes yet
-            </p>
-          ) : (
-            sortedFavoriteRecipes.map((recipe) => {
-              const matchCount = getIngredientMatchCount(
-                getIngredientNames(recipe),
-                groceryList
-              );
-
-              return (
-                <RecipeCard
-                  key={recipe.slug}
-                  slug={recipe.slug}
-                  title={recipe.title}
-                  timeCategory={recipe.timeCategory}
-                  isFavorite={true}
-                  matchCount={matchCount}
-                />
-              );
-            })
-          )}
-        </div>
-      </section>
+      <FavoriteRecipesSection
+        recipes={sortedFavoriteRecipes}
+        groceryList={groceryList}
+      />
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl text-center font-semibold tracking-tight text-black dark:text-zinc-50">
           Recipe Vault
