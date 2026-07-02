@@ -11,6 +11,7 @@ import { getIngredientNames } from "@/lib/recipeUtils";
 import { getAllRecipes } from "@/lib/recipeService";
 import FavoriteRecipesSection from "@/components/FavoriteRecipesSection";
 import GroceryRecipesSection from "@/components/GroceryRecipesSection";
+import RecipeList from "@/components/RecipeList";
 
 function getIngredientMatchCount(recipeIngredients: string[], groceryIngredients: string[]) {
   return recipeIngredients.filter((ingredient) =>
@@ -150,39 +151,12 @@ export default function Home() {
           searchText={searchText}
           setSearchText={setSearchText}
         />
-        <p
-          title="Recipes matching the current search"
-          className="text-center text-sm text-zinc-500"
-        >
-          {!searchText
-            ? `${filteredRecipes.length} recipe${filteredRecipes.length === 1 ? "" : "s"} found`
-            : `${filteredRecipes.length} recipe${filteredRecipes.length === 1 ? "" : "s"} found for "${searchText}"`
-          }
-        </p>
-        {
-          filteredRecipes.length === 0 ? (
-            <p className="text-center text-xl text-zinc-400">
-              {!searchText ? "No recipes found" : `No recipes match "${searchText}"`}
-            </p>
-          ) : (
-            sortedRecipes.map((recipe) => {
-              const matchCount = getIngredientMatchCount(
-                getIngredientNames(recipe),
-                groceryList
-              );
-
-              return(
-                <RecipeCard
-                  slug={recipe.slug}
-                  key={recipe.slug}
-                  title={recipe.title}
-                  timeCategory={recipe.timeCategory}
-                  matchCount={matchCount}
-                />
-              );
-            })
-          )
-        }
+        <RecipeList
+          recipes={sortedRecipes}
+          groceryList={groceryList}
+          searchText={searchText}
+          filteredRecipeCount={filteredRecipes.length}
+        />
         <Link 
           href="/add-recipe"
           className="cursor-pointer text-center fixed bottom-6 right-6 rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
