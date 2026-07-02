@@ -10,6 +10,7 @@ import { getGroceryList, getGroceryRecipeSlugs, removeRecipeFromGroceryList } fr
 import { getIngredientNames } from "@/lib/recipeUtils";
 import { getAllRecipes } from "@/lib/recipeService";
 import FavoriteRecipesSection from "@/components/FavoriteRecipesSection";
+import GroceryRecipesSection from "@/components/GroceryRecipesSection";
 
 function getIngredientMatchCount(recipeIngredients: string[], groceryIngredients: string[]) {
   return recipeIngredients.filter((ingredient) =>
@@ -39,6 +40,27 @@ export default function Home() {
     );
     setGroceryRecipeSlugs(getGroceryRecipeSlugs());
   }, []);
+
+  function handleRemoveGroceryRecipe(recipe: Recipe) {
+    const confirmed = confirm(
+      `Remove "${recipe.title}" from grocery list?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    removeRecipeFromGroceryList(
+      recipe.slug,
+      recipe.structuredIngredients
+    );
+
+    setGroceryRecipeSlugs(getGroceryRecipeSlugs());
+
+    setGroceryList(
+      getGroceryList().map((ingredient) => ingredient.name)
+    );
+  }
 
   const allRecipes = getAllRecipes(savedRecipes);
 
@@ -96,62 +118,10 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
-      <section className="mb-8 w-full max-w-6xl rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4">
-        <h2 className="mb-3 text-center text-sm font-semibold text-zinc-400">
-          🛒 Recipes in Grocery List ({groceryRecipes.length})
-        </h2>
-        <div className="flex flex-wrap justify-center gap-4">
-          {groceryRecipes.length === 0 ? (
-            <p className="text-center text-sm italic text-zinc-500">
-              No recipes added to grocery list
-            </p>
-          ) : (
-            groceryRecipes.map((recipe) => {
-              return(
-                <RecipeCard
-                  key={recipe.slug} 
-                  slug={recipe.slug}
-                  title={recipe.title}
-                  timeCategory={recipe.timeCategory}
-                  actionButton={
-                    <button
-                      title="Remove from grocery list"
-                      className="text-zinc-400 hover:text-zinc-100"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-
-                        const confirmed = confirm(
-                          `Remove "${recipe.title}" from grocery list?`
-                        );
-
-                        if (!confirmed) {
-                          return;
-                        }
-
-                        removeRecipeFromGroceryList(
-                          recipe.slug,
-                          recipe.structuredIngredients
-                        );
-
-                        setGroceryRecipeSlugs(getGroceryRecipeSlugs());
-
-                        setGroceryList(
-                          getGroceryList().map(
-                            (ingredient) => ingredient.name
-                          )
-                        );
-                      }}
-                    >
-                      ✕
-                    </button>
-                  }
-                />
-              );
-            })
-          )}
-        </div>
-      </section>
+      <GroceryRecipesSection
+        recipes={groceryRecipes}
+        onRemoveRecipe={handleRemoveGroceryRecipe}
+      />
       <FavoriteRecipesSection
         recipes={sortedFavoriteRecipes}
         groceryList={groceryList}
