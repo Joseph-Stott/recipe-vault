@@ -18,7 +18,11 @@ type RecipeCardProps = {
 
 export default function RecipeCard(props: RecipeCardProps) {
     return (
-        <Link href={`/recipes/${props.slug}`} className="cursor-pointer relative w-full max-w-sm overflow-hidden hover:border-zinc-500 hover:bg-zinc-800 transition-colors duration-200 rounded-2xl text-center border border-zinc-700 bg-zinc-900 p-4">
+        <Link 
+            href={`/recipes/${props.slug}`} 
+            draggable={false}
+            className="cursor-pointer relative w-full max-w-sm overflow-hidden hover:border-zinc-500 hover:bg-zinc-800 transition-colors duration-200 rounded-2xl text-center border border-zinc-700 bg-zinc-900 p-4"
+        >
             <span 
             className={`absolute left-[-34px] top-4 w-32 rotate-315 text-center text-xs font-semibold ${timeCategoryStyles[props.timeCategory]}`}
             style={{
