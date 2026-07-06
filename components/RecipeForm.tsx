@@ -79,6 +79,7 @@ export default function RecipeForm({
                 autoComplete="off"
                 spellCheck={false}
                 title="Recipe title"
+                onFocus={(event)=> event.target.select()}
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 type="text"
                 placeholder="Add Title"
@@ -205,6 +206,7 @@ export default function RecipeForm({
                 autoComplete="off"
                 spellCheck={false}
                 title="Cookbook title"
+                onFocus={(event)=> event.target.select()}
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 type="text"
                 placeholder="Book title"
@@ -215,6 +217,7 @@ export default function RecipeForm({
                 autoComplete="off"
                 spellCheck={false}
                 title="Cookbook page number"
+                onFocus={(event)=> event.target.select()}
                 className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
                 type="text"
                 placeholder="Page number"

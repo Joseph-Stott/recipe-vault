@@ -24,15 +24,15 @@ export default function RecipeCard(props: RecipeCardProps) {
             className="cursor-pointer relative w-full max-w-sm overflow-hidden hover:border-zinc-500 hover:bg-zinc-800 transition-colors duration-200 rounded-2xl text-center border border-zinc-700 bg-zinc-900 p-4"
         >
             <span 
-            className={`absolute left-[-34px] top-4 w-32 rotate-315 text-center text-xs font-semibold ${timeCategoryStyles[props.timeCategory]}`}
-            style={{
-                textShadow: `
-                -1px -1px 0 black,
-                1px -1px 0 black,
-                -1px  1px 0 black,
-                1px  1px 0 black
-                `
-            }}
+                className={`absolute left-[-34px] top-4 w-32 rotate-315 text-center text-xs font-semibold ${timeCategoryStyles[props.timeCategory]}`}
+                style={{
+                    textShadow: `
+                    -1px -1px 0 black,
+                    1px -1px 0 black,
+                    -1px  1px 0 black,
+                    1px  1px 0 black
+                    `
+                }}
             >
                 {props.timeCategory.charAt(0).toUpperCase() + props.timeCategory.slice(1)}
             </span>
