@@ -107,7 +107,9 @@ export default function DetailPage() {
                     )}
                     {recipe.structuredIngredients &&(
                         <section>
-                            <h2>Ingredients:</h2>
+                            <h2 className="scroll=mt-4">
+                                Ingredients:
+                            </h2>
                             <ul className="text-left text-sm">
                             {recipe.structuredIngredients.map((ingredient, index) => (
                                 <li
@@ -129,7 +131,9 @@ export default function DetailPage() {
                     }
                     {recipe.cookInstructions && (
                         <section>
-                            <h2>Cook Instructions:</h2>
+                            <h2 className="scroll=mt-4">
+                                Cook Instructions:
+                            </h2>
                             <ol className="list-decimal list-inside text-left text-sm">
                                 {recipe.cookInstructions.map((instruction) => (<li key={instruction}>{instruction}</li>))}
                             </ol>
