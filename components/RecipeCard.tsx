@@ -38,7 +38,9 @@ export default function RecipeCard(props: RecipeCardProps) {
             </span>
             <div className="flex flex-col gap-2">
                 <div className="relative flex items-center justify-center">
-                    <span>{props.title}</span>
+                    <span className="break-words">
+                        {props.title}
+                    </span>
 
                     {props.isFavorite && (
                         <span className="absolute right-4 text-xl leading-none text-zinc-100">
