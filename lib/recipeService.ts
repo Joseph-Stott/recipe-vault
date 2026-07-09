@@ -27,6 +27,20 @@ export function filterRecipesBySearch(recipesToFilter: Recipe[], searchText: str
     ));
 }
 
+// Returns recipes marked as favorites that are not already
+// displayed in the grocery recipes section.
+export function getFavoriteRecipes(
+    recipes: Recipe[],
+    favoriteRecipeSlugs: string[],
+    groceryRecipeSlugs: string[]
+) {
+    return recipes.filter(
+        (recipe) =>
+            favoriteRecipeSlugs.includes(recipe.slug) &&
+            !groceryRecipeSlugs.includes(recipe.slug)
+    );
+}
+
 type RecipeFormValues = {
     slug: string;
     title: string;
