@@ -7,7 +7,7 @@ import { Recipe } from "@/types/recipe";
 import { getFavoriteRecipeSlugs } from "@/lib/favorites";
 import { getGroceryList, getGroceryRecipeSlugs, removeRecipeFromGroceryList } from "@/lib/groceryList";
 import { getIngredientNames, getIngredientMatchCount } from "@/lib/recipeUtils";
-import { getAllRecipes } from "@/lib/recipeService";
+import { filterRecipesBySearch, getAllRecipes } from "@/lib/recipeService";
 import FavoriteRecipesSection from "@/components/FavoriteRecipesSection";
 import GroceryRecipesSection from "@/components/GroceryRecipesSection";
 import RecipeList from "@/components/RecipeList";
@@ -15,8 +15,6 @@ import RecipeList from "@/components/RecipeList";
 export default function Home() {
   
   const [searchText, setSearchText] = useState("");
-
-  const normalizedSearch = searchText.trim().toLowerCase();
 
   const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([]);
 
@@ -58,12 +56,7 @@ export default function Home() {
 
   const allRecipes = getAllRecipes(savedRecipes);
 
-  const filteredRecipes = allRecipes.filter((recipe) => (
-    recipe.title.toLowerCase().includes(normalizedSearch) ||
-    recipe.timeCategory.toLowerCase().includes(normalizedSearch) ||
-    getIngredientNames(recipe).some((ingredient) => ingredient.toLowerCase().includes(normalizedSearch)
-    )
-  ));
+  const filteredRecipes = filterRecipesBySearch(allRecipes, searchText);
 
   const groceryRecipes = filteredRecipes.filter((recipe) => 
     groceryRecipeSlugs.includes(recipe.slug)

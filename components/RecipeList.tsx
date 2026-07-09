@@ -1,4 +1,4 @@
-import RecipeCard from "./RecipeCard";
+import RecipeCard from "@/components/RecipeCard";
 import { Recipe } from "@/types/recipe";
 import { getIngredientNames, getIngredientMatchCount } from "@/lib/recipeUtils";
 

@@ -1,5 +1,6 @@
 import { recipes } from "@/data/recipes";
 import { Recipe, Ingredient } from "@/types/recipe";
+import { getIngredientNames } from "@/lib/recipeUtils";
 
 // Combines saved recipes with built-in recipes.
 // Saved recipes are placed first so edited recipes override
@@ -10,6 +11,20 @@ export function getAllRecipes(savedRecipes: Recipe[]) {
     return mergedRecipes.filter((recipe, index, array) =>
         array.findIndex((currentRecipe) => currentRecipe.slug === recipe.slug) === index
     );
+}
+
+// Filters recipes by title, time category, or ingredient name.
+// Search text is trimmed and lowercased so extra spaces and capitalization do not affect results.
+export function filterRecipesBySearch(recipesToFilter: Recipe[], searchText: string) {
+    const normalizedSearch = searchText.trim().toLowerCase();
+
+    return recipesToFilter.filter((recipe) => (
+        recipe.title.toLowerCase().includes(normalizedSearch) ||
+        recipe.timeCategory.toLowerCase().includes(normalizedSearch) ||
+        getIngredientNames(recipe).some((ingredient) =>
+            ingredient.toLowerCase().includes(normalizedSearch)
+        )
+    ));
 }
 
 type RecipeFormValues = {
