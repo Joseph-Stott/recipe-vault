@@ -1,6 +1,7 @@
 import { recipes } from "@/data/recipes";
 import { Recipe, Ingredient } from "@/types/recipe";
 
+// Combines saved recipes with built-in recipes.
 // Saved recipes are placed first so edited recipes override
 // built-in recipes with matching slugs.
 export function getAllRecipes(savedRecipes: Recipe[]) {
@@ -21,6 +22,8 @@ type RecipeFormValues = {
     pageNumber: string;
 };
 
+// Converts form state into a Recipe object before saving.
+// This keeps Add and Edit pages from duplicating recipe-building logic.
 export function buildRecipeFromForm(values: RecipeFormValues): Recipe {
     return {
         slug: values.slug,
