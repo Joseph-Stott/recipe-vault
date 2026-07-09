@@ -1,17 +1,11 @@
 import RecipeCard from "@/components/RecipeCard";
 import { Recipe } from "@/types/recipe";
-import { getIngredientNames } from "@/lib/recipeUtils";
+import { getIngredientNames, getIngredientMatchCount } from "@/lib/recipeUtils";
 
 type FavoriteRecipesSectionProps = {
     recipes: Recipe[];
     groceryList: string[];
 };
-
-function getIngredientMatchCount(recipeIngredients: string[], groceryIngredients: string[]) {
-    return recipeIngredients.filter((ingredient) =>
-        groceryIngredients.includes(ingredient)
-    ).length;
-}
 
 export default function FavoriteRecipesSection({
     recipes,

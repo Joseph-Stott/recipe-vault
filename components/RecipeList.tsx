@@ -1,6 +1,6 @@
 import RecipeCard from "./RecipeCard";
 import { Recipe } from "@/types/recipe";
-import { getIngredientNames } from "@/lib/recipeUtils";
+import { getIngredientNames, getIngredientMatchCount } from "@/lib/recipeUtils";
 
 type RecipeListProps = {
     recipes: Recipe[];
@@ -8,12 +8,6 @@ type RecipeListProps = {
     searchText: string;
     filteredRecipeCount: number;
 };
-
-function getIngredientMatchCount(recipeIngredients: string[], groceryIngredients: string[]) {
-    return recipeIngredients.filter((ingredient) =>
-        groceryIngredients.includes(ingredient)
-    ).length;
-}
 
 export default function RecipeList({
     recipes,

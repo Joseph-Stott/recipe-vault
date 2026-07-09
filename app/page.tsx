@@ -1,5 +1,4 @@
 "use client";
-import RecipeCard from "@/components/RecipeCard";
 import SearchBar from "@/components/SearchBar";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -7,17 +6,11 @@ import { getSavedRecipes } from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
 import { getFavoriteRecipeSlugs } from "@/lib/favorites";
 import { getGroceryList, getGroceryRecipeSlugs, removeRecipeFromGroceryList } from "@/lib/groceryList";
-import { getIngredientNames } from "@/lib/recipeUtils";
+import { getIngredientNames, getIngredientMatchCount } from "@/lib/recipeUtils";
 import { getAllRecipes } from "@/lib/recipeService";
 import FavoriteRecipesSection from "@/components/FavoriteRecipesSection";
 import GroceryRecipesSection from "@/components/GroceryRecipesSection";
 import RecipeList from "@/components/RecipeList";
-
-function getIngredientMatchCount(recipeIngredients: string[], groceryIngredients: string[]) {
-  return recipeIngredients.filter((ingredient) =>
-    groceryIngredients.includes(ingredient)
-  ).length;
-}
 
 export default function Home() {
   
