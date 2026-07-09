@@ -41,6 +41,16 @@ export function getFavoriteRecipes(
     );
 }
 
+// Returns recipes that have been added to the grocery list section.
+export function getGroceryRecipes(
+    recipes: Recipe[],
+    groceryRecipeSlugs: string[]
+) {
+    return recipes.filter((recipe) =>
+        groceryRecipeSlugs.includes(recipe.slug)
+    );
+}
+
 type RecipeFormValues = {
     slug: string;
     title: string;

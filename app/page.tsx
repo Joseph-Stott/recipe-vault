@@ -7,7 +7,7 @@ import { Recipe } from "@/types/recipe";
 import { getFavoriteRecipeSlugs } from "@/lib/favorites";
 import { getGroceryList, getGroceryRecipeSlugs, removeRecipeFromGroceryList } from "@/lib/groceryList";
 import { getIngredientNames, getIngredientMatchCount } from "@/lib/recipeUtils";
-import { filterRecipesBySearch, getAllRecipes, getFavoriteRecipes } from "@/lib/recipeService";
+import { filterRecipesBySearch, getAllRecipes, getFavoriteRecipes, getGroceryRecipes } from "@/lib/recipeService";
 import FavoriteRecipesSection from "@/components/FavoriteRecipesSection";
 import GroceryRecipesSection from "@/components/GroceryRecipesSection";
 import RecipeList from "@/components/RecipeList";
@@ -58,8 +58,9 @@ export default function Home() {
 
   const filteredRecipes = filterRecipesBySearch(allRecipes, searchText);
 
-  const groceryRecipes = filteredRecipes.filter((recipe) => 
-    groceryRecipeSlugs.includes(recipe.slug)
+  const groceryRecipes = getGroceryRecipes(
+    filteredRecipes,
+    groceryRecipeSlugs
   );
 
   const favoriteRecipes = getFavoriteRecipes(
