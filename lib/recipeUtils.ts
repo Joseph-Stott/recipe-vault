@@ -6,6 +6,8 @@ export function getIngredientNames(recipe: Recipe) {
     ) ?? [];
 }
 
+// Counts how many recipe ingredients are currently present
+// in the user's grocery list.
 export function getIngredientMatchCount(
     recipeIngredients: string[],
     groceryIngredients: string[]
