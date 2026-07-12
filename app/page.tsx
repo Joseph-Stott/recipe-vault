@@ -145,6 +145,7 @@ export default function Home() {
           filteredRecipeCount={filteredRecipes.length}
         />
         <Link 
+          title="Create a new recipe"
           href="/add-recipe"
           className="cursor-pointer text-center fixed bottom-6 right-6 rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
         >
