@@ -6,8 +6,7 @@ import { getSavedRecipes } from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
 import { getFavoriteRecipeSlugs } from "@/lib/favorites";
 import { getGroceryList, getGroceryRecipeSlugs, removeRecipeFromGroceryList } from "@/lib/groceryList";
-import { getIngredientNames, getIngredientMatchCount } from "@/lib/recipeUtils";
-import { filterRecipesBySearch, getAllRecipes, getFavoriteRecipes, getGroceryRecipes } from "@/lib/recipeService";
+import { filterRecipesBySearch, getAllRecipes, getFavoriteRecipes, getGroceryRecipes, sortRecipesByIngredientMatches } from "@/lib/recipeService";
 import FavoriteRecipesSection from "@/components/FavoriteRecipesSection";
 import GroceryRecipesSection from "@/components/GroceryRecipesSection";
 import RecipeList from "@/components/RecipeList";
@@ -70,19 +69,10 @@ export default function Home() {
     groceryRecipeSlugs
   );
 
-  const sortedFavoriteRecipes = [...favoriteRecipes].sort((a, b) => {
-    const aIngredientMatches = getIngredientMatchCount(
-      getIngredientNames(a),
-      groceryList
-    );
-
-    const bIngredientMatches = getIngredientMatchCount(
-      getIngredientNames(b),
-      groceryList
-    );
-
-    return bIngredientMatches - aIngredientMatches;
-  });
+  const sortedFavoriteRecipes = sortRecipesByIngredientMatches(
+    favoriteRecipes,
+    groceryList
+  );
 
   const nonSectionFilteredRecipes = filteredRecipes.filter(
     (recipe) =>
@@ -90,20 +80,10 @@ export default function Home() {
         !favoriteRecipeSlugs.includes(recipe.slug)
   );
 
-  const sortedRecipes = [...nonSectionFilteredRecipes].sort((a, b) => {
-    
-    const aIngredientMatches = getIngredientMatchCount(
-      getIngredientNames(a),
-      groceryList
-    );
-
-    const bIngredientMatches = getIngredientMatchCount(
-      getIngredientNames(b),
-      groceryList
-    );
-
-    return bIngredientMatches - aIngredientMatches;
-  });
+  const sortedRecipes = sortRecipesByIngredientMatches(
+    nonSectionFilteredRecipes,
+    groceryList
+  );
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">

@@ -1,6 +1,6 @@
 import { recipes } from "@/data/recipes";
 import { Recipe, Ingredient } from "@/types/recipe";
-import { getIngredientNames } from "@/lib/recipeUtils";
+import { getIngredientNames, getIngredientMatchCount } from "@/lib/recipeUtils";
 
 // Combines saved recipes with built-in recipes.
 // Saved recipes are placed first so edited recipes override
@@ -49,6 +49,27 @@ export function getGroceryRecipes(
     return recipes.filter((recipe) =>
         groceryRecipeSlugs.includes(recipe.slug)
     );
+}
+
+// Sorts recipes from highest to lowest based on how many
+// ingredient names match items currently in the grocery list.
+export function sortRecipesByIngredientMatches(
+    recipes: Recipe[],
+    groceryIngredients: string[]
+) {
+    return [...recipes].sort((a, b) => {
+        const aIngredientMatches = getIngredientMatchCount(
+            getIngredientNames(a),
+            groceryIngredients
+        );
+
+        const bIngredientMatches = getIngredientMatchCount(
+            getIngredientNames(b),
+            groceryIngredients
+        );
+
+        return bIngredientMatches - aIngredientMatches;
+    });
 }
 
 type RecipeFormValues = {
