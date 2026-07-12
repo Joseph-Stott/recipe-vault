@@ -33,6 +33,7 @@ export default function Home() {
     setGroceryRecipeSlugs(getGroceryRecipeSlugs());
   }, []);
 
+  // Removes a recipe from the grocery list after user confirmation.
   function handleRemoveGroceryRecipe(recipe: Recipe) {
     const confirmed = confirm(
       `Remove "${recipe.title}" from grocery list?`
