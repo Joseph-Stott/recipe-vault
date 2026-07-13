@@ -23,6 +23,8 @@ export default function Home() {
 
   const [groceryRecipeSlugs, setGroceryRecipeSlugs] = useState<string[]>([]);
 
+  // Loads saved recipes, favorites, and grocery list data
+  // when the homepage is first displayed.
   useEffect(() => {
     setSavedRecipes(getSavedRecipes());
     setFavoriteRecipeSlugs(getFavoriteRecipeSlugs());
