@@ -51,6 +51,20 @@ export function getGroceryRecipes(
     );
 }
 
+// Returns recipes that are not already displayed in the grocery
+// or favorite sections, preventing duplicate cards on the homepage.
+export function getMainRecipes(
+    recipes: Recipe[],
+    favoriteRecipeSlugs: string[],
+    groceryRecipeSlugs: string[]
+) {
+    return recipes.filter(
+        (recipe) =>
+            !favoriteRecipeSlugs.includes(recipe.slug) &&
+            !groceryRecipeSlugs.includes(recipe.slug)
+    );
+}
+
 // Sorts recipes from highest to lowest based on how many
 // ingredient names match items currently in the grocery list.
 export function sortRecipesByIngredientMatches(

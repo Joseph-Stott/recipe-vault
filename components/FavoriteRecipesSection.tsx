@@ -17,7 +17,6 @@ export default function FavoriteRecipesSection({
                 ⭐ Favorite Recipes ({recipes.length})
             </h2>
             <div className="flex flex-wrap justify-center gap-4">
-                // Display an empty state when there are no favorite recipes.
                 {recipes.length === 0 ? (
                     <p className="text-center text-sm italic text-zinc-500">
                         No favorite recipes yet
