@@ -1,38 +1,27 @@
 "use client";
+
 import SearchBar from "@/components/SearchBar";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { getSavedRecipes } from "@/lib/recipeStorage";
+import { useState } from "react";
 import { Recipe } from "@/types/recipe";
-import { getFavoriteRecipeSlugs } from "@/lib/favorites";
-import { getGroceryList, getGroceryRecipeSlugs, removeRecipeFromGroceryList } from "@/lib/groceryList";
+import { removeRecipeFromGroceryList } from "@/lib/groceryList";
 import { filterRecipesBySearch, getAllRecipes, getFavoriteRecipes, getGroceryRecipes, sortRecipesByIngredientMatches, getMainRecipes } from "@/lib/recipeService";
 import FavoriteRecipesSection from "@/components/FavoriteRecipesSection";
 import GroceryRecipesSection from "@/components/GroceryRecipesSection";
 import RecipeList from "@/components/RecipeList";
+import { useRecipeData } from "@/hooks/useRecipeData";
 
 export default function Home() {
   
   const [searchText, setSearchText] = useState("");
 
-  const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([]);
-
-  const [favoriteRecipeSlugs, setFavoriteRecipeSlugs] = useState<string[]>([]);
-
-  const [groceryList, setGroceryList] = useState<string[]>([]);
-
-  const [groceryRecipeSlugs, setGroceryRecipeSlugs] = useState<string[]>([]);
-
-  // Loads saved recipes, favorites, and grocery list data
-  // when the homepage is first displayed.
-  useEffect(() => {
-    setSavedRecipes(getSavedRecipes());
-    setFavoriteRecipeSlugs(getFavoriteRecipeSlugs());
-    setGroceryList(
-      getGroceryList().map((ingredient) => ingredient.name)
-    );
-    setGroceryRecipeSlugs(getGroceryRecipeSlugs());
-  }, []);
+  const {
+    savedRecipes,
+    favoriteRecipeSlugs,
+    groceryList,
+    groceryRecipeSlugs,
+    refreshGroceryData,
+  } = useRecipeData();
 
   // Removes a recipe from the grocery list after user confirmation.
   function handleRemoveGroceryRecipe(recipe: Recipe) {
@@ -49,11 +38,7 @@ export default function Home() {
       recipe.structuredIngredients
     );
 
-    setGroceryRecipeSlugs(getGroceryRecipeSlugs());
-
-    setGroceryList(
-      getGroceryList().map((ingredient) => ingredient.name)
-    );
+    refreshGroceryData();
   }
 
   const allRecipes = getAllRecipes(savedRecipes);
