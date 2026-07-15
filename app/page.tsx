@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { Recipe } from "@/types/recipe";
 import { removeRecipeFromGroceryList } from "@/lib/groceryList";
-import { filterRecipesBySearch, getAllRecipes, getFavoriteRecipes, getGroceryRecipes, sortRecipesByIngredientMatches, getMainRecipes } from "@/lib/recipeService";
 import FavoriteRecipesSection from "@/components/FavoriteRecipesSection";
 import GroceryRecipesSection from "@/components/GroceryRecipesSection";
 import RecipeList from "@/components/RecipeList";
@@ -16,12 +15,14 @@ export default function Home() {
   const [searchText, setSearchText] = useState("");
 
   const {
-    savedRecipes,
-    favoriteRecipeSlugs,
+    allRecipes,
+    filteredRecipes,
+    groceryRecipes,
+    sortedFavoriteRecipes,
+    sortedRecipes,
     groceryList,
-    groceryRecipeSlugs,
     refreshGroceryData,
-  } = useRecipeData();
+  } = useRecipeData(searchText);
 
   // Removes a recipe from the grocery list after user confirmation.
   function handleRemoveGroceryRecipe(recipe: Recipe) {
@@ -40,37 +41,6 @@ export default function Home() {
 
     refreshGroceryData();
   }
-
-  const allRecipes = getAllRecipes(savedRecipes);
-
-  const filteredRecipes = filterRecipesBySearch(allRecipes, searchText);
-
-  const groceryRecipes = getGroceryRecipes(
-    filteredRecipes,
-    groceryRecipeSlugs
-  );
-
-  const favoriteRecipes = getFavoriteRecipes(
-    filteredRecipes,
-    favoriteRecipeSlugs,
-    groceryRecipeSlugs
-  );
-
-  const sortedFavoriteRecipes = sortRecipesByIngredientMatches(
-    favoriteRecipes,
-    groceryList
-  );
-
-  const mainRecipes = getMainRecipes(
-    filteredRecipes,
-    favoriteRecipeSlugs,
-    groceryRecipeSlugs
-  );
-
-  const sortedRecipes = sortRecipesByIngredientMatches(
-    mainRecipes,
-    groceryList
-  );
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
