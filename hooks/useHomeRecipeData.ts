@@ -14,7 +14,9 @@ import {
   sortRecipesByIngredientMatches,
 } from "@/lib/recipeService";
 
-export function useRecipeData(searchText: string) {
+// Provides the homepage with stored recipe data, derived recipe groups,
+// and grocery refresh behavior.
+export function useHomeRecipeData(searchText: string) {
     const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([]);
     const [favoriteRecipeSlugs, setFavoriteRecipeSlugs] = useState<string[]>([]);
     const [groceryList, setGroceryList] = useState<string[]>([]);

@@ -8,7 +8,7 @@ import { removeRecipeFromGroceryList } from "@/lib/groceryList";
 import FavoriteRecipesSection from "@/components/FavoriteRecipesSection";
 import GroceryRecipesSection from "@/components/GroceryRecipesSection";
 import RecipeList from "@/components/RecipeList";
-import { useRecipeData } from "@/hooks/useRecipeData";
+import { useHomeRecipeData } from "@/hooks/useHomeRecipeData";
 
 export default function Home() {
   
@@ -22,7 +22,7 @@ export default function Home() {
     sortedRecipes,
     groceryList,
     refreshGroceryData,
-  } = useRecipeData(searchText);
+  } = useHomeRecipeData(searchText);
 
   // Removes a recipe from the grocery list after user confirmation.
   function handleRemoveGroceryRecipe(recipe: Recipe) {
