@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { getFavoriteRecipeSlugs } from "@/lib/favorites";
-import { getGroceryList, getGroceryRecipeSlugs } from "@/lib/groceryList";
+import { 
+    getGroceryList,
+    getGroceryRecipeSlugs,
+    removeRecipeFromGroceryList,
+} from "@/lib/groceryList";
 import { getSavedRecipes } from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
 import {
@@ -39,6 +43,17 @@ export function useHomeRecipeData(searchText: string) {
             getGroceryList().map((ingredient) => ingredient.name)
         );
         setGroceryRecipeSlugs(getGroceryRecipeSlugs());
+    }
+
+    // Removes a recipe and its contributed ingredients from grocery storage,
+    // then refreshes the related React state so the homepage updates immediately.
+    function removeGroceryRecipe(recipe: Recipe) {
+        removeRecipeFromGroceryList(
+            recipe.slug,
+            recipe.structuredIngredients
+        );
+
+        refreshGroceryData();
     }
 
     // Builds the recipe groups used by the homepage from the stored data
@@ -84,6 +99,6 @@ export function useHomeRecipeData(searchText: string) {
         sortedFavoriteRecipes,
         sortedRecipes,
         groceryList,
-        refreshGroceryData,
+        removeGroceryRecipe,
     };
 }

@@ -4,7 +4,6 @@ import SearchBar from "@/components/SearchBar";
 import Link from "next/link";
 import { useState } from "react";
 import { Recipe } from "@/types/recipe";
-import { removeRecipeFromGroceryList } from "@/lib/groceryList";
 import FavoriteRecipesSection from "@/components/FavoriteRecipesSection";
 import GroceryRecipesSection from "@/components/GroceryRecipesSection";
 import RecipeList from "@/components/RecipeList";
@@ -21,7 +20,7 @@ export default function Home() {
     sortedFavoriteRecipes,
     sortedRecipes,
     groceryList,
-    refreshGroceryData,
+    removeGroceryRecipe,
   } = useHomeRecipeData(searchText);
 
   // Removes a recipe from the grocery list after user confirmation.
@@ -34,12 +33,7 @@ export default function Home() {
       return;
     }
 
-    removeRecipeFromGroceryList(
-      recipe.slug,
-      recipe.structuredIngredients
-    );
-
-    refreshGroceryData();
+    removeGroceryRecipe(recipe);
   }
 
   return (
