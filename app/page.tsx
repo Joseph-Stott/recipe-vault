@@ -20,6 +20,7 @@ export default function Home() {
     sortedFavoriteRecipes,
     sortedRecipes,
     groceryList,
+    isLoaded,
     removeGroceryRecipe,
   } = useHomeRecipeData(searchText);
 
@@ -34,6 +35,16 @@ export default function Home() {
     }
 
     removeGroceryRecipe(recipe);
+  }
+
+  if (!isLoaded) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+        <p className="text-sm text-zinc-500">
+          Loading recipes...
+        </p>
+      </main>
+    );
   }
 
   return (

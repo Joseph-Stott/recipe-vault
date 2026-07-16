@@ -25,6 +25,7 @@ export function useHomeRecipeData(searchText: string) {
     const [favoriteRecipeSlugs, setFavoriteRecipeSlugs] = useState<string[]>([]);
     const [groceryList, setGroceryList] = useState<string[]>([]);
     const [groceryRecipeSlugs, setGroceryRecipeSlugs] = useState<string[]>([]);
+    const [isLoaded, setIsLoaded] = useState(false);
 
     // Loads browser-stored recipe data once when the component using
     // this hook is first mounted.
@@ -35,6 +36,8 @@ export function useHomeRecipeData(searchText: string) {
             getGroceryList().map((ingredient) => ingredient.name)
         );
         setGroceryRecipeSlugs(getGroceryRecipeSlugs());
+
+        setIsLoaded(true);
     }, []);
 
     // Refreshes grocery-related state after the grocery list changes.
@@ -99,6 +102,7 @@ export function useHomeRecipeData(searchText: string) {
         sortedFavoriteRecipes,
         sortedRecipes,
         groceryList,
+        isLoaded,
         removeGroceryRecipe,
     };
 }
