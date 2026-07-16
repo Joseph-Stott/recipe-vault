@@ -86,6 +86,63 @@ export function sortRecipesByIngredientMatches(
     });
 }
 
+type HomeRecipeCollectionInput = {
+    savedRecipes: Recipe[];
+    searchText: string;
+    favoriteRecipeSlugs: string[];
+    groceryRecipeSlugs: string[];
+    groceryIngredients: string[];
+};
+
+// Builds the recipe collections displayed across the homepage.
+// Keeping these related rules together ensures every homepage section
+// uses the same filtering, exclusion, and sorting behavior.
+export function buildHomeRecipeCollections(
+    input: HomeRecipeCollectionInput
+) {
+    const allRecipes = getAllRecipes(input.savedRecipes);
+
+    const filteredRecipes = filterRecipesBySearch(
+        allRecipes,
+        input.searchText
+    );
+
+    const groceryRecipes = getGroceryRecipes(
+        filteredRecipes,
+        input.groceryRecipeSlugs
+    );
+
+    const favoriteRecipes = getFavoriteRecipes(
+        filteredRecipes,
+        input.favoriteRecipeSlugs,
+        input.groceryRecipeSlugs
+    );
+
+    const sortedFavoriteRecipes = sortRecipesByIngredientMatches(
+        favoriteRecipes,
+        input.groceryIngredients
+    );
+
+    const mainRecipes = getMainRecipes(
+        filteredRecipes,
+        input.favoriteRecipeSlugs,
+        input.groceryRecipeSlugs
+    );
+
+    const sortedRecipes = sortRecipesByIngredientMatches(
+        mainRecipes,
+        input.groceryIngredients
+    );
+
+    return {
+        allRecipes,
+        filteredRecipes,
+        groceryRecipes,
+        sortedFavoriteRecipes,
+        sortedRecipes,
+    };
+}
+
 type RecipeFormValues = {
     slug: string;
     title: string;

@@ -9,14 +9,7 @@ import {
 } from "@/lib/groceryList";
 import { getSavedRecipes } from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
-import {
-  filterRecipesBySearch,
-  getAllRecipes,
-  getFavoriteRecipes,
-  getGroceryRecipes,
-  getMainRecipes,
-  sortRecipesByIngredientMatches,
-} from "@/lib/recipeService";
+import { buildHomeRecipeCollections } from "@/lib/recipeService";
 
 // Provides the homepage with stored recipe data, derived recipe groups,
 // and grocery refresh behavior.
@@ -59,41 +52,21 @@ export function useHomeRecipeData(searchText: string) {
         refreshGroceryData();
     }
 
-    // Builds the recipe groups used by the homepage from the stored data
-    // and current search text.
-    const allRecipes = getAllRecipes(savedRecipes);
-
-    const filteredRecipes = filterRecipesBySearch(
+    // Delegates homepage filtering, grouping, and sorting rules
+    // to the service layer.
+    const {
         allRecipes,
-        searchText
-    );
-
-    const groceryRecipes = getGroceryRecipes(
         filteredRecipes,
-        groceryRecipeSlugs
-    );
-
-    const favoriteRecipes = getFavoriteRecipes(
-        filteredRecipes,
+        groceryRecipes,
+        sortedFavoriteRecipes,
+        sortedRecipes,
+    } = buildHomeRecipeCollections({
+        savedRecipes,
+        searchText,
         favoriteRecipeSlugs,
-        groceryRecipeSlugs
-    );
-
-    const sortedFavoriteRecipes = sortRecipesByIngredientMatches(
-        favoriteRecipes,
-        groceryList
-    );
-
-    const mainRecipes = getMainRecipes(
-        filteredRecipes,
-        favoriteRecipeSlugs,
-        groceryRecipeSlugs
-    );
-
-    const sortedRecipes = sortRecipesByIngredientMatches(
-        mainRecipes,
-        groceryList
-    );
+        groceryRecipeSlugs,
+        groceryIngredients: groceryList,
+    });
 
     return {
         allRecipes,
