@@ -1,6 +1,6 @@
 import RecipeCard from "@/components/RecipeCard";
 import { Recipe } from "@/types/recipe";
-import { getIngredientNames, getIngredientMatchCount } from "@/lib/recipeUtils";
+import { getRecipeIngredientMatchCount } from "@/lib/recipeUtils";
 
 type RecipeListProps = {
     recipes: Recipe[];
@@ -33,8 +33,8 @@ export default function RecipeList({
                 </p>
             ) : (
                 recipes.map((recipe) => {
-                    const matchCount = getIngredientMatchCount(
-                        getIngredientNames(recipe),
+                    const matchCount = getRecipeIngredientMatchCount(
+                        recipe,
                         groceryList
                     );
 

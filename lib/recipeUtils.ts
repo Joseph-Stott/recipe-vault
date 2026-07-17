@@ -17,6 +17,16 @@ export function getIngredientMatchCount(
     ).length;
 }
 
+export function getRecipeIngredientMatchCount(
+    recipe: Recipe,
+    groceryIngredients: string[]
+) {
+    return getIngredientMatchCount(
+        getIngredientNames(recipe),
+        groceryIngredients
+    );
+}
+
 export function createSlug(title: string) {
     return title
         .toLowerCase()

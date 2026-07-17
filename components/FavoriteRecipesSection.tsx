@@ -1,6 +1,6 @@
 import RecipeCard from "@/components/RecipeCard";
 import { Recipe } from "@/types/recipe";
-import { getIngredientNames, getIngredientMatchCount } from "@/lib/recipeUtils";
+import { getRecipeIngredientMatchCount } from "@/lib/recipeUtils";
 
 type FavoriteRecipesSectionProps = {
     recipes: Recipe[];
@@ -23,8 +23,8 @@ export default function FavoriteRecipesSection({
                     </p>
                 ) : (
                     recipes.map((recipe) => {
-                        const matchCount = getIngredientMatchCount(
-                            getIngredientNames(recipe),
+                        const matchCount = getRecipeIngredientMatchCount(
+                            recipe,
                             groceryList
                         );
 

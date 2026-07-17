@@ -1,6 +1,6 @@
 import { recipes } from "@/data/recipes";
 import { Recipe, Ingredient } from "@/types/recipe";
-import { getIngredientNames, getIngredientMatchCount } from "@/lib/recipeUtils";
+import { getIngredientNames, getRecipeIngredientMatchCount } from "@/lib/recipeUtils";
 
 // Combines saved recipes with built-in recipes.
 // Saved recipes are placed first so edited recipes override
@@ -72,13 +72,13 @@ export function sortRecipesByIngredientMatches(
     groceryIngredients: string[]
 ) {
     return [...recipes].sort((a, b) => {
-        const aIngredientMatches = getIngredientMatchCount(
-            getIngredientNames(a),
+        const aIngredientMatches = getRecipeIngredientMatchCount(
+            a,
             groceryIngredients
         );
 
-        const bIngredientMatches = getIngredientMatchCount(
-            getIngredientNames(b),
+        const bIngredientMatches = getRecipeIngredientMatchCount(
+            b,
             groceryIngredients
         );
 
