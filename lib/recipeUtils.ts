@@ -6,13 +6,15 @@ export function getIngredientNames(recipe: Recipe) {
     ) ?? [];
 }
 
-// Counts how many recipe ingredients are currently present
+// Counts how many unique recipe ingredients are currently present
 // in the user's grocery list.
 export function getIngredientMatchCount(
     recipeIngredients: string[],
     groceryIngredients: string[]
 ) {
-    return recipeIngredients.filter((ingredient) =>
+    const uniqueRecipeIngredients = [...new Set(recipeIngredients)];
+
+    return uniqueRecipeIngredients.filter((ingredient) =>
         groceryIngredients.includes(ingredient)
     ).length;
 }
