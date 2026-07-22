@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { getIngredientMatchCount } from "@/lib/recipeUtils";
+import {
+    getIngredientMatchCount,
+    getIngredientNames,
+} from "@/lib/recipeUtils";
 
 describe("getIngredientMatchCount", () => {
     it("counts matching ingredients", () => {
@@ -72,5 +75,36 @@ describe("getIngredientMatchCount", () => {
         );
 
         expect(matchCount).toBe(1);
+    });
+});
+
+describe("getIngredientNames", () => {
+    it("returns the names of a recipe's ingredients", () => {
+        const recipe = {
+            slug: "chicken-rice",
+            title: "Chicken Rice",
+            timeCategory: "medium" as const,
+            structuredIngredients: [
+                { amount: 1, unit: "lb", name: "chicken" },
+                { amount: 2, unit: "cups", name: "rice" },
+            ],
+        };
+
+        const ingredientNames = getIngredientNames(recipe);
+
+        expect(ingredientNames).toEqual(["chicken", "rice"]);
+    });
+
+    it("returns an empty array when the recipe has no ingredients", () => {
+        const recipe = {
+            slug: "simple-recipe",
+            title: "Simple Recipe",
+            timeCategory: "fast" as const,
+            structuredIngredients: [],
+        };
+
+        const ingredientNames = getIngredientNames(recipe);
+
+        expect(ingredientNames).toEqual([]);
     });
 });
