@@ -5,6 +5,7 @@ import {
     getFavoriteRecipes,
     getGroceryRecipes,
     getMainRecipes,
+    sortRecipesByIngredientMatches,
 } from "@/lib/recipeService";
 import { recipes } from "@/data/recipes";
 
@@ -243,5 +244,101 @@ describe("getMainRecipes", () => {
         );
 
         expect(mainRecipes).toEqual([recipesWithMainRecipe[2]]);
+    });
+});
+
+describe("sortRecipesByIngredientMatches", () => {
+    it("sorts recipes from most ingredient matches to fewest", () => {
+        const testRecipes = [
+            {
+                slug: "recipe-1",
+                title: "Recipe 1",
+                timeCategory: "fast" as const,
+                structuredIngredients: [
+                    { amount: 1, unit: "", name: "chicken" },
+                ],
+            },
+            {
+                slug: "recipe-2",
+                title: "Recipe 2",
+                timeCategory: "medium" as const,
+                structuredIngredients: [
+                    { amount: 1, unit: "", name: "chicken" },
+                    { amount: 1, unit: "", name: "rice" },
+                ],
+            },
+        ];
+
+        const sortedRecipes = sortRecipesByIngredientMatches(
+            testRecipes,
+            ["chicken", "rice"]
+        );
+
+        expect(sortedRecipes).toEqual([
+            testRecipes[1],
+            testRecipes[0],
+        ]);
+    });
+
+    it("does not modify the original recipe array", () => {
+        const testRecipes = [
+            {
+                slug: "recipe-1",
+                title: "Recipe 1",
+                timeCategory: "fast" as const,
+                structuredIngredients: [
+                    { amount: 1, unit: "", name: "chicken" },
+                ],
+            },
+            {
+                slug: "recipe-2",
+                title: "Recipe 2",
+                timeCategory: "medium" as const,
+                structuredIngredients: [
+                    { amount: 1, unit: "", name: "chicken" },
+                    { amount: 1, unit: "", name: "rice" },
+                ],
+            },
+        ];
+
+        const originalOrder = [...testRecipes];
+
+        sortRecipesByIngredientMatches(
+            testRecipes,
+            ["chicken", "rice"]
+        );
+
+        expect(testRecipes).toEqual(originalOrder);
+    });
+
+    it("places recipes with no ingredient matches after recipes with matches", () => {
+        const testRecipes = [
+            {
+                slug: "recipe-1",
+                title: "Recipe 1",
+                timeCategory: "fast" as const,
+                structuredIngredients: [
+                    { amount: 1, unit: "", name: "chicken" },
+                ],
+            },
+            {
+                slug: "recipe-2",
+                title: "Recipe 2",
+                timeCategory: "medium" as const,
+                structuredIngredients: [
+                    { amount: 1, unit: "", name: "beef" },
+                ],
+            },
+        ];
+
+        const sortedRecipes = sortRecipesByIngredientMatches(
+            testRecipes,
+            ["chicken"]
+        );
+
+        expect(sortedRecipes).toEqual([
+            testRecipes[0],
+            testRecipes[1],
+        ]);
     });
 });
