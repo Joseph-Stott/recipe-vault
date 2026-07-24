@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { 
+import {
+    buildHomeRecipeCollections,
     filterRecipesBySearch,
     getAllRecipes,
     getFavoriteRecipes,
@@ -339,6 +340,158 @@ describe("sortRecipesByIngredientMatches", () => {
         expect(sortedRecipes).toEqual([
             testRecipes[0],
             testRecipes[1],
+        ]);
+    });
+});
+
+describe("buildHomeRecipeCollections", () => {
+    it("separates grocery, favorite, and main recipes", () => {
+        const savedRecipes = [
+            {
+                slug: "grocery-recipe",
+                title: "Grocery Recipe",
+                timeCategory: "fast" as const,
+                structuredIngredients: [],
+            },
+            {
+                slug: "favorite-recipe",
+                title: "Favorite Recipe",
+                timeCategory: "medium" as const,
+                structuredIngredients: [],
+            },
+            {
+                slug: "main-recipe",
+                title: "Main Recipe",
+                timeCategory: "slow" as const,
+                structuredIngredients: [],
+            },
+        ];
+
+        const collections = buildHomeRecipeCollections({
+            savedRecipes,
+            searchText: "",
+            favoriteRecipeSlugs: ["favorite-recipe"],
+            groceryRecipeSlugs: ["grocery-recipe"],
+            groceryIngredients: [],
+        });
+
+        expect(collections.groceryRecipes).toEqual([
+            savedRecipes[0],
+        ]);
+
+        expect(collections.sortedFavoriteRecipes).toEqual([
+            savedRecipes[1],
+        ]);
+
+        expect(collections.sortedRecipes).toContainEqual(
+            savedRecipes[2]
+        );
+    });
+
+    it("applies the search filter before building recipe collections", () => {
+        const savedRecipes = [
+            {
+                slug: "chicken-recipe",
+                title: "Chicken Recipe",
+                timeCategory: "fast" as const,
+                structuredIngredients: [],
+            },
+            {
+                slug: "beef-recipe",
+                title: "Beef Recipe",
+                timeCategory: "medium" as const,
+                structuredIngredients: [],
+            },
+        ];
+
+        const collections = buildHomeRecipeCollections({
+            savedRecipes,
+            searchText: "Chicken",
+            favoriteRecipeSlugs: [],
+            groceryRecipeSlugs: [],
+            groceryIngredients: [],
+        });
+
+        expect(collections.filteredRecipes).toContainEqual(
+            savedRecipes[0]
+        );
+
+        expect(collections.filteredRecipes).not.toContainEqual(
+            savedRecipes[1]
+        );
+
+        expect(collections.sortedRecipes).toContainEqual(
+            savedRecipes[0]
+        );
+
+        expect(collections.sortedRecipes).not.toContainEqual(
+            savedRecipes[1]
+        );
+    });
+
+    it("sorts favorite and main recipes by grocery ingredient matches", () => {
+        const savedRecipes = [
+            {
+                slug: "favorite-one-match",
+                title: "Favorite One Match",
+                timeCategory: "fast" as const,
+                structuredIngredients: [
+                    { amount: 1, unit: "", name: "chicken" },
+                ],
+            },
+            {
+                slug: "favorite-two-matches",
+                title: "Favorite Two Matches",
+                timeCategory: "medium" as const,
+                structuredIngredients: [
+                    { amount: 1, unit: "", name: "chicken" },
+                    { amount: 1, unit: "", name: "rice" },
+                ],
+            },
+            {
+                slug: "main-one-match",
+                title: "Main One Match",
+                timeCategory: "fast" as const,
+                structuredIngredients: [
+                    { amount: 1, unit: "", name: "chicken" },
+                ],
+            },
+            {
+                slug: "main-two-matches",
+                title: "Main Two Matches",
+                timeCategory: "medium" as const,
+                structuredIngredients: [
+                    { amount: 1, unit: "", name: "chicken" },
+                    { amount: 1, unit: "", name: "rice" },
+                ],
+            },
+        ];
+
+        const collections = buildHomeRecipeCollections({
+            savedRecipes,
+            searchText: "",
+            favoriteRecipeSlugs: [
+                "favorite-one-match",
+                "favorite-two-matches",
+            ],
+            groceryRecipeSlugs: [],
+            groceryIngredients: ["chicken", "rice"],
+        });
+
+        expect(collections.sortedFavoriteRecipes.slice(0, 2)).toEqual([
+            savedRecipes[1],
+            savedRecipes[0],
+        ]);
+
+        const mainSavedRecipes = collections.sortedRecipes.filter(
+            (recipe) =>
+                recipe.slug === "main-one-match" ||
+                recipe.slug === "main-two-matches"
+        );
+
+        expect(mainSavedRecipes).toEqual([
+            savedRecipes[3],
+            savedRecipes[2],
         ]);
     });
 });
