@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
     buildHomeRecipeCollections,
+    buildRecipeFromForm,
     filterRecipesBySearch,
     getAllRecipes,
     getFavoriteRecipes,
@@ -493,5 +494,34 @@ describe("buildHomeRecipeCollections", () => {
             savedRecipes[3],
             savedRecipes[2],
         ]);
+    });
+});
+
+describe("buildRecipeFromForm", () => {
+    it("copies the basic recipe fields from the form values", () => {
+        const formValues = {
+            slug: "chicken-rice",
+            title: "Chicken Rice",
+            timeCategory: "medium" as const,
+            structuredIngredients: [
+                {
+                    amount: 1,
+                    unit: "lb",
+                    name: "chicken",
+                },
+            ],
+            cookInstructionsText: "",
+            cookBook: "",
+            pageNumber: "",
+        };
+
+        const recipe = buildRecipeFromForm(formValues);
+
+        expect(recipe.slug).toBe(formValues.slug);
+        expect(recipe.title).toBe(formValues.title);
+        expect(recipe.timeCategory).toBe(formValues.timeCategory);
+        expect(recipe.structuredIngredients).toEqual(
+            formValues.structuredIngredients
+        );
     });
 });
