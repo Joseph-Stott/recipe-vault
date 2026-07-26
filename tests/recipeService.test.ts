@@ -524,4 +524,75 @@ describe("buildRecipeFromForm", () => {
             formValues.structuredIngredients
         );
     });
+
+    it("converts instruction text into trimmed recipe instructions", () => {
+        const formValues = {
+            slug: "chicken-rice",
+            title: "Chicken Rice",
+            timeCategory: "medium" as const,
+            structuredIngredients: [],
+            cookInstructionsText: `
+                Cook the chicken
+
+                Add the rice
+            `,
+            cookBook: "",
+            pageNumber: "",
+        };
+
+        const recipe = buildRecipeFromForm(formValues);
+
+        expect(recipe.cookInstructions).toEqual([
+            "Cook the chicken",
+            "Add the rice",
+        ]);
+    });
+
+    it("returns undefined when no cook instructions are provided", () => {
+        const formValues = {
+            slug: "chicken-rice",
+            title: "Chicken Rice",
+            timeCategory: "medium" as const,
+            structuredIngredients: [],
+            cookInstructionsText: "",
+            cookBook: "",
+            pageNumber: "",
+        };
+
+        const recipe = buildRecipeFromForm(formValues);
+
+        expect(recipe.cookInstructions).toBeUndefined();
+    });
+
+    it("converts the page number string to a number", () => {
+        const formValues = {
+            slug: "chicken-rice",
+            title: "Chicken Rice",
+            timeCategory: "medium" as const,
+            structuredIngredients: [],
+            cookInstructionsText: "",
+            cookBook: "",
+            pageNumber: "42",
+        };
+
+        const recipe = buildRecipeFromForm(formValues);
+
+        expect(recipe.pageNumber).toBe(42);
+    });
+
+    it("returns undefined when no page number is provided", () => {
+        const formValues = {
+            slug: "chicken-rice",
+            title: "Chicken Rice",
+            timeCategory: "medium" as const,
+            structuredIngredients: [],
+            cookInstructionsText: "",
+            cookBook: "",
+            pageNumber: "",
+        };
+
+        const recipe = buildRecipeFromForm(formValues);
+
+        expect(recipe.pageNumber).toBeUndefined();
+    });
 });
