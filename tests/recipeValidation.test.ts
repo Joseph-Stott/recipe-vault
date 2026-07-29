@@ -117,4 +117,78 @@ describe("validateRecipeForm", () => {
             },
         ]);
     });
+
+    it("rejects a title that creates an existing recipe slug", () => {
+        const result = validateRecipeForm({
+            title: "Chicken Rice",
+            structuredIngredients: [
+                {
+                    amount: 1,
+                    unit: "cup",
+                    name: "rice",
+                },
+            ],
+            existingSlugs: ["chicken-rice"],
+        });
+
+        expect(result.valid).toBe(false);
+        expect(result.messages).toContain(
+            "A recipe with this title already exists"
+        );
+    });
+
+    it("allows the current recipe to keep its existing slug", () => {
+        const result = validateRecipeForm({
+            title: "Chicken Rice",
+            structuredIngredients: [
+                {
+                    amount: 1,
+                    unit: "cup",
+                    name: "rice",
+                },
+            ],
+            existingSlugs: ["chicken-rice"],
+            currentSlug: "chicken-rice",
+        });
+
+        expect(result.valid).toBe(true);
+        expect(result.messages).toEqual([]);
+    });
+
+    it("rejects a title that does not contain letters or numbers", () => {
+        const result = validateRecipeForm({
+            title: "!!!",
+            structuredIngredients: [
+                {
+                    amount: 1,
+                    unit: "cup",
+                    name: "rice",
+                },
+            ],
+        });
+
+        expect(result.valid).toBe(false);
+        expect(result.messages).toContain(
+            "Recipe title must contain letters or numbers"
+        );
+    });
+
+    it("rejects a recipe with no complete ingredients", () => {
+        const result = validateRecipeForm({
+            title: "Chicken Rice",
+            structuredIngredients: [
+                {
+                    amount: "",
+                    unit: "",
+                    name: "",
+                },
+            ],
+        });
+
+        expect(result.valid).toBe(false);
+        expect(result.messages).toContain(
+            "At least one complete ingredient is required"
+        );
+        expect(result.filteredIngredients).toEqual([]);
+    });
 });
