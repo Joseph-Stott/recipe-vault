@@ -24,6 +24,28 @@ Users can create, edit, organize, and browse recipes while generating a grocery 
 
 ![Add Recipe](public/screenshots/add-recipe.png)
 
+## Running the Project
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+in your browser.
+
 ## Key Features
 
 ### Recipe Management
@@ -60,6 +82,7 @@ This enables:
 
 * Add recipe ingredients to a grocery list
 * Remove recipe ingredients from a grocery list
+* Individual grocery recipe removal from homepage grocery section
 * Persistent grocery list storage
 * Persistent grocery recipe tracking
 * Prevent duplicate grocery recipe entries
@@ -132,53 +155,74 @@ The application uses localStorage to persist:
 
 A structured ingredient model replaced a previous string-based ingredient system, enabling aggregation, validation, and more flexible rendering throughout the application.
 
+### Business Logic Separation
+
+Business logic is separated into reusable service and utility modules rather than embedded directly inside React components. This improves maintainability, testability, and code reuse.
+
 ## Technology Stack
 
 * Next.js App Router
 * React
 * TypeScript
 * Tailwind CSS
-* localStorage
+* Vitest
+* Browser localStorage
 
 ## Project Structure
 
 ```text
-app/
-components/
-data/
-lib/
-types/
+app/          Application routes and pages
+components/   Reusable React components
+data/         Built-in recipe data
+hooks/        React hooks for page-level state and behavior
+lib/          Application services, storage, validation, and utilities
+tests/        Vitest unit tests
+types/        Shared TypeScript types
 ```
+
+## Architecture
+
+Recipe Vault follows a layered architecture that separates UI rendering, state management, business logic, and utility functions.
+
+```text
+UI Components
+      ↓
+React Hooks
+      ↓
+Service Layer
+      ↓
+Utilities & Storage
+```
+
+This separation helps keep components focused, improves testability, and makes business logic reusable across the application.
+
+## Testing
+
+Recipe Vault includes unit tests written with Vitest. Business logic is tested independently of the UI to make refactoring safer and to help prevent regressions as new features are added.
+
+Current test coverage includes:
+
+- Recipe utility functions
+- Recipe service functions
+- Homepage recipe collection building
+- Recipe form value transformations
+
+Tests verify behaviors such as:
+
+- Slug generation
+- Ingredient matching
+- Recipe sorting
+- Homepage section building
+- Search filtering
+- Form data transformation
 
 ## Future Improvements
 
 * Toast notifications
 * Improved measurement conversion and aggregation
-* Database-backed persistence
 * User accounts
 * Cloud synchronization
-
-## Running the Project
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Start the development server:
-
-```bash
-npm run dev
-```
-
-Open:
-
-```text
-http://localhost:3000
-```
-
-in your browser.
+* Database-backed persistence with API routes
 
 ## Purpose
 
