@@ -46,4 +46,29 @@ describe("groceryList", () => {
     it("returns an empty grocery list when nothing is stored", () => {
         expect(getGroceryList()).toEqual([]);
     });
+
+    it("adds missing fields to grocery items from older storage data", () => {
+        storage.set(
+            "grocery-list",
+            JSON.stringify([
+                {
+                    amount: 1,
+                    unit: "cup",
+                    name: "rice",
+                },
+            ])
+        );
+
+        const groceryList = getGroceryList();
+
+        expect(groceryList).toEqual([
+            {
+                amount: 1,
+                unit: "cup",
+                name: "rice",
+                id: "1-cup-rice-0",
+                checked: false,
+            },
+        ]);
+    });
 });
