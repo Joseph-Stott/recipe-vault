@@ -42,4 +42,8 @@ describe("groceryList", () => {
             }),
         ]);
     });
+
+    it("returns an empty grocery list when nothing is stored", () => {
+        expect(getGroceryList()).toEqual([]);
+    });
 });
