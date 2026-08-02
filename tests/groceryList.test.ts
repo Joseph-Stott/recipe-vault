@@ -71,4 +71,38 @@ describe("groceryList", () => {
             },
         ]);
     });
+
+    it("adds multiple grocery items", () => {
+        addIngredientsToGroceryList([
+            {
+                amount: 1,
+                unit: "cup",
+                name: "rice",
+            },
+            {
+                amount: 2,
+                unit: "tbsp",
+                name: "soy sauce",
+            },
+        ]);
+
+        const groceryList = getGroceryList();
+
+        expect(groceryList).toHaveLength(2);
+
+        expect(groceryList).toEqual([
+            expect.objectContaining({
+                amount: 1,
+                unit: "cup",
+                name: "rice",
+                checked: false,
+            }),
+            expect.objectContaining({
+                amount: 2,
+                unit: "tbsp",
+                name: "soy sauce",
+                checked: false,
+            }),
+        ]);
+    });
 });
