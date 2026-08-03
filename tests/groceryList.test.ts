@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
     addIngredientsToGroceryList,
     getGroceryList,
+    toggleGroceryItemChecked,
 } from "@/lib/groceryList";
 
 const storage = new Map<string, string>();
@@ -104,5 +105,45 @@ describe("groceryList", () => {
                 checked: false,
             }),
         ]);
+    });
+
+    it("marks a grocery item as checked", () => {
+        addIngredientsToGroceryList([
+            {
+                amount: 1,
+                unit: "cup",
+                name: "rice",
+            },
+        ]);
+
+        const [groceryItem] = getGroceryList();
+
+        const updatedGroceryList = toggleGroceryItemChecked(
+            groceryItem.id
+        );
+
+        expect(updatedGroceryList[0].checked).toBe(true);
+        expect(getGroceryList()[0].checked).toBe(true);
+    });
+
+    it("marks a checked grocery item as unchecked", () => {
+        addIngredientsToGroceryList([
+            {
+                amount: 1,
+                unit: "cup",
+                name: "rice",
+            },
+        ]);
+
+        const [groceryItem] = getGroceryList();
+
+        toggleGroceryItemChecked(groceryItem.id);
+
+        const updatedGroceryList = toggleGroceryItemChecked(
+            groceryItem.id
+        );
+
+        expect(updatedGroceryList[0].checked).toBe(false);
+        expect(getGroceryList()[0].checked).toBe(false);
     });
 });
