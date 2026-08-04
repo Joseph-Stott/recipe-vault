@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
     addIngredientsToGroceryList,
+    clearCheckedGroceryItems,
     getGroceryList,
     toggleGroceryItemChecked,
     toggleGroceryItemsChecked,
@@ -234,5 +235,82 @@ describe("groceryList", () => {
         expect(
             updatedGroceryList[1].id
         ).toBe(milkItem.id);
+    });
+
+    it("removes checked grocery items", () => {
+        addIngredientsToGroceryList([
+            {
+                amount: 1,
+                unit: "cup",
+                name: "rice",
+            },
+            {
+                amount: 2,
+                unit: "cups",
+                name: "milk",
+            },
+        ]);
+
+        const groceryList = getGroceryList();
+
+        toggleGroceryItemChecked(groceryList[0].id);
+
+        const updatedGroceryList = clearCheckedGroceryItems();
+
+        expect(updatedGroceryList).toHaveLength(1);
+        expect(updatedGroceryList[0]).toEqual(
+            expect.objectContaining({
+                amount: 2,
+                unit: "cups",
+                name: "milk",
+                checked: false,
+            })
+        );
+    });
+
+    it("persists the grocery list after clearing checked items", () => {
+        addIngredientsToGroceryList([
+            {
+                amount: 1,
+                unit: "cup",
+                name: "rice",
+            },
+            {
+                amount: 2,
+                unit: "cups",
+                name: "milk",
+            },
+        ]);
+
+        const groceryList = getGroceryList();
+
+        toggleGroceryItemChecked(groceryList[0].id);
+        clearCheckedGroceryItems();
+
+        expect(getGroceryList()).toEqual([
+            expect.objectContaining({
+                amount: 2,
+                unit: "cups",
+                name: "milk",
+                checked: false,
+            }),
+        ]);
+    });
+
+    it("leaves the grocery list unchanged when no items are checked", () => {
+        addIngredientsToGroceryList([
+            {
+                amount: 1,
+                unit: "cup",
+                name: "rice",
+            },
+        ]);
+
+        const originalGroceryList = getGroceryList();
+
+        const updatedGroceryList = clearCheckedGroceryItems();
+
+        expect(updatedGroceryList).toEqual(originalGroceryList);
+        expect(getGroceryList()).toEqual(originalGroceryList);
     });
 });
