@@ -3,6 +3,7 @@ import {
     addIngredientsToGroceryList,
     getGroceryList,
     toggleGroceryItemChecked,
+    toggleGroceryItemsChecked,
 } from "@/lib/groceryList";
 
 const storage = new Map<string, string>();
@@ -145,5 +146,93 @@ describe("groceryList", () => {
 
         expect(updatedGroceryList[0].checked).toBe(false);
         expect(getGroceryList()[0].checked).toBe(false);
+    });
+
+    it("marks multiple grocery items as checked", () => {
+        addIngredientsToGroceryList([
+            {
+                amount: 1,
+                unit: "cup",
+                name: "rice",
+            },
+            {
+                amount: 2,
+                unit: "cups",
+                name: "rice",
+            },
+        ]);
+
+        const groceryList = getGroceryList();
+        const itemIds = groceryList.map((item) => item.id);
+
+        const updatedGroceryList = toggleGroceryItemsChecked(itemIds);
+
+        expect(
+            updatedGroceryList.every((item) => item.checked)
+        ).toBe(true);
+
+        expect(
+            getGroceryList().every((item) => item.checked)
+        ).toBe(true);
+    });
+
+    it("marks multiple checked grocery items as unchecked", () => {
+        addIngredientsToGroceryList([
+            {
+                amount: 1,
+                unit: "cup",
+                name: "rice",
+            },
+            {
+                amount: 2,
+                unit: "cups",
+                name: "rice",
+            },
+        ]);
+
+        const groceryList = getGroceryList();
+        const itemIds = groceryList.map((item) => item.id);
+
+        toggleGroceryItemsChecked(itemIds);
+
+        const updatedGroceryList = toggleGroceryItemsChecked(itemIds);
+
+        expect(
+            updatedGroceryList.every((item) => !item.checked)
+        ).toBe(true);
+
+        expect(
+            getGroceryList().every((item) => !item.checked)
+        ).toBe(true);
+    });
+
+    it("does not change grocery items whose ids are not selected", () => {
+        addIngredientsToGroceryList([
+            {
+                amount: 1,
+                unit: "cup",
+                name: "rice",
+            },
+            {
+                amount: 2,
+                unit: "cups",
+                name: "milk",
+            },
+        ]);
+
+        const groceryList = getGroceryList();
+        const riceItem = groceryList[0];
+        const milkItem = groceryList[1];
+
+        const updatedGroceryList = toggleGroceryItemsChecked([
+            riceItem.id,
+        ]);
+
+        expect(updatedGroceryList[0].checked).toBe(true);
+        expect(updatedGroceryList[1].checked).toBe(false);
+
+        expect(
+            updatedGroceryList[1].id
+        ).toBe(milkItem.id);
     });
 });
