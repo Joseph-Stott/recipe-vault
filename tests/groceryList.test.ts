@@ -1,8 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
     addIngredientsToGroceryList,
+    addRecipeSlugToGroceryList,
     clearCheckedGroceryItems,
+    clearGroceryRecipeSlugs,
     getGroceryList,
+    getGroceryRecipeSlugs,
+    removeRecipeSlugFromGroceryList,
     toggleGroceryItemChecked,
     toggleGroceryItemsChecked,
 } from "@/lib/groceryList";
@@ -312,5 +316,46 @@ describe("groceryList", () => {
 
         expect(updatedGroceryList).toEqual(originalGroceryList);
         expect(getGroceryList()).toEqual(originalGroceryList);
+    });
+
+    it("returns an empty recipe slug list when nothing is stored", () => {
+        expect(getGroceryRecipeSlugs()).toEqual([]);
+    });
+
+    it("adds a recipe slug to grocery storage", () => {
+        addRecipeSlugToGroceryList("chicken-rice");
+
+        expect(getGroceryRecipeSlugs()).toEqual([
+            "chicken-rice",
+        ]);
+    });
+
+    it("does not add a duplicate grocery recipe slug", () => {
+        addRecipeSlugToGroceryList("chicken-rice");
+        addRecipeSlugToGroceryList("chicken-rice");
+
+        expect(getGroceryRecipeSlugs()).toEqual([
+            "chicken-rice",
+        ]);
+    });
+
+    it("removes a recipe slug from grocery storage", () => {
+        addRecipeSlugToGroceryList("chicken-rice");
+        addRecipeSlugToGroceryList("garden-salad");
+
+        removeRecipeSlugFromGroceryList("chicken-rice");
+
+        expect(getGroceryRecipeSlugs()).toEqual([
+            "garden-salad",
+        ]);
+    });
+
+    it("clears all grocery recipe slugs", () => {
+        addRecipeSlugToGroceryList("chicken-rice");
+        addRecipeSlugToGroceryList("garden-salad");
+
+        clearGroceryRecipeSlugs();
+
+        expect(getGroceryRecipeSlugs()).toEqual([]);
     });
 });
