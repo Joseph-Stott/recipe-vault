@@ -6,6 +6,8 @@ import {
     clearGroceryRecipeSlugs,
     getGroceryList,
     getGroceryRecipeSlugs,
+    removeIngredientsFromGroceryList,
+    removeRecipeFromGroceryList,
     removeRecipeSlugFromGroceryList,
     toggleGroceryItemChecked,
     toggleGroceryItemsChecked,
@@ -357,5 +359,86 @@ describe("groceryList", () => {
         clearGroceryRecipeSlugs();
 
         expect(getGroceryRecipeSlugs()).toEqual([]);
+    });
+
+    it("removes only one matching occurrence of a shared ingredient", () => {
+        const sharedIngredient = {
+            amount: 1,
+            unit: "cup",
+            name: "rice",
+        };
+
+        addIngredientsToGroceryList([
+            sharedIngredient,
+            sharedIngredient,
+            {
+                amount: 2,
+                unit: "cups",
+                name: "milk",
+            },
+        ]);
+
+        removeIngredientsFromGroceryList([
+            sharedIngredient,
+        ]);
+
+        const groceryList = getGroceryList();
+
+        expect(groceryList).toHaveLength(2);
+
+        expect(
+            groceryList.filter((item) => item.name === "rice")
+        ).toHaveLength(1);
+
+        expect(groceryList).toContainEqual(
+            expect.objectContaining({
+                amount: 2,
+                unit: "cups",
+                name: "milk",
+            })
+        );
+    });
+
+    it("removes a recipe's ingredients and grocery slug together", () => {
+        const chickenIngredients = [
+            {
+                amount: 1,
+                unit: "lb",
+                name: "chicken",
+            },
+        ];
+
+        const saladIngredients = [
+            {
+                amount: 1,
+                unit: "head",
+                name: "lettuce",
+            },
+        ];
+
+        addIngredientsToGroceryList([
+            ...chickenIngredients,
+            ...saladIngredients,
+        ]);
+
+        addRecipeSlugToGroceryList("chicken-recipe");
+        addRecipeSlugToGroceryList("salad-recipe");
+
+        removeRecipeFromGroceryList(
+            "chicken-recipe",
+            chickenIngredients
+        );
+
+        expect(getGroceryList()).toEqual([
+            expect.objectContaining({
+                amount: 1,
+                unit: "head",
+                name: "lettuce",
+            }),
+        ]);
+
+        expect(getGroceryRecipeSlugs()).toEqual([
+            "salad-recipe",
+        ]);
     });
 });
