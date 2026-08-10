@@ -3,6 +3,7 @@ import {
     addSavedRecipe,
     deleteSavedRecipe,
     getSavedRecipes,
+    subscribeToSavedRecipes,
     updateSavedRecipe,
 } from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
@@ -132,5 +133,28 @@ describe("recipeStorage", () => {
         deleteSavedRecipe("does-not-exist");
 
         expect(getSavedRecipes()).toEqual([recipe]);
+    });
+
+    it("notifies subscribers when saved recipes change", () => {
+        const listener = vi.fn();
+
+        const unsubscribe = subscribeToSavedRecipes(listener);
+
+        const recipe: Recipe = {
+            slug: "chicken-rice",
+            title: "Chicken Rice",
+            timeCategory: "medium",
+            structuredIngredients: [],
+        };
+
+        addSavedRecipe(recipe);
+
+        expect(listener).toHaveBeenCalledTimes(1);
+
+        unsubscribe();
+
+        deleteSavedRecipe(recipe.slug);
+
+        expect(listener).toHaveBeenCalledTimes(1);
     });
 });
