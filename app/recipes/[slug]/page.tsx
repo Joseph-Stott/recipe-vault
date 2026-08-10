@@ -1,11 +1,17 @@
 "use client";
 import GroceryListButton from "@/components/GroceryListButton";
 import Link from "next/link";
-import { getSavedRecipes } from "@/lib/recipeStorage";
-import { useEffect, useState } from "react";
-import { Recipe } from "@/types/recipe";
+import {
+    getSavedRecipes,
+    subscribeToSavedRecipes,
+} from "@/lib/recipeStorage";
+import { useSyncExternalStore } from "react";
 import { useParams } from "next/navigation";
-import { isFavoriteRecipe, toggleFavoriteRecipe } from "@/lib/favorites";
+import {
+    getFavoriteRecipeSlugs,
+    subscribeToFavoriteRecipeSlugs,
+    toggleFavoriteRecipe,
+} from "@/lib/favorites";
 import BackButton from "@/components/BackButton";
 import { getAllRecipes } from "@/lib/recipeService";
 
@@ -15,31 +21,34 @@ const timeCategoryStyles = {
     slow: "bg-red-600 text-white"
 };
 
+const EMPTY_SAVED_RECIPES: ReturnType<typeof getSavedRecipes> = [];
+const EMPTY_FAVORITE_SLUGS: string[] = [];
+
 export default function DetailPage() {
 
     const params = useParams();
+    
+    const savedRecipes = useSyncExternalStore(
+        subscribeToSavedRecipes,
+        getSavedRecipes,
+        () => EMPTY_SAVED_RECIPES
+    );
 
-    const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([]);
-
-    const [isFavorite, setIsFavorite] = useState(false);
+    const favoriteRecipeSlugs = useSyncExternalStore(
+        subscribeToFavoriteRecipeSlugs,
+        getFavoriteRecipeSlugs,
+        () => EMPTY_FAVORITE_SLUGS
+    );
 
     const allRecipes = getAllRecipes(savedRecipes);
 
     const recipe = allRecipes.find((recipe) => recipe.slug === params.slug);
-    
-    useEffect(() => {
-        setSavedRecipes(getSavedRecipes());
-    }, []);
-
-    useEffect(() => {
-        if (recipe) {
-            setIsFavorite(isFavoriteRecipe(recipe.slug));
-        }
-    }, [recipe]);
 
     if (!recipe) {
         return <p className="text-center text-xl text-zinc-400">No recipe found </p>;
     }
+
+    const isFavorite = favoriteRecipeSlugs.includes(recipe.slug);
 
     const groceryIngredients = recipe.structuredIngredients ?? [];
 
@@ -58,7 +67,6 @@ export default function DetailPage() {
                         `}
                         onClick={() => {
                             toggleFavoriteRecipe(recipe.slug);
-                            setIsFavorite(!isFavorite);
                         }}
                         >
                         {isFavorite ? "★" : "☆"}
