@@ -5,6 +5,29 @@ export type GroceryListItem = Ingredient & {
     checked: boolean;
 };
 
+const EMPTY_GROCERY_LIST: GroceryListItem[] = [];
+
+let cachedGroceryListJson: string | null | undefined;
+let cachedGroceryList: GroceryListItem[] = EMPTY_GROCERY_LIST;
+
+type GroceryListListener = () => void;
+
+const groceryListListeners = new Set<GroceryListListener>();
+
+export function subscribeToGroceryList(
+    listener: GroceryListListener
+) {
+    groceryListListeners.add(listener);
+
+    return () => {
+        groceryListListeners.delete(listener);
+    };
+}
+
+function notifyGroceryListListeners() {
+    groceryListListeners.forEach((listener) => listener());
+}
+
 type GroceryRecipeListener = () => void;
 
 const groceryRecipeListeners = new Set<GroceryRecipeListener>();
@@ -25,17 +48,39 @@ function notifyGroceryRecipeListeners() {
 
 export function getGroceryList(): GroceryListItem[] {
     const storedGroceryList = localStorage.getItem("grocery-list");
-    if (!storedGroceryList) {
-        return [];
+
+    // Reuse the previous snapshot until the stored data actually changes.
+    if (storedGroceryList === cachedGroceryListJson) {
+        return cachedGroceryList;
     }
+
+    cachedGroceryListJson = storedGroceryList;
+
+    if (!storedGroceryList) {
+        cachedGroceryList = EMPTY_GROCERY_LIST;
+        return cachedGroceryList;
+    }
+
     const parsedGroceryList = JSON.parse(storedGroceryList);
 
-    return parsedGroceryList.map((ingredient: Ingredient & { id?: string; checked?: boolean}, index: number) => ({
-        ...ingredient,
-        id: ingredient.id ?? `${ingredient.amount}-${ingredient.unit}-${ingredient.name}-${index}`,
-        checked: ingredient.checked ?? false,
-    }));
-};
+    cachedGroceryList = parsedGroceryList.map(
+        (
+            ingredient: Ingredient & {
+                id?: string;
+                checked?: boolean;
+            },
+            index: number
+        ) => ({
+            ...ingredient,
+            id:
+                ingredient.id ??
+                `${ingredient.amount}-${ingredient.unit}-${ingredient.name}-${index}`,
+            checked: ingredient.checked ?? false,
+        })
+    );
+
+    return cachedGroceryList;
+}
 
 export function addIngredientsToGroceryList(ingredients: Ingredient[]) {
     const currentGroceryList = getGroceryList();
@@ -48,7 +93,8 @@ export function addIngredientsToGroceryList(ingredients: Ingredient[]) {
 
     const updatedGroceryList = [...currentGroceryList, ...newGroceryItems];
 
-    localStorage.setItem("grocery-list", JSON.stringify(updatedGroceryList))
+    localStorage.setItem("grocery-list", JSON.stringify(updatedGroceryList));
+    notifyGroceryListListeners();
 };
 
 export function toggleGroceryItemChecked(id: string) {
@@ -66,6 +112,7 @@ export function toggleGroceryItemChecked(id: string) {
     });
 
     localStorage.setItem("grocery-list", JSON.stringify(updatedGroceryList));
+    notifyGroceryListListeners();
 
     return updatedGroceryList;
 }
@@ -89,12 +136,14 @@ export function toggleGroceryItemsChecked(ids: string[]) {
     });
 
     localStorage.setItem("grocery-list", JSON.stringify(updatedGroceryList));
+    notifyGroceryListListeners();
 
     return updatedGroceryList;
 }
 
 export function clearGroceryList () {
     localStorage.removeItem("grocery-list");
+    notifyGroceryListListeners();
 };
 
 export function getGroceryRecipeSlugs(): string[] {
@@ -151,6 +200,7 @@ export function removeIngredientsFromGroceryList(ingredientsToRemove: Ingredient
     });
 
     localStorage.setItem("grocery-list", JSON.stringify(updatedGroceryList));
+    notifyGroceryListListeners();
 }
 
 export function removeRecipeSlugFromGroceryList(slug: string) {
@@ -177,6 +227,7 @@ export function clearCheckedGroceryItems() {
     );
 
     localStorage.setItem("grocery-list", JSON.stringify(updatedGroceryList));
+    notifyGroceryListListeners();
 
     return updatedGroceryList;
 }

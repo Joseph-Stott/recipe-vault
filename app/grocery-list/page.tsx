@@ -1,12 +1,22 @@
 "use client";
-import { clearGroceryList, getGroceryList, clearGroceryRecipeSlugs, toggleGroceryItemsChecked, clearCheckedGroceryItems, type GroceryListItem } from "@/lib/groceryList";
-import { useState, useEffect } from "react";
+import {
+    clearGroceryList,
+    getGroceryList,
+    clearGroceryRecipeSlugs,
+    toggleGroceryItemsChecked,
+    clearCheckedGroceryItems,
+    subscribeToGroceryList,
+    type GroceryListItem,
+} from "@/lib/groceryList";
+import { useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import BackButton from "@/components/BackButton";
 
 type DisplayGroceryItem = GroceryListItem & {
     ids: string[];
 };
+
+const EMPTY_GROCERY_LIST: GroceryListItem[] = [];
 
 // Used so "cup" and "cups" can combine
 function normalizeUnit(unit: string) {
@@ -27,13 +37,13 @@ function formatUnit(amount: number | "", unit: string) {
 }
 
 export default function GroceryListPage() {
-    const [groceryList, setGroceryList] = useState<GroceryListItem[]>([]);
-
     const router = useRouter();
 
-    useEffect(() => {
-        setGroceryList(getGroceryList());
-    }, []);
+    const groceryList = useSyncExternalStore(
+        subscribeToGroceryList,
+        getGroceryList,
+        () => EMPTY_GROCERY_LIST
+    );
 
     const sortedGroceryList = [...groceryList].sort((a, b) => {
         if (a.checked === b.checked) {
@@ -98,7 +108,6 @@ export default function GroceryListPage() {
                             return;
                         }
                         clearGroceryList();
-                        setGroceryList([]);
                         clearGroceryRecipeSlugs();
                         router.push("/");
                     }}
@@ -114,8 +123,7 @@ export default function GroceryListPage() {
                                         type="checkbox"
                                         checked={ingredient.checked}
                                         onChange={() => {
-                                            const updatedGroceryList = toggleGroceryItemsChecked(ingredient.ids);
-                                            setGroceryList(updatedGroceryList);
+                                            toggleGroceryItemsChecked(ingredient.ids);
                                         }}
                                     />
                                     <span className={ingredient.checked ? "line-through text-zinc-500" : ""}>
@@ -136,8 +144,7 @@ export default function GroceryListPage() {
                                     return;
                                 }
 
-                                const updatedGroceryList = clearCheckedGroceryItems();
-                                setGroceryList(updatedGroceryList);
+                                clearCheckedGroceryItems();
                             }}
                         >
                             Clear Purchased Items
