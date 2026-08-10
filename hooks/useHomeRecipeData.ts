@@ -1,55 +1,64 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getFavoriteRecipeSlugs } from "@/lib/favorites";
+import { useSyncExternalStore } from "react";
+import { 
+    getFavoriteRecipeSlugs,
+    subscribeToFavoriteRecipeSlugs,
+} from "@/lib/favorites";
 import { 
     getGroceryList,
     getGroceryRecipeSlugs,
     removeRecipeFromGroceryList,
+    subscribeToGroceryList,
+    subscribeToGroceryRecipeSlugs,
 } from "@/lib/groceryList";
-import { getSavedRecipes } from "@/lib/recipeStorage";
+import {
+    getSavedRecipes,
+    subscribeToSavedRecipes,
+} from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
 import { buildHomeRecipeCollections } from "@/lib/recipeService";
 
-// Provides the homepage with stored recipe data, derived recipe groups,
-// and grocery refresh behavior.
+const EMPTY_RECIPES: Recipe[] = [];
+const EMPTY_SLUGS: string[] = [];
+const EMPTY_GROCERY_ITEMS: ReturnType<typeof getGroceryList> = [];
+
+// Provides the homepage with stored recipe data and derived recipe groups.
 export function useHomeRecipeData(searchText: string) {
-    const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([]);
-    const [favoriteRecipeSlugs, setFavoriteRecipeSlugs] = useState<string[]>([]);
-    const [groceryList, setGroceryList] = useState<string[]>([]);
-    const [groceryRecipeSlugs, setGroceryRecipeSlugs] = useState<string[]>([]);
-    const [isLoaded, setIsLoaded] = useState(false);
+    const savedRecipes = useSyncExternalStore(
+        subscribeToSavedRecipes,
+        getSavedRecipes,
+        () => EMPTY_RECIPES
+    );
 
-    // Loads browser-stored recipe data once when the component using
-    // this hook is first mounted.
-    useEffect(() => {
-        setSavedRecipes(getSavedRecipes());
-        setFavoriteRecipeSlugs(getFavoriteRecipeSlugs());
-        setGroceryList(
-            getGroceryList().map((ingredient) => ingredient.name)
-        );
-        setGroceryRecipeSlugs(getGroceryRecipeSlugs());
+    const favoriteRecipeSlugs = useSyncExternalStore(
+        subscribeToFavoriteRecipeSlugs,
+        getFavoriteRecipeSlugs,
+        () => EMPTY_SLUGS
+    );
 
-        setIsLoaded(true);
-    }, []);
+    const groceryItems = useSyncExternalStore(
+        subscribeToGroceryList,
+        getGroceryList,
+        () => EMPTY_GROCERY_ITEMS
+    );
 
-    // Refreshes grocery-related state after the grocery list changes.
-    function refreshGroceryData() {
-        setGroceryList(
-            getGroceryList().map((ingredient) => ingredient.name)
-        );
-        setGroceryRecipeSlugs(getGroceryRecipeSlugs());
-    }
+    const groceryRecipeSlugs = useSyncExternalStore(
+        subscribeToGroceryRecipeSlugs,
+        getGroceryRecipeSlugs,
+        () => EMPTY_SLUGS
+    );
 
-    // Removes a recipe and its contributed ingredients from grocery storage,
-    // then refreshes the related React state so the homepage updates immediately.
+    const groceryList = groceryItems.map(
+        (ingredient) => ingredient.name
+    );
+
+    // Removes a recipe and its contributed ingredients from grocery storage.
     function removeGroceryRecipe(recipe: Recipe) {
         removeRecipeFromGroceryList(
             recipe.slug,
             recipe.structuredIngredients
         );
-
-        refreshGroceryData();
     }
 
     // Delegates homepage filtering, grouping, and sorting rules
@@ -75,7 +84,6 @@ export function useHomeRecipeData(searchText: string) {
         sortedFavoriteRecipes,
         sortedRecipes,
         groceryList,
-        isLoaded,
         removeGroceryRecipe,
     };
 }
