@@ -5,6 +5,24 @@ export type GroceryListItem = Ingredient & {
     checked: boolean;
 };
 
+type GroceryRecipeListener = () => void;
+
+const groceryRecipeListeners = new Set<GroceryRecipeListener>();
+
+export function subscribeToGroceryRecipeSlugs(
+    listener: GroceryRecipeListener
+) {
+    groceryRecipeListeners.add(listener);
+
+    return () => {
+        groceryRecipeListeners.delete(listener);
+    };
+}
+
+function notifyGroceryRecipeListeners() {
+    groceryRecipeListeners.forEach((listener) => listener());
+}
+
 export function getGroceryList(): GroceryListItem[] {
     const storedGroceryList = localStorage.getItem("grocery-list");
     if (!storedGroceryList) {
@@ -88,6 +106,10 @@ export function getGroceryRecipeSlugs(): string[] {
     return parsedGroceryList;
 }
 
+export function isRecipeInGroceryList(slug: string) {
+    return getGroceryRecipeSlugs().includes(slug);
+}
+
 export function addRecipeSlugToGroceryList(slug: string) {
     const currentGroceryList = getGroceryRecipeSlugs();
 
@@ -100,10 +122,12 @@ export function addRecipeSlugToGroceryList(slug: string) {
     const updatedGroceryList = [...currentGroceryList, slug];
 
     localStorage.setItem("grocery-recipe-slugs", JSON.stringify(updatedGroceryList));
+    notifyGroceryRecipeListeners();
 }
 
 export function clearGroceryRecipeSlugs() {
     localStorage.removeItem("grocery-recipe-slugs");
+    notifyGroceryRecipeListeners();
 }
 
 export function removeIngredientsFromGroceryList(ingredientsToRemove: Ingredient[]) {
@@ -136,10 +160,8 @@ export function removeRecipeSlugFromGroceryList(slug: string) {
         (recipeSlug) => recipeSlug !== slug
     );
 
-    localStorage.setItem(
-        "grocery-recipe-slugs",
-        JSON.stringify(updatedGroceryRecipeSlugs)
-    );
+    localStorage.setItem("grocery-recipe-slugs", JSON.stringify(updatedGroceryRecipeSlugs));
+    notifyGroceryRecipeListeners();
 }
 
 export function removeRecipeFromGroceryList(slug: string, ingredients: Ingredient[]) {

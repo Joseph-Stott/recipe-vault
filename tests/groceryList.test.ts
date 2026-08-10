@@ -6,9 +6,11 @@ import {
     clearGroceryRecipeSlugs,
     getGroceryList,
     getGroceryRecipeSlugs,
+    isRecipeInGroceryList,
     removeIngredientsFromGroceryList,
     removeRecipeFromGroceryList,
     removeRecipeSlugFromGroceryList,
+    subscribeToGroceryRecipeSlugs,
     toggleGroceryItemChecked,
     toggleGroceryItemsChecked,
 } from "@/lib/groceryList";
@@ -440,5 +442,28 @@ describe("groceryList", () => {
         expect(getGroceryRecipeSlugs()).toEqual([
             "salad-recipe",
         ]);
+    });
+
+    it("reports whether a recipe is in the grocery list", () => {
+        addRecipeSlugToGroceryList("chicken-rice");
+
+        expect(isRecipeInGroceryList("chicken-rice")).toBe(true);
+        expect(isRecipeInGroceryList("garden-salad")).toBe(false);
+    });
+
+    it("notifies subscribers when grocery recipe slugs change", () => {
+        const listener = vi.fn();
+
+        const unsubscribe = subscribeToGroceryRecipeSlugs(listener);
+
+        addRecipeSlugToGroceryList("chicken-rice");
+
+        expect(listener).toHaveBeenCalledTimes(1);
+
+        unsubscribe();
+
+        addRecipeSlugToGroceryList("garden-salad");
+
+        expect(listener).toHaveBeenCalledTimes(1);
     });
 });

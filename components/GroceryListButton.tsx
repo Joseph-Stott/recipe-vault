@@ -2,12 +2,13 @@
 import { 
     addIngredientsToGroceryList,
     addRecipeSlugToGroceryList,
-    getGroceryRecipeSlugs,
+    isRecipeInGroceryList,
     removeIngredientsFromGroceryList,
-    removeRecipeSlugFromGroceryList
+    removeRecipeSlugFromGroceryList,
+    subscribeToGroceryRecipeSlugs,
  } from "@/lib/groceryList";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { Ingredient } from "@/types/recipe";
 
 type GroceryListButtonProps = {
@@ -18,13 +19,11 @@ type GroceryListButtonProps = {
 export default function GroceryListButton(props: GroceryListButtonProps) {
     const router  = useRouter();
 
-    const [isInGroceryList, setIsInGroceryList] = useState(false);
-
-    useEffect(() => {
-        const groceryRecipeSlugs = getGroceryRecipeSlugs();
-
-        setIsInGroceryList(groceryRecipeSlugs.includes(props.slug));
-    }, [props.slug]);
+    const isInGroceryList = useSyncExternalStore(
+        subscribeToGroceryRecipeSlugs,
+        () => isRecipeInGroceryList(props.slug),
+        () => false
+    );
 
     return (
         <button
