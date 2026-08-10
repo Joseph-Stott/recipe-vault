@@ -1,60 +1,103 @@
 "use client";
-import { useEffect, useState } from "react";
-import { Recipe, Ingredient } from "@/types/recipe";
-import { useParams } from "next/navigation";
-import { useRouter } from "next/navigation";
-import { getSavedRecipes, updateSavedRecipe, deleteSavedRecipe } from "@/lib/recipeStorage";
+
+import { useState, useSyncExternalStore } from "react";
+import { Ingredient, Recipe } from "@/types/recipe";
+import { useParams, useRouter } from "next/navigation";
+import {
+    deleteSavedRecipe,
+    getSavedRecipes,
+    subscribeToSavedRecipes,
+    updateSavedRecipe,
+} from "@/lib/recipeStorage";
 import RecipeForm from "@/components/RecipeForm";
-import { getAllRecipes, buildRecipeFromForm } from "@/lib/recipeService";
+import {
+    buildRecipeFromForm,
+    getAllRecipes,
+} from "@/lib/recipeService";
 import { validateRecipeForm } from "@/lib/recipeValidation";
+
+const EMPTY_SAVED_RECIPES: ReturnType<typeof getSavedRecipes> = [];
+
+type EditRecipeFormProps = {
+    recipe: Recipe;
+    allRecipes: Recipe[];
+};
 
 export default function EditRecipePage() {
     const params = useParams();
 
-    const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([]);
-    const [title, setTitle] = useState("");
-    const [timeCategory, setTimeCategory] = useState<Recipe["timeCategory"]>("medium");
-    const [structuredIngredients, setStructuredIngredients] = useState<Ingredient[]>([]);
-    const [cookInstructionsText, setCookInstructionsText] = useState("");
-    const [cookBook, setCookBook] = useState("");
-    const [pageNumber, setPageNumber] = useState("");
-    const [errorMessages, setErrorMessages] = useState<string[]>([]);
+    const savedRecipes = useSyncExternalStore(
+        subscribeToSavedRecipes,
+        getSavedRecipes,
+        () => EMPTY_SAVED_RECIPES
+    );
 
     const allRecipes = getAllRecipes(savedRecipes);
 
-    const recipe = allRecipes.find((recipe) => recipe.slug === params.slug);
+    const recipe = allRecipes.find(
+        (recipe) => recipe.slug === params.slug
+    );
 
+    if (!recipe) {
+        return (
+            <p className="text-center text-xl text-zinc-400">
+                Recipe not found
+            </p>
+        );
+    }
+
+    return (
+        <EditRecipeForm
+            key={recipe.slug}
+            recipe={recipe}
+            allRecipes={allRecipes}
+        />
+    );
+}
+
+function EditRecipeForm({
+    recipe,
+    allRecipes,
+}: EditRecipeFormProps) {
     const router = useRouter();
 
-    useEffect(() => {
-        setSavedRecipes(getSavedRecipes());
-    }, []);
+    const [title, setTitle] = useState(recipe.title);
 
-    useEffect(() => {
-        if (recipe) {
-            setTitle(recipe.title);
-            setTimeCategory(recipe.timeCategory);
-            setStructuredIngredients(recipe.structuredIngredients || []);
-            setCookInstructionsText(
+    const [timeCategory, setTimeCategory] =
+        useState<Recipe["timeCategory"]>(recipe.timeCategory);
+
+    const [structuredIngredients, setStructuredIngredients] =
+        useState<Ingredient[]>(
+            recipe.structuredIngredients || []
+        );
+
+    const [cookInstructionsText, setCookInstructionsText] =
+        useState(
             recipe.cookInstructions
                 ? recipe.cookInstructions.join("\n")
                 : ""
-            );
-            setCookBook(recipe.cookBook || "");
-            setPageNumber(
-            recipe.pageNumber
-                ? recipe.pageNumber.toString()
-                : ""
-            );
-        }
-    }, [recipe]);
+        );
 
-    return(
-        <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
-            <div className=" relative w-full max-w-sm flex flex-col gap-4 rounded-2xl text-center border border-zinc-700 bg-zinc-900 p-4">
+    const [cookBook, setCookBook] = useState(
+        recipe.cookBook || ""
+    );
+
+    const [pageNumber, setPageNumber] = useState(
+        recipe.pageNumber
+            ? recipe.pageNumber.toString()
+            : ""
+    );
+
+    const [errorMessages, setErrorMessages] =
+        useState<string[]>([]);
+
+    return (
+        <main className="flex min-h-screen flex-col items-center justify-start bg-zinc-50 px-6 py-16 font-sans dark:bg-black">
+            <div className="relative flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-zinc-700 bg-zinc-900 p-4 text-center">
                 <h1 className="flex items-center justify-center">
                     Edit a Recipe
                 </h1>
+
                 <button
                     title="Delete recipe"
                     aria-label="Delete recipe"
@@ -64,14 +107,14 @@ export default function EditRecipePage() {
                         hover:scale-125
                     `}
                     onClick={() => {
-                        if (!recipe) {
-                            setErrorMessages(["Recipe not found"]);
+                        const confirmed = confirm(
+                            "Delete this recipe? This action cannot be undone."
+                        );
+
+                        if (!confirmed) {
                             return;
                         }
-                        const confirmed = confirm("Delete this recipe? This action cannot be undone.");
-                        if (!confirmed){
-                            return;
-                        }
+
                         deleteSavedRecipe(recipe.slug);
                         router.refresh();
                         router.push("/");
@@ -79,28 +122,30 @@ export default function EditRecipePage() {
                 >
                     🗑️
                 </button>
+
                 <RecipeForm
                     title={title}
                     setTitle={setTitle}
                     timeCategory={timeCategory}
                     setTimeCategory={setTimeCategory}
                     structuredIngredients={structuredIngredients}
-                    setStructuredIngredients={setStructuredIngredients}
+                    setStructuredIngredients={
+                        setStructuredIngredients
+                    }
                     cookInstructionsText={cookInstructionsText}
-                    setCookInstructionsText={setCookInstructionsText}
+                    setCookInstructionsText={
+                        setCookInstructionsText
+                    }
                     cookBook={cookBook}
                     setCookBook={setCookBook}
                     pageNumber={pageNumber}
                     setPageNumber={setPageNumber}
                     submitButtonText="Update Recipe"
-                    onSubmit= {() => {
-                        if (!recipe) {
-                            setErrorMessages(["Recipe not found"]);
-                            return;
-                        }
+                    onSubmit={() => {
+                        const existingSlugs = allRecipes.map(
+                            (recipe) => recipe.slug
+                        );
 
-                        const existingSlugs = allRecipes.map((recipe) => recipe.slug);
-                        
                         const validation = validateRecipeForm({
                             title,
                             structuredIngredients,
@@ -109,7 +154,9 @@ export default function EditRecipePage() {
                         });
 
                         if (!validation.valid) {
-                            setErrorMessages(validation.messages);
+                            setErrorMessages(
+                                validation.messages
+                            );
                             return;
                         }
 
@@ -117,16 +164,21 @@ export default function EditRecipePage() {
                             slug: recipe.slug,
                             title,
                             timeCategory,
-                            structuredIngredients: validation.filteredIngredients,
+                            structuredIngredients:
+                                validation.filteredIngredients,
                             cookInstructionsText,
                             cookBook,
                             pageNumber,
                         });
 
-                        const confirmed = confirm("Save changes to this recipe?");
-                        if(!confirmed) {
+                        const confirmed = confirm(
+                            "Save changes to this recipe?"
+                        );
+
+                        if (!confirmed) {
                             return;
                         }
+
                         updateSavedRecipe(newRecipe);
                         router.refresh();
                         router.push("/");
@@ -136,5 +188,5 @@ export default function EditRecipePage() {
                 />
             </div>
         </main>
-    )
+    );
 }
