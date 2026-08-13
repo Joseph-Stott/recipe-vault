@@ -175,6 +175,8 @@ export default function RecipeForm({
                         />
 
                         <input
+                            autoComplete="off"
+                            spellCheck={false}
                             className="w-40 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm"
                             type="text"
                             placeholder="Ingredient"
