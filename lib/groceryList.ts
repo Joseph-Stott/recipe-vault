@@ -10,6 +10,11 @@ const EMPTY_GROCERY_LIST: GroceryListItem[] = [];
 let cachedGroceryListJson: string | null | undefined;
 let cachedGroceryList: GroceryListItem[] = EMPTY_GROCERY_LIST;
 
+const EMPTY_GROCERY_RECIPE_SLUGS: string[] = [];
+
+let cachedGroceryRecipeSlugsJson: string | null | undefined;
+let cachedGroceryRecipeSlugs: string[] = EMPTY_GROCERY_RECIPE_SLUGS;
+
 type GroceryListListener = () => void;
 
 const groceryListListeners = new Set<GroceryListListener>();
@@ -148,11 +153,21 @@ export function clearGroceryList () {
 
 export function getGroceryRecipeSlugs(): string[] {
     const storedGroceryList = localStorage.getItem("grocery-recipe-slugs");
-    if (!storedGroceryList) {
-        return [];
+
+    if (storedGroceryList === cachedGroceryRecipeSlugsJson) {
+        return cachedGroceryRecipeSlugs;
     }
-    const parsedGroceryList = JSON.parse(storedGroceryList);
-    return parsedGroceryList;
+
+    cachedGroceryRecipeSlugsJson = storedGroceryList;
+
+    if (!storedGroceryList) {
+        cachedGroceryRecipeSlugs = EMPTY_GROCERY_RECIPE_SLUGS;
+        return cachedGroceryRecipeSlugs;
+    }
+
+    cachedGroceryRecipeSlugs = JSON.parse(storedGroceryList);
+
+    return cachedGroceryRecipeSlugs;
 }
 
 export function isRecipeInGroceryList(slug: string) {
