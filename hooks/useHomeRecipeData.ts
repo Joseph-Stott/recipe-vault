@@ -1,6 +1,11 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { 
+    useEffect,
+    useState, 
+    useSyncExternalStore,
+} from "react";
+
 import { 
     getFavoriteRecipeSlugs,
     subscribeToFavoriteRecipeSlugs,
@@ -18,6 +23,7 @@ import {
 } from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
 import { buildHomeRecipeCollections } from "@/lib/recipeService";
+import { getDatabaseRecipes } from "@/lib/recipeApi";
 
 const EMPTY_RECIPES: Recipe[] = [];
 const EMPTY_SLUGS: string[] = [];
@@ -30,6 +36,26 @@ export function useHomeRecipeData(searchText: string) {
         getSavedRecipes,
         () => EMPTY_RECIPES
     );
+
+    const [databaseRecipes, setDatabaseRecipes] = useState<Recipe[]>([]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        getDatabaseRecipes()
+            .then((recipes) => {
+                if (!cancelled) {
+                    setDatabaseRecipes(recipes);
+                }
+            })
+            .catch((error) => {
+                console.error("Failed to load database recipes", error);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     const favoriteRecipeSlugs = useSyncExternalStore(
         subscribeToFavoriteRecipeSlugs,
@@ -47,6 +73,15 @@ export function useHomeRecipeData(searchText: string) {
         subscribeToGroceryRecipeSlugs,
         getGroceryRecipeSlugs,
         () => EMPTY_SLUGS
+    );
+
+    const combinedSavedRecipes = Array.from(
+        new Map(
+            [...savedRecipes, ...databaseRecipes].map((recipe) => [
+                recipe.slug,
+                recipe,
+            ])
+        ).values()
     );
 
     const groceryList = groceryItems.map(
@@ -70,7 +105,7 @@ export function useHomeRecipeData(searchText: string) {
         sortedFavoriteRecipes,
         sortedRecipes,
     } = buildHomeRecipeCollections({
-        savedRecipes,
+        savedRecipes: combinedSavedRecipes,
         searchText,
         favoriteRecipeSlugs,
         groceryRecipeSlugs,
