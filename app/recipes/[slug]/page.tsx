@@ -5,7 +5,10 @@ import {
     getSavedRecipes,
     subscribeToSavedRecipes,
 } from "@/lib/recipeStorage";
-import { useSyncExternalStore } from "react";
+import { 
+    useEffect,
+    useState,
+    useSyncExternalStore, } from "react";
 import { useParams } from "next/navigation";
 import {
     getFavoriteRecipeSlugs,
@@ -14,6 +17,8 @@ import {
 } from "@/lib/favorites";
 import BackButton from "@/components/BackButton";
 import { getAllRecipes } from "@/lib/recipeService";
+import { getDatabaseRecipes } from "@/lib/recipeApi";
+import { Recipe } from "@/types/recipe";
 
 const timeCategoryStyles = {
     fast: "bg-green-600 text-white",
@@ -34,18 +39,65 @@ export default function DetailPage() {
         () => EMPTY_SAVED_RECIPES
     );
 
+    const [databaseRecipes, setDatabaseRecipes] = useState<Recipe[]>([]);
+    const [databaseRecipesLoaded, setDatabaseRecipesLoaded] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        getDatabaseRecipes()
+            .then((recipes) => {
+                if (!cancelled) {
+                    setDatabaseRecipes(recipes);
+                }
+            })
+            .catch((error) => {
+                console.error("Failed to load database recipes", error);
+            })
+            .finally(() => {
+                if (!cancelled) {
+                    setDatabaseRecipesLoaded(true);
+                }
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
     const favoriteRecipeSlugs = useSyncExternalStore(
         subscribeToFavoriteRecipeSlugs,
         getFavoriteRecipeSlugs,
         () => EMPTY_FAVORITE_SLUGS
     );
 
-    const allRecipes = getAllRecipes(savedRecipes);
+    const combinedSavedRecipes = Array.from(
+        new Map(
+            [...savedRecipes, ...databaseRecipes].map((recipe) => [
+                recipe.slug,
+                recipe,
+            ])
+        ).values()
+    );
+
+    const allRecipes = getAllRecipes(combinedSavedRecipes);
 
     const recipe = allRecipes.find((recipe) => recipe.slug === params.slug);
 
+    if (!recipe && !databaseRecipesLoaded) {
+        return (
+            <p className="text-center text-xl text-zinc-400">
+                Loading recipe...
+            </p>
+        );
+    }
+
     if (!recipe) {
-        return <p className="text-center text-xl text-zinc-400">No recipe found </p>;
+        return (
+            <p className="text-center text-xl text-zinc-400">
+                No recipe found
+            </p>
+        );
     }
 
     const isFavorite = favoriteRecipeSlugs.includes(recipe.slug);
