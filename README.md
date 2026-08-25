@@ -4,7 +4,7 @@
 
 Recipe Vault is a recipe management web application built with Next.js, React, TypeScript, and Tailwind CSS.
 
-Users can create, edit, organize, and browse recipes while generating a grocery list directly from recipe ingredients. The application persists user data using localStorage and demonstrates component-based architecture, structured data modeling, dynamic routing, and client-side state management.
+Users can create, edit, organize, and browse recipes while generating a grocery list directly from recipe ingredients. The application currently uses a hybrid persistence model while it is being migrated from localStorage to PostgreSQL with Prisma. It demonstrates component-based architecture, structured data modeling, dynamic routing, API routes, database modeling, and client-side state management.
 
 ## Screenshots
 
@@ -32,7 +32,19 @@ Install dependencies:
 npm install
 ```
 
-Start the development server:
+Create a `.env` file with a PostgreSQL connection string:
+
+```bash
+DATABASE_URL="postgresql://..."
+```
+
+For local database development with Prisma Postgres, start the database:
+
+```bash
+npx prisma dev
+```
+
+In a separate terminal, start the development server:
 
 ```bash
 npm run dev
@@ -56,7 +68,7 @@ in your browser.
 * Favorite recipes
 * Automatic slug generation from recipe titles
 * Dynamic recipe detail pages
-* Persistent recipe storage using localStorage
+* Hybrid recipe storage during migration from localStorage to PostgreSQL
 
 ### Structured Ingredient System
 
@@ -142,14 +154,23 @@ Recipe detail pages are generated using dynamic routes:
 /recipes/[slug]
 ```
 
-### Client-Side Persistence
+### Persistence
 
-The application uses localStorage to persist:
+The application is currently migrating recipe persistence to PostgreSQL through Prisma and Next.js API routes.
 
-* User-created recipes
+Database-backed behavior currently includes:
+
+* Reading recipes from PostgreSQL
+* Creating recipes through the recipe API
+* Mapping database records into the application recipe shape
+
+localStorage still persists:
+
 * Favorite recipes
 * Grocery lists
 * Grocery recipe tracking
+
+During the migration, localStorage recipes and database recipes are both shown so existing local data remains visible.
 
 ### Data Modeling
 
@@ -166,7 +187,9 @@ Business logic is separated into reusable service and utility modules rather tha
 * TypeScript
 * Tailwind CSS
 * Vitest
-* Browser localStorage
+* PostgreSQL
+* Prisma ORM
+* Browser localStorage during migration
 
 ## Project Structure
 
@@ -176,6 +199,7 @@ components/   Reusable React components
 data/         Built-in recipe data
 hooks/        React hooks for page-level state and behavior
 lib/          Application services, storage, validation, and utilities
+prisma/       Prisma schema and migrations
 tests/        Vitest unit tests
 types/        Shared TypeScript types
 ```
@@ -191,7 +215,9 @@ React Hooks
       ↓
 Service Layer
       ↓
-Utilities & Storage
+API Routes / Storage Utilities
+      ↓
+Prisma / PostgreSQL
 ```
 
 This separation helps keep components focused, improves testability, and makes business logic reusable across the application.
@@ -220,9 +246,10 @@ Tests verify behaviors such as:
 
 * Toast notifications
 * Improved measurement conversion and aggregation
+* Complete database-backed recipe CRUD
+* Migrate existing localStorage recipes into PostgreSQL
 * User accounts
 * Cloud synchronization
-* Database-backed persistence with API routes
 
 ## Purpose
 
