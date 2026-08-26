@@ -80,7 +80,7 @@ export default function RecipeForm({
                 spellCheck={false}
                 title="Recipe title"
                 onFocus={(event)=> event.target.select()}
-                className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
+                className="w-full max-w-sm rounded-lg border border-zinc-400 bg-zinc-900 p-2 text-zinc-100 placeholder:text-center placeholder:text-zinc-500"
                 type="text"
                 placeholder="Add Title"
                 value={title}
@@ -95,7 +95,7 @@ export default function RecipeForm({
                     className={`cursor-pointer rounded-lg border px-3 py-2 text-sm font-medium ${
                         timeCategory === "fast"
                             ? "bg-green-600 border-green-500"
-                            : "border-zinc-600 hover:bg-zinc-800"
+                            : "border-zinc-600 text-zinc-100 hover:bg-zinc-800"
                     }`}
                     onClick={() => {
                         setTimeCategory("fast");
@@ -108,7 +108,7 @@ export default function RecipeForm({
                     className={`cursor-pointer rounded-lg border px-3 py-2 text-sm font-medium ${
                         timeCategory === "medium"
                             ? "bg-yellow-600 border-yellow-500"
-                            : "border-zinc-600 hover:bg-zinc-800"
+                            : "border-zinc-600 text-zinc-100 hover:bg-zinc-800"
                     }`}
                     onClick={() => {
                         setTimeCategory("medium");
@@ -121,7 +121,7 @@ export default function RecipeForm({
                     className={`cursor-pointer rounded-lg border px-3 py-2 text-sm font-medium ${
                         timeCategory === "slow"
                             ? "bg-red-600 border-red-500"
-                            : "border-zinc-600 hover:bg-zinc-800"
+                            : "border-zinc-600 text-zinc-100 hover:bg-zinc-800"
                     }`}
                     onClick={() => {
                         setTimeCategory("slow");
@@ -137,7 +137,7 @@ export default function RecipeForm({
 
                 <button
                     title="Add another ingredient row"
-                    className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium text-zinc-100 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
                     disabled={lastIngredientIsEmpty}
                     onClick={() => {
                         setStructuredIngredients([
@@ -153,7 +153,7 @@ export default function RecipeForm({
                         <input
                             autoComplete="off"
                             spellCheck={false}
-                            className="w-16 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm"
+                            className="w-16 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm text-zinc-100 placeholder:text-zinc-500"
                             type="text"
                             placeholder="Amt"
                             value={ingredient.amount}
@@ -165,7 +165,7 @@ export default function RecipeForm({
                         <input
                             autoComplete="off"
                             spellCheck={false}
-                            className="w-20 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm"
+                            className="w-20 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm text-zinc-100 placeholder:text-zinc-500"
                             type="text"
                             placeholder="Unit"
                             value={ingredient.unit}
@@ -177,7 +177,7 @@ export default function RecipeForm({
                         <input
                             autoComplete="off"
                             spellCheck={false}
-                            className="w-40 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm"
+                            className="w-40 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm text-zinc-100 placeholder:text-zinc-500"
                             type="text"
                             placeholder="Ingredient"
                             value={ingredient.name}
@@ -199,7 +199,7 @@ export default function RecipeForm({
             </section>
             <textarea
                 title="Recipe cooking instructions"
-                className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
+                className="w-full max-w-sm rounded-lg border border-zinc-400 bg-zinc-900 p-2 text-zinc-100 placeholder:text-center placeholder:text-zinc-500"
                 placeholder="Cook Instructions"
                 value={cookInstructionsText}
                 onChange={(event) => setCookInstructionsText(event.target.value)}
@@ -209,7 +209,7 @@ export default function RecipeForm({
                 spellCheck={false}
                 title="Cookbook title"
                 onFocus={(event)=> event.target.select()}
-                className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
+                className="w-full max-w-sm rounded-lg border border-zinc-400 bg-zinc-900 p-2 text-zinc-100 placeholder:text-center placeholder:text-zinc-500"
                 type="text"
                 placeholder="Book title"
                 value={cookBook}
@@ -220,7 +220,7 @@ export default function RecipeForm({
                 spellCheck={false}
                 title="Cookbook page number"
                 onFocus={(event)=> event.target.select()}
-                className="w-full max-w-sm p-2 bg-zinc-900 border border-zinc-400 rounded-lg placeholder:text-center"
+                className="w-full max-w-sm rounded-lg border border-zinc-400 bg-zinc-900 p-2 text-zinc-100 placeholder:text-center placeholder:text-zinc-500"
                 type="text"
                 placeholder="Page number"
                 value={pageNumber}
@@ -235,7 +235,7 @@ export default function RecipeForm({
             )}
             <button
                 title={submitButtonText}
-                className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
+                className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium text-zinc-100 hover:bg-zinc-800"
                 onClick={onSubmit}
             >
                 {submitButtonText}

@@ -37,7 +37,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start py-16 bg-zinc-50 px-6 font-sans dark:bg-black">
+    <main className="flex min-h-screen flex-col items-center justify-start bg-black px-6 py-16 font-sans text-zinc-100">
       <GroceryRecipesSection
         recipes={groceryRecipes}
         onRemoveRecipe={handleRemoveGroceryRecipe}
@@ -47,10 +47,10 @@ export default function Home() {
         groceryList={groceryList}
       />
       <div className="flex flex-col gap-4">
-        <h1 className="text-3xl text-center font-semibold tracking-tight text-black dark:text-zinc-50">
+        <h1 className="text-center text-3xl font-semibold tracking-tight text-zinc-50">
           Recipe Vault
         </h1>
-        <p className="mt-4 max-w-md text-center text-lg leading-8 text-zinc-600 dark:text-zinc-400">
+        <p className="mt-4 max-w-md text-center text-lg leading-8 text-zinc-400">
           Store, organize, and search your favorite recipes
         </p>
         <p 
@@ -61,7 +61,7 @@ export default function Home() {
         </p>
         <Link 
           title="View grocery list"
-          className="w-full max-w-sm rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-center font-medium hover:border-zinc-500 hover:bg-zinc-800 transition-colors duration-200"
+          className="w-full max-w-sm rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-center font-medium text-zinc-100 transition-colors duration-200 hover:border-zinc-500 hover:bg-zinc-800"
           href="/grocery-list"
         >
           View Grocery List
@@ -79,7 +79,7 @@ export default function Home() {
         <Link 
           title="Create a new recipe"
           href="/add-recipe"
-          className="cursor-pointer text-center fixed bottom-6 right-6 rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
+          className="fixed bottom-6 right-6 cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-center text-sm font-medium text-zinc-100 hover:bg-zinc-800"
         >
           Add Recipe
         </Link>

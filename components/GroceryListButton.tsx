@@ -27,7 +27,7 @@ export default function GroceryListButton(props: GroceryListButtonProps) {
 
     return (
         <button
-            className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium hover:bg-zinc-800"
+            className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium text-zinc-100 hover:bg-zinc-800"
             onClick={() => {
                 if(isInGroceryList) {
                     const confirmed = confirm("Remove from Grocery List?");

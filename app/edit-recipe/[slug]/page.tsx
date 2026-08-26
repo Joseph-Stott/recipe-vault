@@ -141,8 +141,8 @@ function EditRecipeForm({
         useState<string[]>([]);
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-start bg-zinc-50 px-6 py-16 font-sans dark:bg-black">
-            <div className="relative flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-zinc-700 bg-zinc-900 p-4 text-center">
+        <main className="flex min-h-screen flex-col items-center justify-start bg-black px-6 py-16 font-sans text-zinc-100">
+            <div className="relative flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-zinc-700 bg-zinc-900 p-4 text-center text-zinc-100">
                 <h1 className="flex items-center justify-center">
                     Edit a Recipe
                 </h1>
