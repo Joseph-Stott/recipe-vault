@@ -1,6 +1,10 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import {
+    useEffect,
+    useState,
+    useSyncExternalStore,
+} from "react";
 import { Ingredient, Recipe } from "@/types/recipe";
 import { useParams, useRouter } from "next/navigation";
 import {
@@ -15,6 +19,7 @@ import {
     getAllRecipes,
 } from "@/lib/recipeService";
 import { validateRecipeForm } from "@/lib/recipeValidation";
+import { getDatabaseRecipes } from "@/lib/recipeApi";
 
 const EMPTY_SAVED_RECIPES: ReturnType<typeof getSavedRecipes> = [];
 
@@ -32,11 +37,55 @@ export default function EditRecipePage() {
         () => EMPTY_SAVED_RECIPES
     );
 
-    const allRecipes = getAllRecipes(savedRecipes);
+    const [databaseRecipes, setDatabaseRecipes] = useState<Recipe[]>([]);
+    const [databaseRecipesLoaded, setDatabaseRecipesLoaded] =
+        useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        getDatabaseRecipes()
+            .then((recipes) => {
+                if (!cancelled) {
+                    setDatabaseRecipes(recipes);
+                }
+            })
+            .catch((error) => {
+                console.error("Failed to load database recipes", error);
+            })
+            .finally(() => {
+                if (!cancelled) {
+                    setDatabaseRecipesLoaded(true);
+                }
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    const combinedSavedRecipes = Array.from(
+        new Map(
+            [...savedRecipes, ...databaseRecipes].map((recipe) => [
+                recipe.slug,
+                recipe,
+            ])
+        ).values()
+    );
+
+    const allRecipes = getAllRecipes(combinedSavedRecipes);
 
     const recipe = allRecipes.find(
         (recipe) => recipe.slug === params.slug
     );
+
+    if (!recipe && !databaseRecipesLoaded) {
+        return (
+            <p className="text-center text-xl text-zinc-400">
+                Loading recipe...
+            </p>
+        );
+    }
 
     if (!recipe) {
         return (
