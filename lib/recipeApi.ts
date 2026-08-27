@@ -16,3 +16,23 @@ export async function getDatabaseRecipes(): Promise<Recipe[]> {
 
     return recipes.map(mapDatabaseRecipeToRecipe);
 }
+
+export async function updateDatabaseRecipe(
+    recipe: Recipe
+): Promise<Recipe> {
+    const response = await fetch(`/api/recipes/${recipe.slug}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(recipe),
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to update recipe");
+    }
+
+    const updatedRecipe: DatabaseRecipe = await response.json();
+
+    return mapDatabaseRecipeToRecipe(updatedRecipe);
+}
