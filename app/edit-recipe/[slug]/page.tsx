@@ -19,13 +19,17 @@ import {
     getAllRecipes,
 } from "@/lib/recipeService";
 import { validateRecipeForm } from "@/lib/recipeValidation";
-import { getDatabaseRecipes } from "@/lib/recipeApi";
+import {
+    getDatabaseRecipes,
+    updateDatabaseRecipe,
+} from "@/lib/recipeApi";
 
 const EMPTY_SAVED_RECIPES: ReturnType<typeof getSavedRecipes> = [];
 
 type EditRecipeFormProps = {
     recipe: Recipe;
     allRecipes: Recipe[];
+    isDatabaseRecipe: boolean;
 };
 
 export default function EditRecipePage() {
@@ -79,7 +83,11 @@ export default function EditRecipePage() {
         (recipe) => recipe.slug === params.slug
     );
 
-    if (!recipe && !databaseRecipesLoaded) {
+    const isDatabaseRecipe = databaseRecipes.some(
+        (databaseRecipe) => databaseRecipe.slug === recipe?.slug
+    );
+
+    if (!databaseRecipesLoaded) {
         return (
             <p className="text-center text-xl text-zinc-400">
                 Loading recipe...
@@ -100,6 +108,7 @@ export default function EditRecipePage() {
             key={recipe.slug}
             recipe={recipe}
             allRecipes={allRecipes}
+            isDatabaseRecipe={isDatabaseRecipe}
         />
     );
 }
@@ -107,6 +116,7 @@ export default function EditRecipePage() {
 function EditRecipeForm({
     recipe,
     allRecipes,
+    isDatabaseRecipe,
 }: EditRecipeFormProps) {
     const router = useRouter();
 
@@ -139,6 +149,8 @@ function EditRecipeForm({
 
     const [errorMessages, setErrorMessages] =
         useState<string[]>([]);
+
+    const [isSaving, setIsSaving] = useState(false);
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-start bg-black px-6 py-16 font-sans text-zinc-100">
@@ -190,7 +202,7 @@ function EditRecipeForm({
                     pageNumber={pageNumber}
                     setPageNumber={setPageNumber}
                     submitButtonText="Update Recipe"
-                    onSubmit={() => {
+                    onSubmit={async () => {
                         const existingSlugs = allRecipes.map(
                             (recipe) => recipe.slug
                         );
@@ -228,12 +240,33 @@ function EditRecipeForm({
                             return;
                         }
 
-                        updateSavedRecipe(newRecipe);
-                        router.refresh();
-                        router.push("/");
+                        setIsSaving(true);
+                        setErrorMessages([]);
+
+                        try {
+                            if (isDatabaseRecipe) {
+                                await updateDatabaseRecipe(newRecipe);
+                            } else {
+                                updateSavedRecipe(newRecipe);
+                            }
+
+                            router.refresh();
+                            router.push("/");
+                        } catch (error) {
+                            console.error(
+                                "Failed to update recipe",
+                                error
+                            );
+                            setErrorMessages([
+                                "Failed to update recipe. Please try again.",
+                            ]);
+                        } finally {
+                            setIsSaving(false);
+                        }
                     }}
                     errorMessages={errorMessages}
                     setErrorMessages={setErrorMessages}
+                    submitDisabled={isSaving}
                 />
             </div>
         </main>

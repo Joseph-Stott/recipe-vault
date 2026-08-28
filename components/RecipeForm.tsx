@@ -15,7 +15,8 @@ type RecipeFormProps = {
     pageNumber: string;
     setPageNumber: (pageNumber: string) => void;
     submitButtonText: string;
-    onSubmit: () => void;
+    onSubmit: () => void | Promise<void>;
+    submitDisabled?: boolean;
     errorMessages: string[];
     setErrorMessages: (messages: string[]) => void;
 };
@@ -35,6 +36,7 @@ export default function RecipeForm({
     setPageNumber,
     submitButtonText,
     onSubmit,
+    submitDisabled = false,
     errorMessages,
     setErrorMessages
 }: RecipeFormProps) {
@@ -235,7 +237,8 @@ export default function RecipeForm({
             )}
             <button
                 title={submitButtonText}
-                className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium text-zinc-100 hover:bg-zinc-800"
+                className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-sm font-medium text-zinc-100 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
+                disabled={submitDisabled}
                 onClick={onSubmit}
             >
                 {submitButtonText}
