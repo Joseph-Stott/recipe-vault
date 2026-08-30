@@ -89,3 +89,36 @@ export async function PUT(
 
     return Response.json(recipe);
 }
+
+export async function DELETE(
+    _request: Request,
+    context: RecipeRouteContext
+) {
+    const { slug } = await context.params;
+
+    const existingRecipe = await prisma.recipe.findUnique({
+        where: {
+            slug,
+        },
+        select: {
+            id: true,
+        },
+    });
+
+    if (!existingRecipe) {
+        return Response.json(
+            { error: "Recipe not found" },
+            { status: 404 }
+        );
+    }
+
+    await prisma.recipe.delete({
+        where: {
+            slug,
+        },
+    });
+
+    return Response.json({
+        success: true,
+    });
+}
