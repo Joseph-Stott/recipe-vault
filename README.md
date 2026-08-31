@@ -4,7 +4,7 @@
 
 Recipe Vault is a recipe management web application built with Next.js, React, TypeScript, and Tailwind CSS.
 
-Users can create, edit, organize, and browse recipes while generating a grocery list directly from recipe ingredients. The application currently uses a hybrid persistence model while it is being migrated from localStorage to PostgreSQL with Prisma. It demonstrates component-based architecture, structured data modeling, dynamic routing, API routes, database modeling, and client-side state management.
+Users can create, edit, organize, and browse recipes while generating a grocery list directly from recipe ingredients. The application currently uses a hybrid persistence model: recipe CRUD is database-backed through PostgreSQL and Prisma, while favorites and grocery-list state still use browser localStorage. It demonstrates component-based architecture, structured data modeling, dynamic routing, API routes, database modeling, and client-side state management.
 
 ## Screenshots
 
@@ -44,6 +44,12 @@ For local database development with Prisma Postgres, start the database:
 npx prisma dev
 ```
 
+Apply database migrations:
+
+```bash
+npx prisma migrate dev
+```
+
 In a separate terminal, start the development server:
 
 ```bash
@@ -68,7 +74,8 @@ in your browser.
 * Favorite recipes
 * Automatic slug generation from recipe titles
 * Dynamic recipe detail pages
-* Hybrid recipe storage during migration from localStorage to PostgreSQL
+* Database-backed recipe storage through PostgreSQL and Prisma
+* Hybrid display of built-in, database, and existing localStorage recipes during migration
 
 ### Structured Ingredient System
 
@@ -161,7 +168,9 @@ The application is currently migrating recipe persistence to PostgreSQL through 
 Database-backed behavior currently includes:
 
 * Reading recipes from PostgreSQL
-* Creating recipes through the recipe API
+* Creating recipes from the Add Recipe page
+* Updating database recipes from the Edit Recipe page
+* Deleting database recipes from the Edit Recipe page
 * Mapping database records into the application recipe shape
 
 localStorage still persists:
@@ -169,8 +178,9 @@ localStorage still persists:
 * Favorite recipes
 * Grocery lists
 * Grocery recipe tracking
+* Older custom recipes created before the database migration
 
-During the migration, localStorage recipes and database recipes are both shown so existing local data remains visible.
+During the migration, built-in recipes, localStorage recipes, and database recipes are all shown so existing local data remains visible. The next migration step is an import path for useful localStorage recipes.
 
 ### Data Modeling
 
@@ -230,8 +240,12 @@ Current test coverage includes:
 
 - Recipe utility functions
 - Recipe service functions
-- Homepage recipe collection building
-- Recipe form value transformations
+- Recipe validation
+- Recipe storage helpers
+- Favorites and grocery-list behavior
+- Database recipe mapping
+- Recipe API client behavior
+- Recipe create, update, and delete API routes
 
 Tests verify behaviors such as:
 
@@ -241,13 +255,16 @@ Tests verify behaviors such as:
 - Homepage section building
 - Search filtering
 - Form data transformation
+- API request and response handling
+- Database record mapping
 
 ## Future Improvements
 
 * Toast notifications
 * Improved measurement conversion and aggregation
-* Complete database-backed recipe CRUD
 * Migrate existing localStorage recipes into PostgreSQL
+* Hosted deployment with a production PostgreSQL database
+* iPhone Home Screen support
 * User accounts
 * Cloud synchronization
 
