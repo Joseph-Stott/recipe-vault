@@ -25,7 +25,7 @@ flowchart TD
 - [x] Database recipes load into the edit page.
 - [x] Database recipes can be updated from the edit page.
 - [x] Database recipes can be deleted from the edit page.
-- [ ] New recipes are created in the database from the Add Recipe page.
+- [x] New recipes are created in the database from the Add Recipe page.
 - [ ] Existing localStorage recipes can be imported or migrated into the database.
 - [ ] The app is deployed with a hosted Postgres database.
 - [ ] The deployed app can be added to an iPhone Home Screen.
@@ -42,9 +42,9 @@ flowchart TD
 ### Phase 1: Finish Recipe Database CRUD
 
 - [x] Add database recipe create API client.
-- [ ] Save Add Recipe form submissions to the database.
-- [ ] Include database recipes when validating duplicate titles on Add Recipe.
-- [ ] Smoke test creating a recipe through the UI.
+- [x] Save Add Recipe form submissions to the database.
+- [x] Include database recipes when validating duplicate titles on Add Recipe.
+- [x] Smoke test creating a recipe through the UI.
 
 ### Phase 2: Migrate Existing Recipe Data
 
