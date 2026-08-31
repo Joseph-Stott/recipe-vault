@@ -1,6 +1,6 @@
 # Recipe Vault Launch Todo
 
-This checklist tracks the shortest practical path to a usable first launch.
+This checklist tracks launch readiness for the first usable version.
 
 Scope assumption: single-user MVP. The app does not need public multi-user scale for v1, but it does need persistent recipe data that works from both desktop browser and iPhone.
 
@@ -46,16 +46,12 @@ flowchart TD
 - [ ] Include database recipes when validating duplicate titles on Add Recipe.
 - [ ] Smoke test creating a recipe through the UI.
 
-Estimated commits: 2-3
-
 ### Phase 2: Migrate Existing Recipe Data
 
 - [ ] Decide whether built-in/static recipes should stay in code or be imported into the database.
 - [ ] Add a one-time localStorage recipe import path.
 - [ ] Prevent duplicate imported recipes by slug.
 - [ ] Verify migrated recipes can be viewed, edited, and deleted.
-
-Estimated commits: 2-4
 
 ### Phase 3: Prepare MVP Deployment
 
@@ -66,16 +62,12 @@ Estimated commits: 2-4
 - [ ] Deploy the Next.js app.
 - [ ] Smoke test homepage, detail page, add, edit, and delete in production.
 
-Estimated commits: 1-3, plus deployment setup steps.
-
 ### Phase 4: iPhone Home Screen Experience
 
 - [ ] Add app metadata for a better Home Screen name and icon.
 - [ ] Add a web app manifest if needed.
 - [ ] Confirm the deployed site opens well on iPhone Safari.
 - [ ] Add the deployed site to the iPhone Home Screen.
-
-Estimated commits: 1-2
 
 ### Phase 5: Nice-To-Have After Launch
 
@@ -84,19 +76,6 @@ Estimated commits: 1-2
 - [ ] Authentication and separate user ownership.
 - [ ] Better production error messages.
 - [ ] Backups/export workflow.
-
-## Rough Remaining Estimate
-
-Usable MVP:
-
-- Estimated commits: 6-12
-- Focused coding sessions: 2-5
-- Calendar-time estimate: about 1-2 weeks of part-time work
-
-If cross-device grocery list and favorites are required before launch:
-
-- Add estimated commits: 4-8
-- Add focused sessions: 2-4
 
 ## Free Deployment Notes
 
