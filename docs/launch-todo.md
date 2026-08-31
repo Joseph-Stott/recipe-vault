@@ -41,7 +41,7 @@ flowchart TD
 
 ### Phase 1: Finish Recipe Database CRUD
 
-- [ ] Add database recipe create API client.
+- [x] Add database recipe create API client.
 - [ ] Save Add Recipe form submissions to the database.
 - [ ] Include database recipes when validating duplicate titles on Add Recipe.
 - [ ] Smoke test creating a recipe through the UI.
