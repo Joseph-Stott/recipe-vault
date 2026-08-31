@@ -36,3 +36,13 @@ export async function updateDatabaseRecipe(
 
     return mapDatabaseRecipeToRecipe(updatedRecipe);
 }
+
+export async function deleteDatabaseRecipe(slug: string): Promise<void> {
+    const response = await fetch(`/api/recipes/${slug}`, {
+        method: "DELETE",
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to delete recipe");
+    }
+}

@@ -20,6 +20,7 @@ import {
 } from "@/lib/recipeService";
 import { validateRecipeForm } from "@/lib/recipeValidation";
 import {
+    deleteDatabaseRecipe,
     getDatabaseRecipes,
     updateDatabaseRecipe,
 } from "@/lib/recipeApi";
@@ -151,6 +152,7 @@ function EditRecipeForm({
         useState<string[]>([]);
 
     const [isSaving, setIsSaving] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-start bg-black px-6 py-16 font-sans text-zinc-100">
@@ -166,8 +168,10 @@ function EditRecipeForm({
                         absolute right-4 top-4 cursor-pointer text-base
                         transition-all duration-300
                         hover:scale-125
+                        disabled:cursor-not-allowed disabled:opacity-40
                     `}
-                    onClick={() => {
+                    disabled={isDeleting || isSaving}
+                    onClick={async () => {
                         const confirmed = confirm(
                             "Delete this recipe? This action cannot be undone."
                         );
@@ -176,9 +180,29 @@ function EditRecipeForm({
                             return;
                         }
 
-                        deleteSavedRecipe(recipe.slug);
-                        router.refresh();
-                        router.push("/");
+                        setIsDeleting(true);
+                        setErrorMessages([]);
+
+                        try {
+                            if (isDatabaseRecipe) {
+                                await deleteDatabaseRecipe(recipe.slug);
+                            } else {
+                                deleteSavedRecipe(recipe.slug);
+                            }
+
+                            router.refresh();
+                            router.push("/");
+                        } catch (error) {
+                            console.error(
+                                "Failed to delete recipe",
+                                error
+                            );
+                            setErrorMessages([
+                                "Failed to delete recipe. Please try again.",
+                            ]);
+                        } finally {
+                            setIsDeleting(false);
+                        }
                     }}
                 >
                     🗑️
@@ -266,7 +290,7 @@ function EditRecipeForm({
                     }}
                     errorMessages={errorMessages}
                     setErrorMessages={setErrorMessages}
-                    submitDisabled={isSaving}
+                    submitDisabled={isSaving || isDeleting}
                 />
             </div>
         </main>

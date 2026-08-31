@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+    deleteDatabaseRecipe,
     getDatabaseRecipes,
     updateDatabaseRecipe,
 } from "@/lib/recipeApi";
@@ -179,5 +180,48 @@ describe("updateDatabaseRecipe", () => {
                 ],
             })
         ).rejects.toThrow("Failed to update recipe");
+    });
+});
+
+describe("deleteDatabaseRecipe", () => {
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it("deletes a database recipe", async () => {
+        vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(
+                JSON.stringify({
+                    success: true,
+                }),
+                {
+                    status: 200,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            )
+        );
+
+        await deleteDatabaseRecipe("chicken-rice");
+
+        expect(fetch).toHaveBeenCalledWith(
+            "/api/recipes/chicken-rice",
+            {
+                method: "DELETE",
+            }
+        );
+    });
+
+    it("throws when the delete request fails", async () => {
+        vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(null, {
+                status: 500,
+            })
+        );
+
+        await expect(
+            deleteDatabaseRecipe("chicken-rice")
+        ).rejects.toThrow("Failed to delete recipe");
     });
 });
