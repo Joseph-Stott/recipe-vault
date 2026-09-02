@@ -3,6 +3,7 @@ import {
     createDatabaseRecipe,
     deleteDatabaseRecipe,
     getDatabaseRecipes,
+    importDatabaseRecipes,
     updateDatabaseRecipe,
 } from "@/lib/recipeApi";
 
@@ -287,6 +288,119 @@ describe("updateDatabaseRecipe", () => {
                 ],
             })
         ).rejects.toThrow("Failed to update recipe");
+    });
+});
+
+describe("importDatabaseRecipes", () => {
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it("imports and maps database recipes", async () => {
+        vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(
+                JSON.stringify({
+                    importedCount: 1,
+                    skippedCount: 0,
+                    recipes: [
+                        {
+                            slug: "chicken-rice",
+                            title: "Chicken Rice",
+                            timeCategory: "medium",
+                            cookBook: null,
+                            pageNumber: null,
+                            cookInstructions: ["Cook rice"],
+                            ingredients: [
+                                {
+                                    amount: "2",
+                                    unit: "cups",
+                                    name: "rice",
+                                },
+                            ],
+                        },
+                    ],
+                }),
+                {
+                    status: 200,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            )
+        );
+
+        const result = await importDatabaseRecipes([
+            {
+                slug: "chicken-rice",
+                title: "Chicken Rice",
+                timeCategory: "medium",
+                structuredIngredients: [
+                    {
+                        amount: 2,
+                        unit: "cups",
+                        name: "rice",
+                    },
+                ],
+                cookInstructions: ["Cook rice"],
+            },
+        ]);
+
+        expect(fetch).toHaveBeenCalledWith("/api/recipes/import", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                recipes: [
+                    {
+                        slug: "chicken-rice",
+                        title: "Chicken Rice",
+                        timeCategory: "medium",
+                        structuredIngredients: [
+                            {
+                                amount: 2,
+                                unit: "cups",
+                                name: "rice",
+                            },
+                        ],
+                        cookInstructions: ["Cook rice"],
+                    },
+                ],
+            }),
+        });
+        expect(result).toEqual({
+            importedCount: 1,
+            skippedCount: 0,
+            recipes: [
+                {
+                    slug: "chicken-rice",
+                    title: "Chicken Rice",
+                    timeCategory: "medium",
+                    structuredIngredients: [
+                        {
+                            amount: 2,
+                            unit: "cups",
+                            name: "rice",
+                        },
+                    ],
+                    cookInstructions: ["Cook rice"],
+                    cookBook: undefined,
+                    pageNumber: undefined,
+                },
+            ],
+        });
+    });
+
+    it("throws when the import request fails", async () => {
+        vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(null, {
+                status: 500,
+            })
+        );
+
+        await expect(importDatabaseRecipes([])).rejects.toThrow(
+            "Failed to import recipes"
+        );
     });
 });
 

@@ -37,6 +37,40 @@ export async function createDatabaseRecipe(
     return mapDatabaseRecipeToRecipe(createdRecipe);
 }
 
+export async function importDatabaseRecipes(
+    recipes: Recipe[]
+): Promise<{
+    importedCount: number;
+    skippedCount: number;
+    recipes: Recipe[];
+}> {
+    const response = await fetch("/api/recipes/import", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            recipes,
+        }),
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to import recipes");
+    }
+
+    const result: {
+        importedCount: number;
+        skippedCount: number;
+        recipes: DatabaseRecipe[];
+    } = await response.json();
+
+    return {
+        importedCount: result.importedCount,
+        skippedCount: result.skippedCount,
+        recipes: result.recipes.map(mapDatabaseRecipeToRecipe),
+    };
+}
+
 export async function updateDatabaseRecipe(
     recipe: Recipe
 ): Promise<Recipe> {

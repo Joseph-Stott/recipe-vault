@@ -20,6 +20,10 @@ export default function Home() {
     sortedFavoriteRecipes,
     sortedRecipes,
     groceryList,
+    localRecipesToImport,
+    isImportingRecipes,
+    importRecipeMessage,
+    importLocalRecipes,
     removeGroceryRecipe,
   } = useHomeRecipeData(searchText);
 
@@ -70,6 +74,26 @@ export default function Home() {
           searchText={searchText}
           setSearchText={setSearchText}
         />
+        {localRecipesToImport.length > 0 && (
+          <section className="flex w-full max-w-sm flex-col gap-2 rounded-lg border border-zinc-700 bg-zinc-900 p-3 text-center text-sm text-zinc-300">
+            <p>
+              {localRecipesToImport.length} local recipe{localRecipesToImport.length === 1 ? "" : "s"} can be copied into the database.
+            </p>
+            <button
+              title="Import local recipes"
+              className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 font-medium text-zinc-100 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
+              disabled={isImportingRecipes}
+              onClick={importLocalRecipes}
+            >
+              {isImportingRecipes ? "Importing..." : "Import Local Recipes"}
+            </button>
+          </section>
+        )}
+        {importRecipeMessage && (
+          <p className="max-w-sm text-center text-sm text-zinc-400">
+            {importRecipeMessage}
+          </p>
+        )}
         <RecipeList
           recipes={sortedRecipes}
           groceryList={groceryList}

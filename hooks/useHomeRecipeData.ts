@@ -23,7 +23,10 @@ import {
 } from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
 import { buildHomeRecipeCollections } from "@/lib/recipeService";
-import { getDatabaseRecipes } from "@/lib/recipeApi";
+import {
+    getDatabaseRecipes,
+    importDatabaseRecipes,
+} from "@/lib/recipeApi";
 
 const EMPTY_RECIPES: Recipe[] = [];
 const EMPTY_SLUGS: string[] = [];
@@ -38,6 +41,8 @@ export function useHomeRecipeData(searchText: string) {
     );
 
     const [databaseRecipes, setDatabaseRecipes] = useState<Recipe[]>([]);
+    const [isImportingRecipes, setIsImportingRecipes] = useState(false);
+    const [importRecipeMessage, setImportRecipeMessage] = useState<string | null>(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -84,6 +89,14 @@ export function useHomeRecipeData(searchText: string) {
         ).values()
     );
 
+    const databaseRecipeSlugs = new Set(
+        databaseRecipes.map((recipe) => recipe.slug)
+    );
+
+    const localRecipesToImport = savedRecipes.filter(
+        (recipe) => !databaseRecipeSlugs.has(recipe.slug)
+    );
+
     const groceryList = groceryItems.map(
         (ingredient) => ingredient.name
     );
@@ -94,6 +107,46 @@ export function useHomeRecipeData(searchText: string) {
             recipe.slug,
             recipe.structuredIngredients
         );
+    }
+
+    async function importLocalRecipes() {
+        if (localRecipesToImport.length === 0 || isImportingRecipes) {
+            return;
+        }
+
+        setIsImportingRecipes(true);
+        setImportRecipeMessage(null);
+
+        try {
+            const result = await importDatabaseRecipes(localRecipesToImport);
+
+            setDatabaseRecipes((currentRecipes) =>
+                Array.from(
+                    new Map(
+                        [
+                            ...currentRecipes,
+                            ...result.recipes,
+                        ].map((recipe) => [
+                            recipe.slug,
+                            recipe,
+                        ])
+                    ).values()
+                )
+            );
+
+            setImportRecipeMessage(
+                result.importedCount === 1
+                    ? "Imported 1 recipe."
+                    : `Imported ${result.importedCount} recipes.`
+            );
+        } catch (error) {
+            console.error("Failed to import local recipes", error);
+            setImportRecipeMessage(
+                "Failed to import local recipes. Please try again."
+            );
+        } finally {
+            setIsImportingRecipes(false);
+        }
     }
 
     // Delegates homepage filtering, grouping, and sorting rules
@@ -119,6 +172,10 @@ export function useHomeRecipeData(searchText: string) {
         sortedFavoriteRecipes,
         sortedRecipes,
         groceryList,
+        localRecipesToImport,
+        isImportingRecipes,
+        importRecipeMessage,
+        importLocalRecipes,
         removeGroceryRecipe,
     };
 }
