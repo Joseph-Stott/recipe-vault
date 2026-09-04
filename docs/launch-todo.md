@@ -51,7 +51,7 @@ flowchart TD
 - [ ] Decide whether built-in/static recipes should stay in code or be imported into the database.
 - [x] Add a one-time localStorage recipe import path.
 - [x] Prevent duplicate imported recipes by slug.
-- [ ] Verify migrated recipes can be viewed, edited, and deleted.
+- [x] Verify migrated recipes can be viewed, edited, and deleted.
 
 ### Phase 3: Prepare MVP Deployment
 
