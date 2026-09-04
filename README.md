@@ -4,7 +4,7 @@
 
 Recipe Vault is a recipe management web application built with Next.js, React, TypeScript, and Tailwind CSS.
 
-Users can create, edit, organize, and browse recipes while generating a grocery list directly from recipe ingredients. The application currently uses a hybrid persistence model: recipe CRUD is database-backed through PostgreSQL and Prisma, while favorites and grocery-list state still use browser localStorage. It demonstrates component-based architecture, structured data modeling, dynamic routing, API routes, database modeling, and client-side state management.
+Users can create, edit, organize, and browse recipes while generating a grocery list directly from recipe ingredients. Recipe CRUD is database-backed through PostgreSQL and Prisma, while favorites and grocery-list state still use browser localStorage. It demonstrates component-based architecture, structured data modeling, dynamic routing, API routes, database modeling, and client-side state management.
 
 ## Screenshots
 
@@ -50,6 +50,12 @@ Apply database migrations:
 npx prisma migrate dev
 ```
 
+Seed starter recipes:
+
+```bash
+npm run db:seed
+```
+
 In a separate terminal, start the development server:
 
 ```bash
@@ -75,7 +81,7 @@ in your browser.
 * Automatic slug generation from recipe titles
 * Dynamic recipe detail pages
 * Database-backed recipe storage through PostgreSQL and Prisma
-* Hybrid display of built-in, database, and existing localStorage recipes during migration
+* Temporary localStorage import path for older browser-saved recipes
 
 ### Structured Ingredient System
 
@@ -171,6 +177,7 @@ Database-backed behavior currently includes:
 * Creating recipes from the Add Recipe page
 * Updating database recipes from the Edit Recipe page
 * Deleting database recipes from the Edit Recipe page
+* Seeding starter recipes into PostgreSQL
 * Mapping database records into the application recipe shape
 
 localStorage still persists:
@@ -180,7 +187,7 @@ localStorage still persists:
 * Grocery recipe tracking
 * Older custom recipes created before the database migration
 
-During the migration, built-in recipes, localStorage recipes, and database recipes are all shown so existing local data remains visible. The next migration step is an import path for useful localStorage recipes.
+Starter recipes are stored in source control as seed data and imported into the database with `npm run db:seed`. During the migration, localStorage recipes can still be imported into the database so existing local data can be preserved.
 
 ### Data Modeling
 
@@ -206,7 +213,7 @@ Business logic is separated into reusable service and utility modules rather tha
 ```text
 app/          Application routes and pages
 components/   Reusable React components
-data/         Built-in recipe data
+data/         Starter recipe seed data
 hooks/        React hooks for page-level state and behavior
 lib/          Application services, storage, validation, and utilities
 prisma/       Prisma schema and migrations
@@ -262,9 +269,10 @@ Tests verify behaviors such as:
 
 * Toast notifications
 * Improved measurement conversion and aggregation
-* Migrate existing localStorage recipes into PostgreSQL
 * Hosted deployment with a production PostgreSQL database
 * iPhone Home Screen support
+* Database-backed favorites
+* Database-backed grocery list
 * User accounts
 * Cloud synchronization
 

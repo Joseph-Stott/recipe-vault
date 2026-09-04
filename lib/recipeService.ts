@@ -1,14 +1,11 @@
-import { recipes } from "@/data/recipes";
 import { Recipe, Ingredient } from "@/types/recipe";
 import { getIngredientNames, getRecipeIngredientMatchCount } from "@/lib/recipeUtils";
 
-// Combines saved recipes with built-in recipes.
-// Saved recipes are placed first so edited recipes override
-// built-in recipes with matching slugs.
+// Deduplicates runtime recipes by slug.
+// Database recipes are passed after localStorage recipes so database data wins
+// during the temporary localStorage import bridge.
 export function getAllRecipes(savedRecipes: Recipe[]) {
-    const mergedRecipes = [...savedRecipes, ...recipes];
-
-    return mergedRecipes.filter((recipe, index, array) =>
+    return savedRecipes.filter((recipe, index, array) =>
         array.findIndex((currentRecipe) => currentRecipe.slug === recipe.slug) === index
     );
 }

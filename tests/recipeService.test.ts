@@ -9,38 +9,40 @@ import {
     getMainRecipes,
     sortRecipesByIngredientMatches,
 } from "@/lib/recipeService";
-import { recipes } from "@/data/recipes";
 
 describe("getAllRecipes", () => {
-    it("places saved recipes before built-in recipes", () => {
-        const savedRecipe = {
+    it("returns runtime recipes without adding built-in recipes", () => {
+        const recipe = {
             slug: "custom-recipe",
             title: "Custom Recipe",
             timeCategory: "fast" as const,
             structuredIngredients: [],
         };
 
-        const allRecipes = getAllRecipes([savedRecipe]);
+        const allRecipes = getAllRecipes([recipe]);
 
-        expect(allRecipes[0]).toEqual(savedRecipe);
+        expect(allRecipes).toEqual([recipe]);
     });
 
-    it("keeps the saved recipe when a built-in recipe has the same slug", () => {
-        const builtInRecipe = recipes[0];
-
-        const savedRecipe = {
-            ...builtInRecipe,
-            title: "Edited Recipe Title",
+    it("keeps the first recipe when duplicate runtime slugs are present", () => {
+        const firstRecipe = {
+            slug: "custom-recipe",
+            title: "Custom Recipe",
+            timeCategory: "fast" as const,
+            structuredIngredients: [],
         };
 
-        const allRecipes = getAllRecipes([savedRecipe]);
+        const duplicateRecipe = {
+            ...firstRecipe,
+            title: "Duplicate Recipe",
+        };
 
-        const matchingRecipes = allRecipes.filter(
-            (recipe) => recipe.slug === builtInRecipe.slug
-        );
+        const allRecipes = getAllRecipes([
+            firstRecipe,
+            duplicateRecipe,
+        ]);
 
-        expect(matchingRecipes).toHaveLength(1);
-        expect(matchingRecipes[0].title).toBe("Edited Recipe Title");
+        expect(allRecipes).toEqual([firstRecipe]);
     });
 });
 

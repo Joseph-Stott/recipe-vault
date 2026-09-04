@@ -27,6 +27,7 @@ flowchart TD
 - [x] Database recipes can be deleted from the edit page.
 - [x] New recipes are created in the database from the Add Recipe page.
 - [x] Existing localStorage recipes can be imported or migrated into the database.
+- [x] Built-in/static recipes are seed data for the database.
 - [ ] The app is deployed with a hosted Postgres database.
 - [ ] The deployed app can be added to an iPhone Home Screen.
 
@@ -48,7 +49,8 @@ flowchart TD
 
 ### Phase 2: Migrate Existing Recipe Data
 
-- [ ] Decide whether built-in/static recipes should stay in code or be imported into the database.
+- [x] Decide whether built-in/static recipes should stay in code or be imported into the database.
+- [x] Add a database seed path for built-in/static recipes.
 - [x] Add a one-time localStorage recipe import path.
 - [x] Prevent duplicate imported recipes by slug.
 - [x] Verify migrated recipes can be viewed, edited, and deleted.
