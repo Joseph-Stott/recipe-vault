@@ -7,10 +7,6 @@ import {
 } from "react";
 
 import { 
-    getFavoriteRecipeSlugs,
-    subscribeToFavoriteRecipeSlugs,
-} from "@/lib/favorites";
-import { 
     getGroceryList,
     getGroceryRecipeSlugs,
     removeRecipeFromGroceryList,
@@ -27,6 +23,7 @@ import {
     getDatabaseRecipes,
     importDatabaseRecipes,
 } from "@/lib/recipeApi";
+import { useFavoriteRecipeSlugs } from "@/hooks/useFavoriteRecipeSlugs";
 
 const EMPTY_RECIPES: Recipe[] = [];
 const EMPTY_SLUGS: string[] = [];
@@ -62,11 +59,7 @@ export function useHomeRecipeData(searchText: string) {
         };
     }, []);
 
-    const favoriteRecipeSlugs = useSyncExternalStore(
-        subscribeToFavoriteRecipeSlugs,
-        getFavoriteRecipeSlugs,
-        () => EMPTY_SLUGS
-    );
+    const { favoriteRecipeSlugs } = useFavoriteRecipeSlugs();
 
     const groceryItems = useSyncExternalStore(
         subscribeToGroceryList,

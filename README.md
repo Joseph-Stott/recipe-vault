@@ -4,7 +4,7 @@
 
 Recipe Vault is a recipe management web application built with Next.js, React, TypeScript, and Tailwind CSS.
 
-Users can create, edit, organize, and browse recipes while generating a grocery list directly from recipe ingredients. Recipe CRUD is database-backed through PostgreSQL and Prisma, while favorites and grocery-list state still use browser localStorage. It demonstrates component-based architecture, structured data modeling, dynamic routing, API routes, database modeling, and client-side state management.
+Users can create, edit, organize, and browse recipes while generating a grocery list directly from recipe ingredients. Recipe CRUD and favorites are database-backed through PostgreSQL and Prisma, while grocery-list state still uses browser localStorage. It demonstrates component-based architecture, structured data modeling, dynamic routing, API routes, database modeling, and client-side state management.
 
 ## Screenshots
 
@@ -50,6 +50,8 @@ Apply database migrations:
 npx prisma migrate dev
 ```
 
+If Prisma needs a separate shadow database for migration validation, set `SHADOW_DATABASE_URL` in `.env` to a second disposable database URL.
+
 Seed starter recipes:
 
 ```bash
@@ -81,6 +83,7 @@ in your browser.
 * Automatic slug generation from recipe titles
 * Dynamic recipe detail pages
 * Database-backed recipe storage through PostgreSQL and Prisma
+* Database-backed favorite recipe storage
 * Temporary localStorage import path for older browser-saved recipes
 
 ### Structured Ingredient System
@@ -177,12 +180,13 @@ Database-backed behavior currently includes:
 * Creating recipes from the Add Recipe page
 * Updating database recipes from the Edit Recipe page
 * Deleting database recipes from the Edit Recipe page
+* Reading and toggling favorite recipes through PostgreSQL
+* Importing older browser-saved favorites into PostgreSQL
 * Seeding starter recipes into PostgreSQL
 * Mapping database records into the application recipe shape
 
 localStorage still persists:
 
-* Favorite recipes
 * Grocery lists
 * Grocery recipe tracking
 * Older custom recipes created before the database migration
@@ -253,6 +257,8 @@ Current test coverage includes:
 - Database recipe mapping
 - Recipe API client behavior
 - Recipe create, update, and delete API routes
+- Favorite API client behavior
+- Favorite API routes
 
 Tests verify behaviors such as:
 
@@ -271,7 +277,6 @@ Tests verify behaviors such as:
 * Improved measurement conversion and aggregation
 * Hosted deployment with a production PostgreSQL database
 * iPhone Home Screen support
-* Database-backed favorites
 * Database-backed grocery list
 * User accounts
 * Cloud synchronization

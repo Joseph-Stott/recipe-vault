@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
     getFavoriteRecipeSlugs,
+    removeFavoriteRecipe,
     subscribeToFavoriteRecipeSlugs,
     toggleFavoriteRecipe,
 } from "@/lib/favorites";
@@ -35,6 +36,17 @@ describe("favorites", () => {
         toggleFavoriteRecipe("chicken-rice");
 
         expect(getFavoriteRecipeSlugs()).toEqual([]);
+    });
+
+    it("removes a recipe favorite", () => {
+        toggleFavoriteRecipe("chicken-rice");
+        toggleFavoriteRecipe("bean-soup");
+
+        removeFavoriteRecipe("chicken-rice");
+
+        expect(getFavoriteRecipeSlugs()).toEqual([
+            "bean-soup",
+        ]);
     });
 
     it("notifies subscribers when favorites change", () => {

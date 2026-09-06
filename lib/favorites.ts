@@ -58,6 +58,21 @@ export function toggleFavoriteRecipe(slug: string) {
     notifyFavoriteRecipeListeners();
 }
 
+export function removeFavoriteRecipe(slug: string) {
+    const currentFavoriteList = getFavoriteRecipeSlugs();
+
+    if (!currentFavoriteList.includes(slug)) {
+        return;
+    }
+
+    const updatedFavoriteList = currentFavoriteList.filter(
+        (favoriteSlug) => favoriteSlug !== slug
+    );
+
+    localStorage.setItem("favorite-list", JSON.stringify(updatedFavoriteList));
+    notifyFavoriteRecipeListeners();
+}
+
 export function isFavoriteRecipe(slug: string) {
     const favoriteSlugs = getFavoriteRecipeSlugs();
     

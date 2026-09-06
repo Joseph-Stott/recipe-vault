@@ -28,6 +28,7 @@ flowchart TD
 - [x] New recipes are created in the database from the Add Recipe page.
 - [x] Existing localStorage recipes can be imported or migrated into the database.
 - [x] Built-in/static recipes are seed data for the database.
+- [x] Favorites are database-backed, with a localStorage import bridge for older browser-saved favorites.
 - [ ] The app is deployed with a hosted Postgres database.
 - [ ] The deployed app can be added to an iPhone Home Screen.
 
@@ -35,7 +36,7 @@ flowchart TD
 
 - Keep authentication out of the first launch unless private access becomes a hard requirement.
 - Use one shared database-backed recipe collection for the first version.
-- Keep favorites and grocery list in localStorage for v1 unless cross-device sync becomes required immediately.
+- Keep grocery list state in localStorage for v1 unless cross-device sync becomes required immediately.
 - Prefer free hosting/database options first, with clear notes about limits.
 
 ## Remaining Todo
@@ -73,7 +74,6 @@ flowchart TD
 
 ### Phase 5: Nice-To-Have After Launch
 
-- [ ] Database-backed favorites.
 - [ ] Database-backed grocery list.
 - [ ] Authentication and separate user ownership.
 - [ ] Better production error messages.

@@ -19,21 +19,28 @@ enum TimeCategory {
 }
 
 model Recipe {
-  id    Int    @id @default(autoincrement())
-  title String
-  slug  String @unique
-  timeCategory TimeCategory
-  cookBook String?
-  pageNumber Int?
+  id               Int             @id @default(autoincrement())
+  title            String
+  slug             String          @unique
+  timeCategory     TimeCategory
+  cookBook         String?
+  pageNumber       Int?
   cookInstructions String[]
-  ingredients Ingredient[]
+  ingredients      Ingredient[]
+  favorite         FavoriteRecipe?
 }
 
 model Ingredient {
-  id       Int    @id @default(autoincrement())
+  id       Int      @id @default(autoincrement())
   amount   Decimal?
   unit     String
   name     String
   recipeId Int
-  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipe   Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+}
+
+model FavoriteRecipe {
+  id         Int    @id @default(autoincrement())
+  recipeSlug String @unique
+  recipe     Recipe @relation(fields: [recipeSlug], references: [slug], onDelete: Cascade)
 }

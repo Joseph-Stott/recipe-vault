@@ -10,15 +10,11 @@ import {
     useState,
     useSyncExternalStore, } from "react";
 import { useParams } from "next/navigation";
-import {
-    getFavoriteRecipeSlugs,
-    subscribeToFavoriteRecipeSlugs,
-    toggleFavoriteRecipe,
-} from "@/lib/favorites";
 import BackButton from "@/components/BackButton";
 import { getAllRecipes } from "@/lib/recipeService";
 import { getDatabaseRecipes } from "@/lib/recipeApi";
 import { Recipe } from "@/types/recipe";
+import { useFavoriteRecipeSlugs } from "@/hooks/useFavoriteRecipeSlugs";
 
 const timeCategoryStyles = {
     fast: "bg-green-600 text-white",
@@ -27,8 +23,6 @@ const timeCategoryStyles = {
 };
 
 const EMPTY_SAVED_RECIPES: ReturnType<typeof getSavedRecipes> = [];
-const EMPTY_FAVORITE_SLUGS: string[] = [];
-
 export default function DetailPage() {
 
     const params = useParams();
@@ -65,11 +59,11 @@ export default function DetailPage() {
         };
     }, []);
 
-    const favoriteRecipeSlugs = useSyncExternalStore(
-        subscribeToFavoriteRecipeSlugs,
-        getFavoriteRecipeSlugs,
-        () => EMPTY_FAVORITE_SLUGS
-    );
+    const {
+        favoriteRecipeSlugs,
+        isUpdatingFavorite,
+        toggleFavoriteRecipe,
+    } = useFavoriteRecipeSlugs();
 
     const combinedSavedRecipes = Array.from(
         new Map(
@@ -110,15 +104,17 @@ export default function DetailPage() {
                 <div className="flex flex-col gap-4">
                     <button
                     title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                        disabled={isUpdatingFavorite}
                         className={`
                             absolute right-4 top-4 cursor-pointer text-2xl
                             transition-all duration-300
                             hover:scale-125
                             active:scale-150
+                            disabled:cursor-not-allowed disabled:opacity-40
                             ${isFavorite ? "rotate-360 scale-125" : "rotate-0"}
                         `}
-                        onClick={() => {
-                            toggleFavoriteRecipe(recipe.slug);
+                        onClick={async () => {
+                            await toggleFavoriteRecipe(recipe.slug);
                         }}
                         >
                         {isFavorite ? "★" : "☆"}
