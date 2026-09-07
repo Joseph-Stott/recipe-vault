@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Recipe Vault icon</title>
+  <desc id="desc">A recipe book with a gold bookmark on a dark background.</desc>
+  <rect width="512" height="512" rx="112" fill="#050505"/>
+  <rect x="126" y="96" width="260" height="320" rx="36" fill="#18181b" stroke="#71717a" stroke-width="16"/>
+  <path d="M174 96h70v320h-70c-27 0-48-21-48-48V144c0-27 21-48 48-48z" fill="#27272a"/>
+  <path d="M286 96h66c19 0 34 15 34 34v286l-50-32-50 32z" fill="#fbbf24"/>
+  <path d="M178 176h116M178 230h76M178 284h122" stroke="#f4f4f5" stroke-width="20" stroke-linecap="round"/>
+  <circle cx="336" cy="188" r="22" fill="#050505"/>
+</svg>

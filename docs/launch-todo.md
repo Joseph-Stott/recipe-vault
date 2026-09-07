@@ -67,8 +67,8 @@ flowchart TD
 
 ### Phase 4: iPhone Home Screen Experience
 
-- [ ] Add app metadata for a better Home Screen name and icon.
-- [ ] Add a web app manifest if needed.
+- [x] Add app metadata for a better Home Screen name and icon.
+- [x] Add a web app manifest.
 - [ ] Confirm the deployed site opens well on iPhone Safari.
 - [ ] Add the deployed site to the iPhone Home Screen.
 
