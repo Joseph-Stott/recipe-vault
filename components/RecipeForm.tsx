@@ -151,11 +151,14 @@ export default function RecipeForm({
                     Add Ingredient
                 </button>
                 {structuredIngredients.map((ingredient, index) => (
-                    <div key={index} className="flex items-center gap-2">
+                    <div
+                        key={index}
+                        className="grid grid-cols-[minmax(3.5rem,0.7fr)_minmax(4rem,0.9fr)_minmax(0,1.4fr)_2.5rem] items-center gap-2"
+                    >
                         <input
                             autoComplete="off"
                             spellCheck={false}
-                            className="w-16 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm text-zinc-100 placeholder:text-zinc-500"
+                            className="min-w-0 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm text-zinc-100 placeholder:text-zinc-500"
                             type="text"
                             placeholder="Amt"
                             value={ingredient.amount}
@@ -167,7 +170,7 @@ export default function RecipeForm({
                         <input
                             autoComplete="off"
                             spellCheck={false}
-                            className="w-20 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm text-zinc-100 placeholder:text-zinc-500"
+                            className="min-w-0 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm text-zinc-100 placeholder:text-zinc-500"
                             type="text"
                             placeholder="Unit"
                             value={ingredient.unit}
@@ -179,7 +182,7 @@ export default function RecipeForm({
                         <input
                             autoComplete="off"
                             spellCheck={false}
-                            className="w-40 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm text-zinc-100 placeholder:text-zinc-500"
+                            className="min-w-0 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm text-zinc-100 placeholder:text-zinc-500"
                             type="text"
                             placeholder="Ingredient"
                             value={ingredient.name}

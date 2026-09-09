@@ -69,6 +69,7 @@ flowchart TD
 
 - [x] Add app metadata for a better Home Screen name and icon.
 - [x] Add a web app manifest.
+- [x] Smoke test local mobile-width layout for homepage, detail, and recipe form pages.
 - [ ] Confirm the deployed site opens well on iPhone Safari.
 - [ ] Add the deployed site to the iPhone Home Screen.
 

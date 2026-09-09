@@ -38,7 +38,7 @@ export default function RecipeCard(props: RecipeCardProps) {
             </span>
             <div className="flex flex-col gap-2">
                 <div className="relative flex items-center justify-center">
-                    <span className="break-words">
+                    <span className="min-w-0 break-words px-10">
                         {props.title}
                     </span>
 

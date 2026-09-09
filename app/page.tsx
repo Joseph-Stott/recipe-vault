@@ -41,7 +41,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start bg-black px-6 py-16 font-sans text-zinc-100">
+    <main className="flex min-h-svh flex-col items-center justify-start bg-black px-6 pb-28 pt-16 font-sans text-zinc-100">
       <GroceryRecipesSection
         recipes={groceryRecipes}
         onRemoveRecipe={handleRemoveGroceryRecipe}
@@ -103,7 +103,7 @@ export default function Home() {
         <Link 
           title="Create a new recipe"
           href="/add-recipe"
-          className="fixed bottom-6 right-6 cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 text-center text-sm font-medium text-zinc-100 hover:bg-zinc-800"
+          className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))] cursor-pointer rounded-lg border border-zinc-600 bg-black/80 px-3 py-2 text-center text-sm font-medium text-zinc-100 backdrop-blur hover:bg-zinc-800"
         >
           Add Recipe
         </Link>
