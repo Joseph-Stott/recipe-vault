@@ -38,6 +38,10 @@ export function useHomeRecipeData(searchText: string) {
     );
 
     const [databaseRecipes, setDatabaseRecipes] = useState<Recipe[]>([]);
+    const [databaseRecipesLoaded, setDatabaseRecipesLoaded] =
+        useState(false);
+    const [databaseRecipeLoadError, setDatabaseRecipeLoadError] =
+        useState<string | null>(null);
     const [isImportingRecipes, setIsImportingRecipes] = useState(false);
     const [importRecipeMessage, setImportRecipeMessage] = useState<string | null>(null);
 
@@ -48,10 +52,21 @@ export function useHomeRecipeData(searchText: string) {
             .then((recipes) => {
                 if (!cancelled) {
                     setDatabaseRecipes(recipes);
+                    setDatabaseRecipeLoadError(null);
                 }
             })
             .catch((error) => {
                 console.error("Failed to load database recipes", error);
+                if (!cancelled) {
+                    setDatabaseRecipeLoadError(
+                        "Recipes could not be loaded from the database."
+                    );
+                }
+            })
+            .finally(() => {
+                if (!cancelled) {
+                    setDatabaseRecipesLoaded(true);
+                }
             });
 
         return () => {
@@ -59,7 +74,12 @@ export function useHomeRecipeData(searchText: string) {
         };
     }, []);
 
-    const { favoriteRecipeSlugs } = useFavoriteRecipeSlugs();
+    const {
+        favoriteRecipeSlugs,
+        favoriteRecipeLoadError,
+        favoriteRecipeImportError,
+        favoriteRecipeUpdateError,
+    } = useFavoriteRecipeSlugs();
 
     const groceryItems = useSyncExternalStore(
         subscribeToGroceryList,
@@ -165,6 +185,11 @@ export function useHomeRecipeData(searchText: string) {
         sortedFavoriteRecipes,
         sortedRecipes,
         groceryList,
+        databaseRecipesLoaded,
+        databaseRecipeLoadError,
+        favoriteRecipeLoadError,
+        favoriteRecipeImportError,
+        favoriteRecipeUpdateError,
         localRecipesToImport,
         isImportingRecipes,
         importRecipeMessage,

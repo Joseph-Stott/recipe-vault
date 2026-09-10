@@ -15,6 +15,7 @@ import { getAllRecipes } from "@/lib/recipeService";
 import { getDatabaseRecipes } from "@/lib/recipeApi";
 import { Recipe } from "@/types/recipe";
 import { useFavoriteRecipeSlugs } from "@/hooks/useFavoriteRecipeSlugs";
+import StatusPanel from "@/components/StatusPanel";
 
 const timeCategoryStyles = {
     fast: "bg-green-600 text-white",
@@ -35,6 +36,8 @@ export default function DetailPage() {
 
     const [databaseRecipes, setDatabaseRecipes] = useState<Recipe[]>([]);
     const [databaseRecipesLoaded, setDatabaseRecipesLoaded] = useState(false);
+    const [databaseRecipeLoadError, setDatabaseRecipeLoadError] =
+        useState<string | null>(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -43,10 +46,16 @@ export default function DetailPage() {
             .then((recipes) => {
                 if (!cancelled) {
                     setDatabaseRecipes(recipes);
+                    setDatabaseRecipeLoadError(null);
                 }
             })
             .catch((error) => {
                 console.error("Failed to load database recipes", error);
+                if (!cancelled) {
+                    setDatabaseRecipeLoadError(
+                        "Recipes could not be loaded from the database."
+                    );
+                }
             })
             .finally(() => {
                 if (!cancelled) {
@@ -61,6 +70,9 @@ export default function DetailPage() {
 
     const {
         favoriteRecipeSlugs,
+        favoriteRecipeLoadError,
+        favoriteRecipeImportError,
+        favoriteRecipeUpdateError,
         isUpdatingFavorite,
         toggleFavoriteRecipe,
     } = useFavoriteRecipeSlugs();
@@ -80,17 +92,39 @@ export default function DetailPage() {
 
     if (!recipe && !databaseRecipesLoaded) {
         return (
-            <p className="text-center text-xl text-zinc-400">
-                Loading recipe...
-            </p>
+            <main className="flex min-h-screen flex-col items-center justify-start bg-black px-6 py-16 font-sans text-zinc-100">
+                <StatusPanel title="Loading recipe">
+                    Connecting to the recipe database...
+                </StatusPanel>
+            </main>
+        );
+    }
+
+    if (!recipe && databaseRecipeLoadError) {
+        return (
+            <main className="flex min-h-screen flex-col items-center justify-start bg-black px-6 py-16 font-sans text-zinc-100">
+                <StatusPanel
+                    title="Recipe unavailable"
+                    tone="error"
+                    action={<BackButton />}
+                >
+                    {databaseRecipeLoadError} Check the database connection and try again.
+                </StatusPanel>
+            </main>
         );
     }
 
     if (!recipe) {
         return (
-            <p className="text-center text-xl text-zinc-400">
-                No recipe found
-            </p>
+            <main className="flex min-h-screen flex-col items-center justify-start bg-black px-6 py-16 font-sans text-zinc-100">
+                <StatusPanel
+                    title="Recipe not found"
+                    tone="warning"
+                    action={<BackButton />}
+                >
+                    This recipe is not available in the current collection.
+                </StatusPanel>
+            </main>
         );
     }
 
@@ -160,6 +194,15 @@ export default function DetailPage() {
                                 <span>page {recipe.pageNumber}</span>
                             )}
                         </section>
+                    )}
+                    {(favoriteRecipeLoadError ||
+                        favoriteRecipeImportError ||
+                        favoriteRecipeUpdateError) && (
+                        <StatusPanel title="Favorites need attention" tone="warning">
+                            {favoriteRecipeUpdateError ||
+                                favoriteRecipeImportError ||
+                                favoriteRecipeLoadError}
+                        </StatusPanel>
                     )}
                     {recipe.structuredIngredients &&(
                         <section>

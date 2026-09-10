@@ -11,6 +11,7 @@ import {
     createDatabaseRecipe,
     getDatabaseRecipes,
 } from "@/lib/recipeApi";
+import StatusPanel from "@/components/StatusPanel";
 
 export default function AddRecipePage() {
     const [title, setTitle] = useState("");
@@ -28,6 +29,8 @@ export default function AddRecipePage() {
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
     const [databaseRecipes, setDatabaseRecipes] = useState<Recipe[]>([]);
     const [databaseRecipesLoaded, setDatabaseRecipesLoaded] = useState(false);
+    const [databaseRecipeLoadError, setDatabaseRecipeLoadError] =
+        useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
 
     const router = useRouter();
@@ -39,10 +42,16 @@ export default function AddRecipePage() {
             .then((recipes) => {
                 if (!cancelled) {
                     setDatabaseRecipes(recipes);
+                    setDatabaseRecipeLoadError(null);
                 }
             })
             .catch((error) => {
                 console.error("Failed to load database recipes", error);
+                if (!cancelled) {
+                    setDatabaseRecipeLoadError(
+                        "Recipes could not be loaded from the database. New recipes cannot be saved until the database is available."
+                    );
+                }
             })
             .finally(() => {
                 if (!cancelled) {
@@ -61,6 +70,16 @@ export default function AddRecipePage() {
                 <h1 className="flex items-center justify-center">
                     Add a Recipe
                 </h1>
+                {!databaseRecipesLoaded && (
+                    <StatusPanel title="Checking recipes">
+                        Loading existing recipes before saving is enabled...
+                    </StatusPanel>
+                )}
+                {databaseRecipeLoadError && (
+                    <StatusPanel title="Cannot save yet" tone="error">
+                        {databaseRecipeLoadError}
+                    </StatusPanel>
+                )}
                 <RecipeForm
                     title={title}
                     setTitle={setTitle}
@@ -76,6 +95,13 @@ export default function AddRecipePage() {
                     setPageNumber={setPageNumber}
                     submitButtonText="Add Recipe"
                     onSubmit={async () => {
+                        if (databaseRecipeLoadError) {
+                            setErrorMessages([
+                                "Recipes must load before a new recipe can be saved.",
+                            ]);
+                            return;
+                        }
+
                         const combinedSavedRecipes = Array.from(
                             new Map(
                                 [
@@ -142,7 +168,11 @@ export default function AddRecipePage() {
                     }}
                     errorMessages={errorMessages}
                     setErrorMessages={setErrorMessages}
-                    submitDisabled={isSaving || !databaseRecipesLoaded}
+                    submitDisabled={
+                        isSaving ||
+                        !databaseRecipesLoaded ||
+                        Boolean(databaseRecipeLoadError)
+                    }
                 />
             </div>
         </main>

@@ -29,6 +29,7 @@ flowchart TD
 - [x] Existing localStorage recipes can be imported or migrated into the database.
 - [x] Built-in/static recipes are seed data for the database.
 - [x] Favorites are database-backed, with a localStorage import bridge for older browser-saved favorites.
+- [x] Database load failures show user-facing status messages.
 - [ ] The app is deployed with a hosted Postgres database.
 - [ ] The deployed app can be added to an iPhone Home Screen.
 

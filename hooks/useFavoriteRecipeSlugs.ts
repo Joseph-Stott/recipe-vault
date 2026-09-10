@@ -33,6 +33,12 @@ export function useFavoriteRecipeSlugs() {
         useState(false);
 
     const [isUpdatingFavorite, setIsUpdatingFavorite] = useState(false);
+    const [favoriteRecipeLoadError, setFavoriteRecipeLoadError] =
+        useState<string | null>(null);
+    const [favoriteRecipeImportError, setFavoriteRecipeImportError] =
+        useState<string | null>(null);
+    const [favoriteRecipeUpdateError, setFavoriteRecipeUpdateError] =
+        useState<string | null>(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -41,10 +47,16 @@ export function useFavoriteRecipeSlugs() {
             .then((favoriteRecipeSlugs) => {
                 if (!cancelled) {
                     setDatabaseFavoriteRecipeSlugs(favoriteRecipeSlugs);
+                    setFavoriteRecipeLoadError(null);
                 }
             })
             .catch((error) => {
                 console.error("Failed to load database favorites", error);
+                if (!cancelled) {
+                    setFavoriteRecipeLoadError(
+                        "Favorites could not be loaded from the database."
+                    );
+                }
             })
             .finally(() => {
                 if (!cancelled) {
@@ -80,10 +92,16 @@ export function useFavoriteRecipeSlugs() {
             .then((favoriteRecipeSlugs) => {
                 if (!cancelled) {
                     setDatabaseFavoriteRecipeSlugs(favoriteRecipeSlugs);
+                    setFavoriteRecipeImportError(null);
                 }
             })
             .catch((error) => {
                 console.error("Failed to import local favorites", error);
+                if (!cancelled) {
+                    setFavoriteRecipeImportError(
+                        "Local favorites could not be copied into the database."
+                    );
+                }
             });
 
         return () => {
@@ -115,6 +133,7 @@ export function useFavoriteRecipeSlugs() {
         }
 
         setIsUpdatingFavorite(true);
+        setFavoriteRecipeUpdateError(null);
 
         try {
             const favoriteRecipeSlugs =
@@ -127,6 +146,9 @@ export function useFavoriteRecipeSlugs() {
             setDatabaseFavoriteRecipeSlugs(favoriteRecipeSlugs);
         } catch (error) {
             console.error("Failed to update database favorite", error);
+            setFavoriteRecipeUpdateError(
+                "Favorite could not be updated. Please try again."
+            );
         } finally {
             setIsUpdatingFavorite(false);
         }
@@ -134,6 +156,9 @@ export function useFavoriteRecipeSlugs() {
 
     return {
         favoriteRecipeSlugs,
+        favoriteRecipeLoadError,
+        favoriteRecipeImportError,
+        favoriteRecipeUpdateError,
         isUpdatingFavorite,
         toggleFavoriteRecipe,
     };

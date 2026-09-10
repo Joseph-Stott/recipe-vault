@@ -8,6 +8,7 @@ import FavoriteRecipesSection from "@/components/FavoriteRecipesSection";
 import GroceryRecipesSection from "@/components/GroceryRecipesSection";
 import RecipeList from "@/components/RecipeList";
 import { useHomeRecipeData } from "@/hooks/useHomeRecipeData";
+import StatusPanel from "@/components/StatusPanel";
 
 export default function Home() {
   
@@ -20,6 +21,11 @@ export default function Home() {
     sortedFavoriteRecipes,
     sortedRecipes,
     groceryList,
+    databaseRecipesLoaded,
+    databaseRecipeLoadError,
+    favoriteRecipeLoadError,
+    favoriteRecipeImportError,
+    favoriteRecipeUpdateError,
     localRecipesToImport,
     isImportingRecipes,
     importRecipeMessage,
@@ -39,6 +45,10 @@ export default function Home() {
 
     removeGroceryRecipe(recipe);
   }
+
+  const canShowRecipeList =
+    allRecipes.length > 0 ||
+    (databaseRecipesLoaded && !databaseRecipeLoadError);
 
   return (
     <main className="flex min-h-svh flex-col items-center justify-start bg-black px-6 pb-28 pt-16 font-sans text-zinc-100">
@@ -74,6 +84,25 @@ export default function Home() {
           searchText={searchText}
           setSearchText={setSearchText}
         />
+        {!databaseRecipesLoaded && (
+          <StatusPanel title="Loading recipes">
+            Connecting to the recipe database...
+          </StatusPanel>
+        )}
+        {databaseRecipeLoadError && (
+          <StatusPanel title="Recipes unavailable" tone="error">
+            {databaseRecipeLoadError} Check the database connection and refresh the page.
+          </StatusPanel>
+        )}
+        {(favoriteRecipeLoadError ||
+          favoriteRecipeImportError ||
+          favoriteRecipeUpdateError) && (
+          <StatusPanel title="Favorites need attention" tone="warning">
+            {favoriteRecipeUpdateError ||
+              favoriteRecipeImportError ||
+              favoriteRecipeLoadError}
+          </StatusPanel>
+        )}
         {localRecipesToImport.length > 0 && (
           <section className="flex w-full max-w-sm flex-col gap-2 rounded-lg border border-zinc-700 bg-zinc-900 p-3 text-center text-sm text-zinc-300">
             <p>
@@ -94,12 +123,14 @@ export default function Home() {
             {importRecipeMessage}
           </p>
         )}
-        <RecipeList
-          recipes={sortedRecipes}
-          groceryList={groceryList}
-          searchText={searchText}
-          filteredRecipeCount={filteredRecipes.length}
-        />
+        {canShowRecipeList && (
+          <RecipeList
+            recipes={sortedRecipes}
+            groceryList={groceryList}
+            searchText={searchText}
+            filteredRecipeCount={filteredRecipes.length}
+          />
+        )}
         <Link 
           title="Create a new recipe"
           href="/add-recipe"

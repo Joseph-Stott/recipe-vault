@@ -24,6 +24,8 @@ import {
     getDatabaseRecipes,
     updateDatabaseRecipe,
 } from "@/lib/recipeApi";
+import StatusPanel from "@/components/StatusPanel";
+import BackButton from "@/components/BackButton";
 
 const EMPTY_SAVED_RECIPES: ReturnType<typeof getSavedRecipes> = [];
 
@@ -45,6 +47,8 @@ export default function EditRecipePage() {
     const [databaseRecipes, setDatabaseRecipes] = useState<Recipe[]>([]);
     const [databaseRecipesLoaded, setDatabaseRecipesLoaded] =
         useState(false);
+    const [databaseRecipeLoadError, setDatabaseRecipeLoadError] =
+        useState<string | null>(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -53,10 +57,16 @@ export default function EditRecipePage() {
             .then((recipes) => {
                 if (!cancelled) {
                     setDatabaseRecipes(recipes);
+                    setDatabaseRecipeLoadError(null);
                 }
             })
             .catch((error) => {
                 console.error("Failed to load database recipes", error);
+                if (!cancelled) {
+                    setDatabaseRecipeLoadError(
+                        "Recipes could not be loaded from the database."
+                    );
+                }
             })
             .finally(() => {
                 if (!cancelled) {
@@ -90,17 +100,39 @@ export default function EditRecipePage() {
 
     if (!databaseRecipesLoaded) {
         return (
-            <p className="text-center text-xl text-zinc-400">
-                Loading recipe...
-            </p>
+            <main className="flex min-h-screen flex-col items-center justify-start bg-black px-6 py-16 font-sans text-zinc-100">
+                <StatusPanel title="Loading recipe">
+                    Connecting to the recipe database...
+                </StatusPanel>
+            </main>
+        );
+    }
+
+    if (databaseRecipeLoadError) {
+        return (
+            <main className="flex min-h-screen flex-col items-center justify-start bg-black px-6 py-16 font-sans text-zinc-100">
+                <StatusPanel
+                    title="Recipe unavailable"
+                    tone="error"
+                    action={<BackButton />}
+                >
+                    {databaseRecipeLoadError} Check the database connection and try again.
+                </StatusPanel>
+            </main>
         );
     }
 
     if (!recipe) {
         return (
-            <p className="text-center text-xl text-zinc-400">
-                Recipe not found
-            </p>
+            <main className="flex min-h-screen flex-col items-center justify-start bg-black px-6 py-16 font-sans text-zinc-100">
+                <StatusPanel
+                    title="Recipe not found"
+                    tone="warning"
+                    action={<BackButton />}
+                >
+                    This recipe is not available in the current collection.
+                </StatusPanel>
+            </main>
         );
     }
 
