@@ -84,6 +84,7 @@ in your browser.
 * Dynamic recipe detail pages
 * Database-backed recipe storage through PostgreSQL and Prisma
 * Database-backed favorite recipe storage
+* JSON backup export for recipes and favorites
 * Temporary localStorage import path for older browser-saved recipes
 
 ### Structured Ingredient System
@@ -182,6 +183,7 @@ Database-backed behavior currently includes:
 * Deleting database recipes from the Edit Recipe page
 * Reading and toggling favorite recipes through PostgreSQL
 * Importing older browser-saved favorites into PostgreSQL
+* Exporting database recipes and favorites as a JSON backup
 * Seeding starter recipes into PostgreSQL
 * Mapping database records into the application recipe shape
 
@@ -259,6 +261,7 @@ Current test coverage includes:
 - Recipe create, update, and delete API routes
 - Favorite API client behavior
 - Favorite API routes
+- Recipe backup export route
 
 Tests verify behaviors such as:
 

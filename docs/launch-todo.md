@@ -30,6 +30,7 @@ flowchart TD
 - [x] Built-in/static recipes are seed data for the database.
 - [x] Favorites are database-backed, with a localStorage import bridge for older browser-saved favorites.
 - [x] Database load failures show user-facing status messages.
+- [x] Database recipes and favorites can be exported as a JSON backup.
 - [ ] The app is deployed with a hosted Postgres database.
 - [ ] The deployed app can be added to an iPhone Home Screen.
 
@@ -79,7 +80,6 @@ flowchart TD
 - [ ] Database-backed grocery list.
 - [ ] Authentication and separate user ownership.
 - [ ] Better production error messages.
-- [ ] Backups/export workflow.
 
 ## Free Deployment Notes
 
