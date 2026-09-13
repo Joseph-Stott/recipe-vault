@@ -31,6 +31,7 @@ flowchart TD
 - [x] Favorites are database-backed, with a localStorage import bridge for older browser-saved favorites.
 - [x] Database load failures show user-facing status messages.
 - [x] Database recipes and favorites can be exported as a JSON backup.
+- [x] App/database readiness can be checked through a health check endpoint.
 - [ ] The app is deployed with a hosted Postgres database.
 - [ ] The deployed app can be added to an iPhone Home Screen.
 
@@ -60,6 +61,7 @@ flowchart TD
 
 ### Phase 3: Prepare MVP Deployment
 
+- [x] Add a health check endpoint for deployment smoke tests.
 - [ ] Choose a hosted Postgres provider.
 - [ ] Create the hosted database.
 - [ ] Configure production `DATABASE_URL`.

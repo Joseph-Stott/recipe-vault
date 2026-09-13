@@ -72,6 +72,12 @@ http://localhost:3000
 
 in your browser.
 
+To check whether the app can reach the database, open:
+
+```text
+http://localhost:3000/api/health
+```
+
 ## Key Features
 
 ### Recipe Management
@@ -184,6 +190,7 @@ Database-backed behavior currently includes:
 * Reading and toggling favorite recipes through PostgreSQL
 * Importing older browser-saved favorites into PostgreSQL
 * Exporting database recipes and favorites as a JSON backup
+* Checking app/database readiness through a health check endpoint
 * Seeding starter recipes into PostgreSQL
 * Mapping database records into the application recipe shape
 
@@ -262,6 +269,7 @@ Current test coverage includes:
 - Favorite API client behavior
 - Favorite API routes
 - Recipe backup export route
+- Health check API route
 
 Tests verify behaviors such as:
 
