@@ -32,6 +32,8 @@ flowchart TD
 - [x] Database load failures show user-facing status messages.
 - [x] Database recipes and favorites can be exported as a JSON backup.
 - [x] App/database readiness can be checked through a health check endpoint.
+- [x] Required environment variables are documented with a committed example file.
+- [x] Local verification and deployment preflight commands are available.
 - [ ] The app is deployed with a hosted Postgres database.
 - [ ] The deployed app can be added to an iPhone Home Screen.
 
@@ -62,6 +64,8 @@ flowchart TD
 ### Phase 3: Prepare MVP Deployment
 
 - [x] Add a health check endpoint for deployment smoke tests.
+- [x] Add an environment variable example file.
+- [x] Add repeatable local verification and deployment preflight commands.
 - [ ] Choose a hosted Postgres provider.
 - [ ] Create the hosted database.
 - [ ] Configure production `DATABASE_URL`.

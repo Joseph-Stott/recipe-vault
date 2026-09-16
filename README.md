@@ -35,6 +35,12 @@ npm install
 Create a `.env` file with a PostgreSQL connection string:
 
 ```bash
+cp .env.example .env
+```
+
+Then replace the placeholder values:
+
+```bash
 DATABASE_URL="postgresql://..."
 ```
 
@@ -77,6 +83,30 @@ To check whether the app can reach the database, open:
 ```text
 http://localhost:3000/api/health
 ```
+
+## Verification
+
+Run the standard local checks:
+
+```bash
+npm run check
+```
+
+Before deployment, run the full preflight check:
+
+```bash
+npm run preflight
+```
+
+`npm run check` validates the Prisma schema, lints the code, and runs the test suite. `npm run preflight` runs those checks and then creates a production build.
+
+For production or hosted environments, apply committed migrations with:
+
+```bash
+npx prisma migrate deploy
+```
+
+Use `prisma migrate dev` only for local development when creating or testing new migrations.
 
 ## Key Features
 
