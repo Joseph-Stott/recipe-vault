@@ -33,6 +33,7 @@ flowchart TD
 - [x] Database recipes and favorites can be exported as a JSON backup.
 - [x] App/database readiness can be checked through a health check endpoint.
 - [x] Required environment variables are documented with a committed example file.
+- [x] Required environment variables can be checked from an npm script.
 - [x] Local verification and deployment preflight commands are available.
 - [x] Production migration commands are available as npm scripts.
 - [x] Health smoke tests can run against local or deployed environments.
@@ -67,6 +68,7 @@ flowchart TD
 
 - [x] Add a health check endpoint for deployment smoke tests.
 - [x] Add an environment variable example file.
+- [x] Add a command for validating required environment variables.
 - [x] Add repeatable local verification and deployment preflight commands.
 - [x] Add npm scripts for checking and applying production migrations.
 - [x] Add a command for health smoke tests after deployment.

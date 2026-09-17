@@ -92,13 +92,19 @@ Run the standard local checks:
 npm run check
 ```
 
+Confirm required environment variables are configured:
+
+```bash
+npm run check:env
+```
+
 Before deployment, run the full preflight check:
 
 ```bash
 npm run preflight
 ```
 
-`npm run check` validates the Prisma schema, lints the code, and runs the test suite. `npm run preflight` runs those checks and then creates a production build.
+`npm run check` validates the Prisma schema, lints the code, and runs the test suite. `npm run check:env` verifies the required database connection settings without printing secrets. `npm run preflight` runs those checks and then creates a production build.
 
 After starting the app, run a health smoke test:
 

@@ -11,8 +11,9 @@
     "db:seed": "prisma db seed",
     "start": "next start",
     "lint": "eslint",
+    "check:env": "node scripts/check-env.mjs",
     "check": "prisma validate && npm run lint && npm run test",
-    "preflight": "npm run check && npm run build",
+    "preflight": "npm run check:env && npm run check && npm run build",
     "smoke:health": "node scripts/check-health.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
