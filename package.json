@@ -13,6 +13,7 @@
     "lint": "eslint",
     "check": "prisma validate && npm run lint && npm run test",
     "preflight": "npm run check && npm run build",
+    "smoke:health": "node scripts/check-health.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },

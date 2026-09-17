@@ -100,6 +100,26 @@ npm run preflight
 
 `npm run check` validates the Prisma schema, lints the code, and runs the test suite. `npm run preflight` runs those checks and then creates a production build.
 
+After starting the app, run a health smoke test:
+
+```bash
+npm run smoke:health
+```
+
+For a deployed environment, set `APP_URL`:
+
+PowerShell:
+
+```powershell
+$env:APP_URL="https://your-deployed-site.example"; npm run smoke:health
+```
+
+Bash:
+
+```bash
+APP_URL="https://your-deployed-site.example" npm run smoke:health
+```
+
 For production or hosted environments, apply committed migrations with:
 
 ```bash
