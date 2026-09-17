@@ -22,6 +22,15 @@ function parseJsonResponse(responseBody) {
     }
 }
 
+function isExpectedHealthResponse(health) {
+    return (
+        typeof health === "object" &&
+        health !== null &&
+        health.status === "ok" &&
+        health.database === "reachable"
+    );
+}
+
 let healthUrl;
 
 try {
@@ -47,9 +56,9 @@ try {
         );
     }
 
-    if (health.status !== "ok" || health.database !== "reachable") {
+    if (!isExpectedHealthResponse(health)) {
         throw new Error(
-            `Unexpected health response: ${responseBody}`
+            `Unexpected health response: ${formatResponseBody(responseBody)}`
         );
     }
 
