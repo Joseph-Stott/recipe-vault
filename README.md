@@ -103,7 +103,13 @@ npm run preflight
 For production or hosted environments, apply committed migrations with:
 
 ```bash
-npx prisma migrate deploy
+npm run db:migrate:deploy
+```
+
+To inspect migration state before deploying, run:
+
+```bash
+npm run db:migrate:status
 ```
 
 Use `prisma migrate dev` only for local development when creating or testing new migrations.

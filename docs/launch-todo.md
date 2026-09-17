@@ -34,6 +34,7 @@ flowchart TD
 - [x] App/database readiness can be checked through a health check endpoint.
 - [x] Required environment variables are documented with a committed example file.
 - [x] Local verification and deployment preflight commands are available.
+- [x] Production migration commands are available as npm scripts.
 - [ ] The app is deployed with a hosted Postgres database.
 - [ ] The deployed app can be added to an iPhone Home Screen.
 
@@ -66,6 +67,7 @@ flowchart TD
 - [x] Add a health check endpoint for deployment smoke tests.
 - [x] Add an environment variable example file.
 - [x] Add repeatable local verification and deployment preflight commands.
+- [x] Add npm scripts for checking and applying production migrations.
 - [ ] Choose a hosted Postgres provider.
 - [ ] Create the hosted database.
 - [ ] Configure production `DATABASE_URL`.
