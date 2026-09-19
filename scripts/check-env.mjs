@@ -73,6 +73,10 @@ validatePostgresUrl("DATABASE_URL", env.DATABASE_URL, errors);
 
 if (env.SHADOW_DATABASE_URL) {
     validatePostgresUrl("SHADOW_DATABASE_URL", env.SHADOW_DATABASE_URL, errors);
+
+    if (env.SHADOW_DATABASE_URL === env.DATABASE_URL) {
+        errors.push("SHADOW_DATABASE_URL must use a different database from DATABASE_URL.");
+    }
 }
 
 if (errors.length > 0) {
