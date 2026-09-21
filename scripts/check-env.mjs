@@ -62,6 +62,22 @@ function validatePostgresUrl(name, value, errors) {
     }
 }
 
+function validateAppUrl(value, errors) {
+    if (!value) {
+        return;
+    }
+
+    try {
+        const parsedUrl = new URL(value);
+
+        if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+            errors.push("APP_URL must use an http:// or https:// URL.");
+        }
+    } catch {
+        errors.push("APP_URL must be a valid URL.");
+    }
+}
+
 const fileEnv = readEnvFile(envFilePath);
 const env = {
     ...fileEnv,
@@ -78,6 +94,8 @@ if (env.SHADOW_DATABASE_URL) {
         errors.push("SHADOW_DATABASE_URL must use a different database from DATABASE_URL.");
     }
 }
+
+validateAppUrl(env.APP_URL, errors);
 
 if (errors.length > 0) {
     console.error("Environment check failed:");
