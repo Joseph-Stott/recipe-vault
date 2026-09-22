@@ -112,6 +112,8 @@ After starting the app, run a health smoke test:
 npm run smoke:health
 ```
 
+The health smoke test fails if the endpoint does not respond within 10 seconds.
+
 For a deployed environment, set `APP_URL`:
 
 PowerShell:

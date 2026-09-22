@@ -1,4 +1,5 @@
 const appUrl = process.env.APP_URL ?? "http://localhost:3000";
+const healthCheckTimeoutMs = 10_000;
 
 function formatResponseBody(responseBody) {
     if (!responseBody) {
@@ -31,6 +32,26 @@ function isExpectedHealthResponse(health) {
     );
 }
 
+async function fetchWithTimeout(url, options, timeoutMs) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+        return await fetch(url, {
+            ...options,
+            signal: controller.signal,
+        });
+    } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") {
+            throw new Error(`Request timed out after ${timeoutMs}ms.`);
+        }
+
+        throw error;
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+
 let healthUrl;
 
 try {
@@ -42,11 +63,15 @@ try {
 }
 
 try {
-    const response = await fetch(healthUrl, {
-        headers: {
-            Accept: "application/json",
+    const response = await fetchWithTimeout(
+        healthUrl,
+        {
+            headers: {
+                Accept: "application/json",
+            },
         },
-    });
+        healthCheckTimeoutMs
+    );
     const responseBody = await response.text();
     const health = parseJsonResponse(responseBody);
 
