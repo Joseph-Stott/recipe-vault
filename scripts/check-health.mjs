@@ -1,5 +1,25 @@
 const appUrl = process.env.APP_URL ?? "http://localhost:3000";
-const healthCheckTimeoutMs = 10_000;
+const defaultHealthCheckTimeoutMs = 10_000;
+
+function parseHealthCheckTimeout(value) {
+    if (!value) {
+        return defaultHealthCheckTimeoutMs;
+    }
+
+    const timeoutMs = Number(value);
+
+    if (!Number.isInteger(timeoutMs) || timeoutMs <= 0) {
+        console.error("Health check failed.");
+        console.error("HEALTH_CHECK_TIMEOUT_MS must be a positive integer.");
+        process.exit(1);
+    }
+
+    return timeoutMs;
+}
+
+const healthCheckTimeoutMs = parseHealthCheckTimeout(
+    process.env.HEALTH_CHECK_TIMEOUT_MS
+);
 
 function formatResponseBody(responseBody) {
     if (!responseBody) {

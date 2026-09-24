@@ -78,6 +78,18 @@ function validateAppUrl(value, errors) {
     }
 }
 
+function validatePositiveInteger(name, value, errors) {
+    if (!value) {
+        return;
+    }
+
+    const parsedValue = Number(value);
+
+    if (!Number.isInteger(parsedValue) || parsedValue <= 0) {
+        errors.push(`${name} must be a positive integer.`);
+    }
+}
+
 const fileEnv = readEnvFile(envFilePath);
 const env = {
     ...fileEnv,
@@ -96,6 +108,11 @@ if (env.SHADOW_DATABASE_URL) {
 }
 
 validateAppUrl(env.APP_URL, errors);
+validatePositiveInteger(
+    "HEALTH_CHECK_TIMEOUT_MS",
+    env.HEALTH_CHECK_TIMEOUT_MS,
+    errors
+);
 
 if (errors.length > 0) {
     console.error("Environment check failed:");
