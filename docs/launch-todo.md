@@ -4,6 +4,8 @@ This checklist tracks launch readiness for the first usable version.
 
 Scope assumption: single-user MVP. The app does not need public multi-user scale for v1, but it does need persistent recipe data that works from both desktop browser and iPhone.
 
+For the broader status, roadmap, and open decisions, see [project-status.md](project-status.md).
+
 ## Launch Shape
 
 ```mermaid

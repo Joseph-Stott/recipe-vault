@@ -361,3 +361,5 @@ Tests verify behaviors such as:
 ## Purpose
 
 Recipe Vault is an ongoing portfolio project focused on learning modern web development through incremental feature development, refactoring, and user experience improvements.
+
+For current project status and launch direction, see [docs/project-status.md](docs/project-status.md).
