@@ -47,8 +47,10 @@ DATABASE_URL="postgresql://..."
 For local database development with Prisma Postgres, start the database:
 
 ```bash
-npx prisma dev
+npm run db:dev
 ```
+
+Use `npm run db:dev:detach` to start the local database in the background.
 
 Apply database migrations:
 
