@@ -55,7 +55,7 @@ Use `npm run db:dev:detach` to start the local database in the background.
 Apply database migrations:
 
 ```bash
-npx prisma migrate dev
+npm run db:migrate:dev
 ```
 
 If Prisma needs a separate shadow database for migration validation, set `SHADOW_DATABASE_URL` in `.env` to a second disposable database URL.
