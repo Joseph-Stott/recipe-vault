@@ -6,6 +6,8 @@ Scope assumption: single-user MVP. The app does not need public multi-user scale
 
 For the broader status, roadmap, and open decisions, see [project-status.md](project-status.md).
 
+For launch verification steps, see [manual-smoke-test.md](manual-smoke-test.md).
+
 ## Launch Shape
 
 ```mermaid
@@ -39,6 +41,7 @@ flowchart TD
 - [x] Local verification and deployment preflight commands are available.
 - [x] Production migration commands are available as npm scripts.
 - [x] Health smoke tests can run against local or deployed environments.
+- [x] Manual launch smoke-test checklist is documented.
 - [ ] The app is deployed with a hosted Postgres database.
 - [ ] The deployed app can be added to an iPhone Home Screen.
 
@@ -74,6 +77,7 @@ flowchart TD
 - [x] Add repeatable local verification and deployment preflight commands.
 - [x] Add npm scripts for checking and applying production migrations.
 - [x] Add a command for health smoke tests after deployment.
+- [x] Add a manual launch smoke-test checklist.
 - [ ] Choose a hosted Postgres provider.
 - [ ] Create the hosted database.
 - [ ] Configure production `DATABASE_URL`.
