@@ -97,7 +97,7 @@ Recipes are also sorted by grocery ingredient matches, which helps surface recip
 
 The app can export database recipes and favorite slugs as a JSON backup from `/api/recipes/export`.
 
-This is a good first safety mechanism, but it is export-only. There is no general restore UI yet.
+This is a good first safety mechanism, but it is export-only. There is no general restore UI yet. Backup expectations are documented in [backup-restore-notes.md](backup-restore-notes.md).
 
 ### iPhone And Home Screen Readiness
 
