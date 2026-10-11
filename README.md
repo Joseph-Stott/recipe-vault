@@ -24,6 +24,13 @@ Users can create, edit, organize, and browse recipes while generating a grocery 
 
 ![Add Recipe](public/screenshots/add-recipe.png)
 
+## Project Docs
+
+- [Project status and roadmap](docs/project-status.md)
+- [Launch todo](docs/launch-todo.md)
+- [Manual smoke test checklist](docs/manual-smoke-test.md)
+- [Backup and restore notes](docs/backup-restore-notes.md)
+
 ## Running the Project
 
 Install dependencies:
