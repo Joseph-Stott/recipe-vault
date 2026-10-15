@@ -57,10 +57,12 @@ async function fetchWithTimeout(url, options, timeoutMs) {
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-        return await fetch(url, {
+        const response = await fetch(url, {
             ...options,
             signal: controller.signal,
         });
+        const responseBody = await response.text();
+        return { response, responseBody };
     } catch (error) {
         if (error instanceof Error && error.name === "AbortError") {
             throw new Error(`Request timed out after ${timeoutMs}ms.`);
@@ -83,7 +85,7 @@ try {
 }
 
 try {
-    const response = await fetchWithTimeout(
+    const { response, responseBody } = await fetchWithTimeout(
         healthUrl,
         {
             headers: {
@@ -92,7 +94,6 @@ try {
         },
         healthCheckTimeoutMs
     );
-    const responseBody = await response.text();
     const health = parseJsonResponse(responseBody);
 
     if (!response.ok) {
