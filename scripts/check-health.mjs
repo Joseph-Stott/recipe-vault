@@ -94,13 +94,13 @@ try {
         },
         healthCheckTimeoutMs
     );
-    const health = parseJsonResponse(responseBody);
-
     if (!response.ok) {
         throw new Error(
             `Expected HTTP 200, received HTTP ${response.status}: ${formatResponseBody(responseBody)}`
         );
     }
+
+    const health = parseJsonResponse(responseBody);
 
     if (!isExpectedHealthResponse(health)) {
         throw new Error(
