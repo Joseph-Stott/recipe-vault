@@ -8,9 +8,9 @@ function parseHealthCheckTimeout(value) {
 
     const timeoutMs = Number(value);
 
-    if (!Number.isInteger(timeoutMs) || timeoutMs <= 0) {
+    if (!Number.isInteger(timeoutMs) || timeoutMs <= 0 || timeoutMs > 2_147_483_647) {
         console.error("Health check failed.");
-        console.error("HEALTH_CHECK_TIMEOUT_MS must be a positive integer.");
+        console.error("HEALTH_CHECK_TIMEOUT_MS must be an integer between 1 and 2147483647.");
         process.exit(1);
     }
 
