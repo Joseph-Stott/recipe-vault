@@ -6,6 +6,14 @@ import {
 } from "@/lib/recipeUtils";
 
 describe("getIngredientMatchCount", () => {
+    it("matches names regardless of capitalization and surrounding whitespace", () => {
+        expect(getIngredientMatchCount([" Rice ", "MILK"], ["rice", " milk "])).toBe(2);
+    });
+
+    it("counts normalized duplicates once and ignores blank names", () => {
+        expect(getIngredientMatchCount(["Rice", " rice ", "", " "], ["RICE", ""])).toBe(1);
+    });
+
     it("counts matching ingredients", () => {
         const recipeIngredients = ["chicken", "rice", "broccoli"];
         const groceryIngredients = ["rice", "milk", "chicken"];

@@ -12,10 +12,12 @@ export function getIngredientMatchCount(
     recipeIngredients: string[],
     groceryIngredients: string[]
 ) {
-    const uniqueRecipeIngredients = [...new Set(recipeIngredients)];
+    const normalize = (name: string) => name.trim().toLowerCase();
+    const uniqueRecipeIngredients = [...new Set(recipeIngredients.map(normalize))];
+    const groceryIngredientNames = new Set(groceryIngredients.map(normalize));
 
     return uniqueRecipeIngredients.filter((ingredient) =>
-        groceryIngredients.includes(ingredient)
+        ingredient !== "" && groceryIngredientNames.has(ingredient)
     ).length;
 }
 
