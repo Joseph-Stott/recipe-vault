@@ -11,15 +11,16 @@ export function getAllRecipes(savedRecipes: Recipe[]) {
 }
 
 // Filters recipes by title, time category, or ingredient name.
-// Search text is trimmed and lowercased so extra spaces and capitalization do not affect results.
+// Normalize both sides so spacing and capitalization do not affect results.
 export function filterRecipesBySearch(recipesToFilter: Recipe[], searchText: string) {
-    const normalizedSearch = searchText.trim().toLowerCase();
+    const normalize = (text: string) => text.trim().toLowerCase().replace(/\s+/g, " ");
+    const normalizedSearch = normalize(searchText);
 
     return recipesToFilter.filter((recipe) => (
-        recipe.title.toLowerCase().includes(normalizedSearch) ||
-        recipe.timeCategory.toLowerCase().includes(normalizedSearch) ||
+        normalize(recipe.title).includes(normalizedSearch) ||
+        normalize(recipe.timeCategory).includes(normalizedSearch) ||
         getIngredientNames(recipe).some((ingredient) =>
-            ingredient.toLowerCase().includes(normalizedSearch)
+            normalize(ingredient).includes(normalizedSearch)
         )
     ));
 }

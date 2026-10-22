@@ -76,6 +76,22 @@ describe("filterRecipesBySearch", () => {
         expect(filteredRecipes).toEqual([testRecipes[0]]);
     });
 
+    it("ignores repeated whitespace in the search phrase", () => {
+        expect(filterRecipesBySearch(testRecipes, " chicken  \t rice ")).toEqual([testRecipes[0]]);
+    });
+
+    it("normalizes whitespace in stored titles and ingredient names", () => {
+        const recipe = {
+            ...testRecipes[0],
+            title: "Chicken   Rice",
+            structuredIngredients: [{ amount: 1, unit: "cup", name: "Soy\t Sauce" }],
+        };
+        expect(filterRecipesBySearch([recipe], "chicken rice")).toEqual([recipe]);
+        expect(filterRecipesBySearch([recipe], "soy sauce")).toEqual([recipe]);
+        expect(recipe.title).toBe("Chicken   Rice");
+        expect(recipe.structuredIngredients[0].name).toBe("Soy\t Sauce");
+    });
+
     it("matches recipe titles regardless of capitalization", () => {
         const filteredRecipes = filterRecipesBySearch(
             testRecipes,
