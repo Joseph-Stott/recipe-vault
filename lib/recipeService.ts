@@ -1,13 +1,16 @@
 import { Recipe, Ingredient } from "@/types/recipe";
 import { getIngredientNames, getRecipeIngredientMatchCount } from "@/lib/recipeUtils";
 
-// Deduplicates runtime recipes by slug.
-// Database recipes are passed after localStorage recipes so database data wins
-// during the temporary localStorage import bridge.
+// Keep the first recipe for each slug, preserving input order.
 export function getAllRecipes(savedRecipes: Recipe[]) {
-    return savedRecipes.filter((recipe, index, array) =>
-        array.findIndex((currentRecipe) => currentRecipe.slug === recipe.slug) === index
-    );
+    const seenSlugs = new Set<string>();
+    return savedRecipes.filter((recipe) => {
+        if (seenSlugs.has(recipe.slug)) {
+            return false;
+        }
+        seenSlugs.add(recipe.slug);
+        return true;
+    });
 }
 
 // Filters recipes by title, time category, or ingredient name.
