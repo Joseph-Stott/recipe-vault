@@ -268,6 +268,20 @@ describe("getMainRecipes", () => {
 });
 
 describe("sortRecipesByIngredientMatches", () => {
+    it("preserves input order when match counts are equal", () => {
+        const recipes = ["second", "first"].map((slug) => ({
+            slug,
+            title: slug,
+            timeCategory: "fast" as const,
+            structuredIngredients: [{ amount: 1, unit: "cup", name: "rice" }],
+        }));
+
+        const sorted = sortRecipesByIngredientMatches(recipes, ["rice"]);
+        expect(sorted).toEqual(recipes);
+        expect(sorted).not.toBe(recipes);
+        expect(sorted[0]).toBe(recipes[0]);
+    });
+
     it("sorts recipes from most ingredient matches to fewest", () => {
         const testRecipes = [
             {

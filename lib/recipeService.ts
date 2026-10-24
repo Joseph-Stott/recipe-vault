@@ -72,19 +72,13 @@ export function sortRecipesByIngredientMatches(
     recipes: Recipe[],
     groceryIngredients: string[]
 ) {
-    return [...recipes].sort((a, b) => {
-        const aIngredientMatches = getRecipeIngredientMatchCount(
-            a,
-            groceryIngredients
-        );
-
-        const bIngredientMatches = getRecipeIngredientMatchCount(
-            b,
-            groceryIngredients
-        );
-
-        return bIngredientMatches - aIngredientMatches;
-    });
+    return recipes
+        .map((recipe) => ({
+            recipe,
+            matches: getRecipeIngredientMatchCount(recipe, groceryIngredients),
+        }))
+        .sort((a, b) => b.matches - a.matches)
+        .map(({ recipe }) => recipe);
 }
 
 type HomeRecipeCollectionInput = {
