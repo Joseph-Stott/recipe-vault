@@ -22,6 +22,21 @@ vi.stubGlobal("localStorage", {
 });
 
 describe("favorites", () => {
+    it("does not return stale favorites after a failed parse and recovers after correction", () => {
+        storage.set("favorite-list", JSON.stringify(["rice"]));
+        expect(getFavoriteRecipeSlugs()).toEqual(["rice"]);
+
+        storage.set("favorite-list", "{broken");
+        expect(() => getFavoriteRecipeSlugs()).toThrow(SyntaxError);
+        expect(() => getFavoriteRecipeSlugs()).toThrow(SyntaxError);
+        expect(storage.get("favorite-list")).toBe("{broken");
+
+        storage.set("favorite-list", "[]");
+        const recovered = getFavoriteRecipeSlugs();
+        expect(recovered).toEqual([]);
+        expect(getFavoriteRecipeSlugs()).toBe(recovered);
+    });
+
     beforeEach(() => {
         storage.clear();
     });

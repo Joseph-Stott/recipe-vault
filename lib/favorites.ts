@@ -28,14 +28,14 @@ export function getFavoriteRecipeSlugs(): string[] {
         return cachedFavoriteRecipeSlugs;
     }
 
-    cachedFavoriteRecipeSlugsJson = storedFavoriteList;
-
     if (!storedFavoriteList) {
         cachedFavoriteRecipeSlugs = EMPTY_FAVORITE_RECIPE_SLUGS;
+        cachedFavoriteRecipeSlugsJson = storedFavoriteList;
         return cachedFavoriteRecipeSlugs;
     }
 
     cachedFavoriteRecipeSlugs = JSON.parse(storedFavoriteList);
+    cachedFavoriteRecipeSlugsJson = storedFavoriteList;
 
     return cachedFavoriteRecipeSlugs;
 }
