@@ -30,14 +30,14 @@ export function getSavedRecipes(): Recipe[] {
         return cachedSavedRecipes;
     }
 
-    cachedSavedRecipesJson = storedRecipes;
-
     if (!storedRecipes) {
         cachedSavedRecipes = EMPTY_SAVED_RECIPES;
+        cachedSavedRecipesJson = storedRecipes;
         return cachedSavedRecipes;
     }
 
     cachedSavedRecipes = JSON.parse(storedRecipes);
+    cachedSavedRecipesJson = storedRecipes;
 
     return cachedSavedRecipes;
 }

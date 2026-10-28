@@ -24,6 +24,24 @@ vi.stubGlobal("localStorage", {
 });
 
 describe("recipeStorage", () => {
+    it("does not return stale recipes after a failed parse and recovers after correction", () => {
+        const recipe: Recipe = {
+            slug: "rice", title: "Rice", timeCategory: "fast", structuredIngredients: [],
+        };
+        storage.set("saved-recipes", JSON.stringify([recipe]));
+        expect(getSavedRecipes()).toEqual([recipe]);
+
+        storage.set("saved-recipes", "{broken");
+        expect(() => getSavedRecipes()).toThrow(SyntaxError);
+        expect(() => getSavedRecipes()).toThrow(SyntaxError);
+        expect(storage.get("saved-recipes")).toBe("{broken");
+
+        storage.set("saved-recipes", "[]");
+        const recovered = getSavedRecipes();
+        expect(recovered).toEqual([]);
+        expect(getSavedRecipes()).toBe(recovered);
+    });
+
     beforeEach(() => {
         storage.clear();
     });
