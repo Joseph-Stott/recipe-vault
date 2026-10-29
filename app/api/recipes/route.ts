@@ -1,15 +1,5 @@
 import prisma from "@/lib/prisma";
-import { Ingredient, Recipe } from "@/types/recipe";
-
-type CreateRecipeRequest = {
-    slug: string;
-    title: string;
-    timeCategory: Recipe["timeCategory"];
-    structuredIngredients: Ingredient[];
-    cookInstructions?: string[];
-    cookBook?: string;
-    pageNumber?: number;
-};
+import { parseCreateRecipeRequest } from "@/lib/recipeRequest";
 
 export async function GET() {
     const recipes = await prisma.recipe.findMany({
@@ -22,38 +12,12 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-    const body: CreateRecipeRequest = await request.json();
-
-    if (!body.title?.trim()) {
-        return Response.json(
-            { error: "Recipe title is required" },
-            { status: 400 }
-        );
+    const input: unknown = await request.json();
+    const validation = parseCreateRecipeRequest(input);
+    if (validation.error !== undefined) {
+        return Response.json({ error: validation.error }, { status: 400 });
     }
-
-    if (!body.slug?.trim()) {
-        return Response.json(
-            { error: "Recipe slug is required" },
-            { status: 400 }
-        );
-    }
-
-    if (!["fast", "medium", "slow"].includes(body.timeCategory)) {
-        return Response.json(
-            { error: "Invalid time category" },
-            { status: 400 }
-        );
-    }
-
-    if (
-        !Array.isArray(body.structuredIngredients) ||
-        body.structuredIngredients.length === 0
-    ) {
-        return Response.json(
-            { error: "At least one ingredient is required" },
-            { status: 400 }
-        );
-    }
+    const body = validation.recipe;
 
     const recipe = await prisma.recipe.create({
         data: {
