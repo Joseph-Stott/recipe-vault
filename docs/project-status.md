@@ -41,6 +41,10 @@ Current local development support includes:
 
 Recipes can be created, viewed, edited, and deleted through database-backed API routes.
 
+The creation endpoint validates request fields and ingredients at runtime before writing. It returns JSON errors for invalid input or malformed JSON (400), duplicate slugs (409), and unexpected database failures (500). Route tests cover these cases with a mocked database; they do not verify a live database connection.
+
+Equivalent runtime validation and error handling for update and import remain follow-up work.
+
 The database stores:
 
 - Recipe title.

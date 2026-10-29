@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { Prisma } from "@/lib/generated/prisma/client";
 
 const prisma = vi.hoisted(() => ({ recipe: { create: vi.fn() } }));
 vi.mock("@/lib/prisma", () => ({ default: prisma }));
@@ -14,6 +15,36 @@ function request(body: unknown) {
 
 describe("POST /api/recipes", () => {
     beforeEach(() => vi.resetAllMocks());
+    afterEach(() => vi.restoreAllMocks());
+
+    it.each(["", "{broken", '{"title":}'])("returns JSON 400 for malformed JSON: %j", async (body) => {
+        const response = await POST(new Request("http://localhost/api/recipes", { method: "POST", body }));
+        expect(response.status).toBe(400);
+        expect(await response.json()).toEqual({ error: "Request body must be valid JSON" });
+        expect(prisma.recipe.create).not.toHaveBeenCalled();
+    });
+
+    it("returns 409 for a unique constraint failure from the database", async () => {
+        prisma.recipe.create.mockRejectedValue(new Prisma.PrismaClientKnownRequestError(
+            "Unique constraint failed", { code: "P2002", clientVersion: "7.9.1", meta: { target: ["slug"] } }
+        ));
+        const response = await POST(request(validRecipe));
+        expect(response.status).toBe(409);
+        expect(await response.json()).toEqual({ error: "A recipe with this slug already exists" });
+        expect(prisma.recipe.create).toHaveBeenCalledTimes(1);
+    });
+
+    it.each([
+        new Error("Private database connection details"),
+        new Prisma.PrismaClientKnownRequestError("Database unavailable", { code: "P1001", clientVersion: "7.9.1" }),
+    ])("returns a generic 500 and logs unexpected database failures", async (error) => {
+        const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+        prisma.recipe.create.mockRejectedValue(error);
+        const response = await POST(request(validRecipe));
+        expect(response.status).toBe(500);
+        expect(await response.json()).toEqual({ error: "Failed to create recipe" });
+        expect(log).toHaveBeenCalledWith("Failed to create recipe", error);
+    });
 
     it.each([null, [], 1, "rice", {},
         ...["title", "slug"].flatMap((key) => [123, null, " "].map((value) => ({ ...validRecipe, [key]: value }))),
