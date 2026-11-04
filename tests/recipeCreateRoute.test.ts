@@ -17,6 +17,26 @@ describe("POST /api/recipes", () => {
     beforeEach(() => vi.resetAllMocks());
     afterEach(() => vi.restoreAllMocks());
 
+    it.each(["rice/soup", "rice?draft", "rice#step", "rice%2Fsoup", "rice soup", "Rice", " rice ", "---"])(
+        "rejects a slug that cannot be used as a recipe URL: %s", async (slug) => {
+            const response = await POST(request({ ...validRecipe, slug }));
+            expect(response.status).toBe(400);
+            expect(await response.json()).toEqual({
+                error: "Recipe slug must use lowercase letters, numbers, and hyphens and contain a letter or number",
+            });
+            expect(prisma.recipe.create).not.toHaveBeenCalled();
+        }
+    );
+
+    it("accepts a generated-style slug with hyphens and numbers", async () => {
+        prisma.recipe.create.mockResolvedValue({ id: 1 });
+        const response = await POST(request({ ...validRecipe, slug: "20-minute-rice" }));
+        expect(response.status).toBe(201);
+        expect(prisma.recipe.create).toHaveBeenCalledWith(expect.objectContaining({
+            data: expect.objectContaining({ slug: "20-minute-rice" }),
+        }));
+    });
+
     it.each(["", "{broken", '{"title":}'])("returns JSON 400 for malformed JSON: %j", async (body) => {
         const response = await POST(new Request("http://localhost/api/recipes", { method: "POST", body }));
         expect(response.status).toBe(400);

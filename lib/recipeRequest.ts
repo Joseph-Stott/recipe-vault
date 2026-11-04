@@ -14,6 +14,9 @@ export function parseCreateRecipeRequest(body: unknown): RecipeRequestResult {
     if (typeof body.slug !== "string" || !body.slug.trim()) {
         return { error: "Recipe slug is required" };
     }
+    if (!/^[a-z0-9-]+$/.test(body.slug) || !/[a-z0-9]/.test(body.slug)) {
+        return { error: "Recipe slug must use lowercase letters, numbers, and hyphens and contain a letter or number" };
+    }
     if (body.timeCategory !== "fast" && body.timeCategory !== "medium" && body.timeCategory !== "slow") {
         return { error: "Invalid time category" };
     }
