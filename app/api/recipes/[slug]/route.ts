@@ -22,7 +22,15 @@ export async function PUT(
     context: RecipeRouteContext
 ) {
     const { slug } = await context.params;
-    const body: UpdateRecipeRequest = await request.json();
+    let body: UpdateRecipeRequest;
+    try {
+        body = await request.json();
+    } catch {
+        return Response.json(
+            { error: "Request body must be valid JSON" },
+            { status: 400 }
+        );
+    }
 
     const validation = validateRecipeForm({
         title: body.title ?? "",

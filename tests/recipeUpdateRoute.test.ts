@@ -36,6 +36,26 @@ describe("PUT /api/recipes/[slug]", () => {
         vi.clearAllMocks();
     });
 
+    it.each(["", "{broken", '{"title":}'])(
+        "returns 400 without database access for malformed JSON: %j",
+        async (body) => {
+            const response = await PUT(
+                new Request("http://localhost:3000/api/recipes/chicken-rice", {
+                    method: "PUT",
+                    body,
+                }),
+                createRouteContext()
+            );
+
+            expect(response.status).toBe(400);
+            expect(await response.json()).toEqual({
+                error: "Request body must be valid JSON",
+            });
+            expect(prisma.recipe.findUnique).not.toHaveBeenCalled();
+            expect(prisma.recipe.update).not.toHaveBeenCalled();
+        }
+    );
+
     it("returns 400 for invalid recipe data", async () => {
         const response = await PUT(
             createUpdateRequest({
