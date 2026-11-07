@@ -32,6 +32,27 @@ describe("POST /api/recipes/import", () => {
         vi.clearAllMocks();
     });
 
+    it.each(["", "{broken", '{"recipes":}'])(
+        "returns 400 for malformed JSON: %j", async (body) => {
+            const response = await POST(new Request("http://localhost:3000/api/recipes/import", {
+                method: "POST",
+                body,
+            }));
+            expect(response.status).toBe(400);
+            expect(await response.json()).toEqual({ error: "Request body must be valid JSON" });
+            expect(prisma.$transaction).not.toHaveBeenCalled();
+        }
+    );
+
+    it.each([null, [], "recipes", 1, true, { recipes: null }, { recipes: {} }])(
+        "rejects invalid request envelopes without starting a transaction: %j", async (body) => {
+            const response = await POST(createImportRequest(body));
+            expect(response.status).toBe(400);
+            expect(await response.json()).toEqual({ error: "Recipes are required" });
+            expect(prisma.$transaction).not.toHaveBeenCalled();
+        }
+    );
+
     it("returns 400 when recipes are missing", async () => {
         const response = await POST(createImportRequest({}));
 

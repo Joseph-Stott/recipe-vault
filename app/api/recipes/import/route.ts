@@ -2,14 +2,19 @@ import prisma from "@/lib/prisma";
 import { validateRecipeForm } from "@/lib/recipeValidation";
 import { Recipe } from "@/types/recipe";
 
-type ImportRecipesRequest = {
-    recipes?: unknown[];
-};
-
 export async function POST(request: Request) {
-    const body: ImportRecipesRequest = await request.json();
+    let body: unknown;
+    try {
+        body = await request.json();
+    } catch {
+        return Response.json(
+            { error: "Request body must be valid JSON" },
+            { status: 400 }
+        );
+    }
 
-    if (!Array.isArray(body.recipes)) {
+    if (typeof body !== "object" || body === null || Array.isArray(body) ||
+        !("recipes" in body) || !Array.isArray(body.recipes)) {
         return Response.json(
             { error: "Recipes are required" },
             { status: 400 }
