@@ -49,6 +49,28 @@ describe("POST /api/favorites/import", () => {
         expect(prisma.$transaction).not.toHaveBeenCalled();
     });
 
+    it.each(["", "{broken", '{"recipeSlugs":}'])("rejects malformed JSON: %j", async (body) => {
+        const response = await POST(new Request("http://localhost/api/favorites/import", { method: "POST", body }));
+        expect(response.status).toBe(400);
+        expect(await response.json()).toEqual({ error: "Request body must be valid JSON" });
+        expect(prisma.$transaction).not.toHaveBeenCalled();
+        expect(prisma.recipe.findMany).not.toHaveBeenCalled();
+        expect(prisma.favoriteRecipe.findMany).not.toHaveBeenCalled();
+        expect(prisma.favoriteRecipe.createMany).not.toHaveBeenCalled();
+    });
+
+    it.each([null, [], 1, true, "rice", { recipeSlugs: null }, { recipeSlugs: "rice" }, { recipeSlugs: {} }])(
+        "rejects invalid import input before database access: %j", async (body) => {
+            const response = await POST(createFavoriteImportRequest(body));
+            expect(response.status).toBe(400);
+            expect(await response.json()).toEqual({ error: "Favorite recipe slugs are required" });
+            expect(prisma.$transaction).not.toHaveBeenCalled();
+            expect(prisma.recipe.findMany).not.toHaveBeenCalled();
+            expect(prisma.favoriteRecipe.findMany).not.toHaveBeenCalled();
+            expect(prisma.favoriteRecipe.createMany).not.toHaveBeenCalled();
+        }
+    );
+
     it("imports only valid existing recipe slugs", async () => {
         prisma.$transaction.mockResolvedValue([
             [

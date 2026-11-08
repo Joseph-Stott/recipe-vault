@@ -1,9 +1,5 @@
 import prisma from "@/lib/prisma";
 
-type ImportFavoritesRequest = {
-    recipeSlugs?: unknown[];
-};
-
 async function getFavoriteRecipeSlugs() {
     const favorites = await prisma.favoriteRecipe.findMany({
         orderBy: {
@@ -18,9 +14,15 @@ async function getFavoriteRecipeSlugs() {
 }
 
 export async function POST(request: Request) {
-    const body: ImportFavoritesRequest = await request.json();
+    let body: unknown;
+    try {
+        body = await request.json();
+    } catch {
+        return Response.json({ error: "Request body must be valid JSON" }, { status: 400 });
+    }
 
-    if (!Array.isArray(body.recipeSlugs)) {
+    if (typeof body !== "object" || body === null || Array.isArray(body) ||
+        !("recipeSlugs" in body) || !Array.isArray(body.recipeSlugs)) {
         return Response.json(
             { error: "Favorite recipe slugs are required" },
             { status: 400 }
