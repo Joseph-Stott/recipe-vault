@@ -62,6 +62,29 @@ describe("POST /api/favorites", () => {
         vi.clearAllMocks();
     });
 
+    it.each(["", "{broken", '{"recipeSlug":}'])("rejects malformed JSON: %j", async (body) => {
+        const response = await POST(new Request("http://localhost/api/favorites", { method: "POST", body }));
+        expect(response.status).toBe(400);
+        expect(await response.json()).toEqual({ error: "Request body must be valid JSON" });
+        expect(prisma.recipe.findUnique).not.toHaveBeenCalled();
+        for (const operation of Object.values(prisma.favoriteRecipe)) {
+            expect(operation).not.toHaveBeenCalled();
+        }
+    });
+
+    it.each([null, [], 1, true, "rice", { recipeSlug: 123 }, { recipeSlug: null },
+        { recipeSlug: [] }, { recipeSlug: {} }, { recipeSlug: " " }])(
+        "rejects invalid toggle input before database access: %j", async (body) => {
+            const response = await POST(createFavoriteRequest(body));
+            expect(response.status).toBe(400);
+            expect(await response.json()).toEqual({ error: "Recipe slug is required" });
+            expect(prisma.recipe.findUnique).not.toHaveBeenCalled();
+            for (const operation of Object.values(prisma.favoriteRecipe)) {
+                expect(operation).not.toHaveBeenCalled();
+            }
+        }
+    );
+
     it("returns 400 when recipe slug is missing", async () => {
         const response = await POST(createFavoriteRequest({}));
 
