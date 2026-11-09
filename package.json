@@ -19,6 +19,7 @@
     "preflight": "npm run check:env && npm run check && npm run build",
     "smoke:health": "node scripts/check-health.mjs",
     "test": "vitest run",
+    "test:browser": "playwright test",
     "test:watch": "vitest"
   },
   "dependencies": {
@@ -31,6 +32,7 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

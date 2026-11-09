@@ -3,6 +3,7 @@
 import {
     useEffect,
     useMemo,
+    useRef,
     useState,
     useSyncExternalStore,
 } from "react";
@@ -39,6 +40,7 @@ export function useFavoriteRecipeSlugs() {
         useState<string | null>(null);
     const [favoriteRecipeUpdateError, setFavoriteRecipeUpdateError] =
         useState<string | null>(null);
+    const completedImports = useRef(new Set<string>());
 
     useEffect(() => {
         let cancelled = false;
@@ -71,7 +73,7 @@ export function useFavoriteRecipeSlugs() {
 
     useEffect(() => {
         if (
-            !databaseFavoritesLoaded ||
+            !databaseFavoritesLoaded || favoriteRecipeLoadError ||
             localFavoriteRecipeSlugs.length === 0
         ) {
             return;
@@ -86,11 +88,16 @@ export function useFavoriteRecipeSlugs() {
             return;
         }
 
+        const importKey = JSON.stringify([...missingFavoriteSlugs].sort());
+        // Missing recipes cannot be imported; retry them on the next page visit.
+        if (completedImports.current.has(importKey)) return;
+
         let cancelled = false;
 
         importDatabaseFavoriteRecipeSlugs(missingFavoriteSlugs)
             .then((favoriteRecipeSlugs) => {
                 if (!cancelled) {
+                    completedImports.current.add(importKey);
                     setDatabaseFavoriteRecipeSlugs(favoriteRecipeSlugs);
                     setFavoriteRecipeImportError(null);
                 }
@@ -110,6 +117,7 @@ export function useFavoriteRecipeSlugs() {
     }, [
         databaseFavoriteRecipeSlugs,
         databaseFavoritesLoaded,
+        favoriteRecipeLoadError,
         localFavoriteRecipeSlugs,
     ]);
 
