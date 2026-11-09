@@ -1,107 +1,69 @@
 # Recipe Vault Launch Todo
 
-This checklist tracks launch readiness for the first usable version.
+Scope: single-user MVP, shared recipes and favorites on desktop and iPhone. Hosting, access method, and grocery sync are still decisions. See [project-status.md](project-status.md) for findings and rationale.
 
-Scope assumption: single-user MVP. The app does not need public multi-user scale for v1, but it does need persistent recipe data that works from both desktop browser and iPhone.
+## Completed Foundation
 
-For the broader status, roadmap, and open decisions, see [project-status.md](project-status.md).
+- [x] Database-backed recipe CRUD and favorites.
+- [x] Starter seed data and legacy browser import bridges.
+- [x] Runtime validation on create, update, and recipe import.
+- [x] Malformed JSON handling for recipe and favorite write requests.
+- [x] Numeric form conversion and form-to-API regression tests.
+- [x] Prevent repeated imports of missing legacy favorites.
+- [x] Recipe/favorite JSON export and health endpoint.
+- [x] Environment checks, explicit type checks, unit tests, and production build command.
+- [x] Desktop/mobile Chromium browser workflow tests with mocked APIs.
+- [x] Manifest, Home Screen icons, and mobile form layout checks.
+- [x] Manual smoke checklist and backup/restore notes.
+- [x] Runtime dependency advisory remediation from the November review.
 
-For launch verification steps, see [manual-smoke-test.md](manual-smoke-test.md).
+## Next: Reliability Without Hosting
 
-## Launch Shape
+- [ ] Retire confirmed legacy copies safely; deleted imported recipes must stay deleted after refresh.
+- [ ] Complete favorite migration state; old browser favorites must not restore removed database favorites.
+- [ ] Handle malformed/unavailable localStorage without crashing or silently destroying recoverable data.
+- [ ] Fix grocery item ownership after editing/removing a contributing recipe.
+- [ ] Return consistent JSON errors from remaining database operations; test concurrent writes/deletes.
+- [ ] Display actionable validation/conflict messages from API clients.
+- [ ] Report skipped/rejected import records accurately and bound import/request sizes.
+- [ ] Add CI for checks, production build, and browser workflows.
+- [ ] Add isolated live-Postgres tests for migrations and recipe/favorite persistence.
+- [ ] Extend browser coverage to delete/reload, favorite toggle, grocery flows, export, and unavailable-server states.
+- [ ] Review form semantics, accessible names, long titles, and all mobile pages.
+- [ ] Recheck development-tool advisories when upstream fixes become available.
 
-```mermaid
-flowchart TD
-    current[Current local app] --> crud[Complete database recipe CRUD]
-    crud --> migrate[Move existing useful recipes into database]
-    migrate --> hosting[Deploy app with hosted Postgres]
-    hosting --> pwa[Add iPhone-friendly home screen support]
-    pwa --> smoke[Smoke test on desktop and iPhone]
-    smoke --> launch[Usable MVP launch]
-```
+## Data Transfer And Recovery
 
-## Current Status
+- [ ] Choose app-level JSON restore or a documented provider recovery procedure for v1; JSON restore is the preferred provider-independent path.
+- [ ] Make backup export a consistent snapshot of recipes and favorites.
+- [ ] Implement and test validated JSON restore with duplicate preview and explicit confirmation.
+- [ ] Test a local export restored into a separate empty database, including favorites.
+- [ ] Document transfer from localhost to the hosted origin; localStorage does not move between URLs.
+- [ ] Define production backup retention and test the restore procedure.
 
-- [x] PostgreSQL and Prisma are configured locally.
-- [x] Recipes can be read from the database.
-- [x] Database recipes appear on the homepage.
-- [x] Database recipes appear on detail pages.
-- [x] Database recipes load into the edit page.
-- [x] Database recipes can be updated from the edit page.
-- [x] Database recipes can be deleted from the edit page.
-- [x] New recipes are created in the database from the Add Recipe page.
-- [x] Existing localStorage recipes can be imported or migrated into the database.
-- [x] Built-in/static recipes are seed data for the database.
-- [x] Favorites are database-backed, with a localStorage import bridge for older browser-saved favorites.
-- [x] Database load failures show user-facing status messages.
-- [x] Database recipes and favorites can be exported as a JSON backup.
-- [x] App/database readiness can be checked through a health check endpoint.
-- [x] Required environment variables are documented with a committed example file.
-- [x] Required environment variables can be checked from an npm script.
-- [x] Local verification and deployment preflight commands are available.
-- [x] Production migration commands are available as npm scripts.
-- [x] Health smoke tests can run against local or deployed environments.
-- [x] Manual launch smoke-test checklist is documented.
-- [ ] The app is deployed with a hosted Postgres database.
-- [ ] The deployed app can be added to an iPhone Home Screen.
+## Decisions Before Deployment
 
-## MVP Decisions
+- [ ] Choose the app host and PostgreSQL provider, including free-tier limits.
+- [ ] Choose protection for both UI and API routes. An unlisted URL is not protection.
+- [ ] Confirm whether per-device grocery lists are acceptable for v1.
+- [ ] Confirm which local data to transfer and the restore requirement for launch.
 
-- Keep authentication out of the first launch unless private access becomes a hard requirement.
-- Use one shared database-backed recipe collection for the first version.
-- Keep grocery list state in localStorage for v1 unless cross-device sync becomes required immediately.
-- Prefer free hosting/database options first, with clear notes about limits.
+## Deployment And Acceptance
 
-## Remaining Todo
+- [ ] Configure production secrets outside source control.
+- [ ] Apply committed migrations and verify status against the intended production database.
+- [ ] Transfer/seed approved data and verify recipe/favorite counts.
+- [ ] Verify unauthorized requests cannot read/export or modify protected data.
+- [ ] Run production health and [manual smoke tests](manual-smoke-test.md).
+- [ ] Confirm desktop changes appear on the phone using the same hosted URL.
+- [ ] Test iPhone Safari and Add to Home Screen on a real device.
+- [ ] Confirm backup and recovery work before relying on the app for real use.
 
-### Phase 1: Finish Recipe Database CRUD
+## Deferred Unless Required
 
-- [x] Add database recipe create API client.
-- [x] Save Add Recipe form submissions to the database.
-- [x] Include database recipes when validating duplicate titles on Add Recipe.
-- [x] Smoke test creating a recipe through the UI.
+- Multiple accounts and separate ownership.
+- Offline editing or offline synchronization.
+- Measurement conversion and fraction parsing.
+- Visual redesign and nonessential notifications.
 
-### Phase 2: Migrate Existing Recipe Data
-
-- [x] Decide whether built-in/static recipes should stay in code or be imported into the database.
-- [x] Add a database seed path for built-in/static recipes.
-- [x] Add a one-time localStorage recipe import path.
-- [x] Prevent duplicate imported recipes by slug.
-- [x] Verify migrated recipes can be viewed, edited, and deleted.
-
-### Phase 3: Prepare MVP Deployment
-
-- [x] Add a health check endpoint for deployment smoke tests.
-- [x] Add an environment variable example file.
-- [x] Add a command for validating required environment variables.
-- [x] Add repeatable local verification and deployment preflight commands.
-- [x] Add npm scripts for checking and applying production migrations.
-- [x] Add a command for health smoke tests after deployment.
-- [x] Add a manual launch smoke-test checklist.
-- [ ] Choose a hosted Postgres provider.
-- [ ] Create the hosted database.
-- [ ] Configure production `DATABASE_URL`.
-- [ ] Run production migrations.
-- [ ] Deploy the Next.js app.
-- [ ] Smoke test homepage, detail page, add, edit, and delete in production.
-
-### Phase 4: iPhone Home Screen Experience
-
-- [x] Add app metadata for a better Home Screen name and icon.
-- [x] Add a web app manifest.
-- [x] Smoke test local mobile-width layout for homepage, detail, and recipe form pages.
-- [ ] Confirm the deployed site opens well on iPhone Safari.
-- [ ] Add the deployed site to the iPhone Home Screen.
-
-### Phase 5: Nice-To-Have After Launch
-
-- [ ] Database-backed grocery list.
-- [ ] Authentication and separate user ownership.
-- [ ] Better production error messages.
-
-## Free Deployment Notes
-
-- An iPhone Home Screen app still needs a website URL. That means hosting is required unless the app is only used on one local device.
-- A normal deployed website can be added to the iPhone Home Screen from Safari.
-- To keep desktop and iPhone on the same recipe data, both devices need to use the deployed app connected to the same hosted database.
-- Free tiers are reasonable for the first MVP launch, but they may have limits such as storage caps, inactivity pauses, operation limits, or no automatic backups.
+Keep changes incremental: one behavior or workflow per commit, with relevant tests and docs. Launch is determined by these checks, not a fixed number of commits or sessions.

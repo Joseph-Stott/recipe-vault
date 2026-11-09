@@ -4,7 +4,9 @@
 
 Recipe Vault is a recipe management web application built with Next.js, React, TypeScript, and Tailwind CSS.
 
-Users can create, edit, organize, and browse recipes while generating a grocery list directly from recipe ingredients. Recipe CRUD and favorites are database-backed through PostgreSQL and Prisma, while grocery-list state still uses browser localStorage. It demonstrates component-based architecture, structured data modeling, dynamic routing, API routes, database modeling, and client-side state management.
+Users can create, edit, organize, and browse recipes while generating a grocery list directly from recipe ingredients. Recipes and favorites are stored in PostgreSQL through Prisma. Grocery lists remain local to each browser.
+
+Current scope is a single-user collection shared between desktop and iPhone. The app works locally; production deployment, access protection, and tested backup recovery remain unfinished. There is no authentication, so the app should not be exposed publicly until both pages and API routes are protected. See the [project status](docs/project-status.md) for current findings and the [launch todo](docs/launch-todo.md) for the development order.
 
 ## Screenshots
 
@@ -33,13 +35,19 @@ Users can create, edit, organize, and browse recipes while generating a grocery 
 
 ## Running the Project
 
-Install dependencies:
+Install the locked dependencies:
 
 ```bash
-npm install
+npm ci
 ```
 
-Create a `.env` file with a PostgreSQL connection string:
+Create a `.env` file with a PostgreSQL connection string. In PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Or in Bash:
 
 ```bash
 cp .env.example .env
@@ -57,7 +65,7 @@ For local database development with Prisma Postgres, start the database:
 npm run db:dev
 ```
 
-Use `npm run db:dev:detach` to start the local database in the background.
+Use `npm run db:dev:detach` to start the local database in the background. Set `DATABASE_URL` to the PostgreSQL connection URL printed by that command. An existing PostgreSQL database can also be used.
 
 Apply database migrations:
 
@@ -113,7 +121,18 @@ Before deployment, run the full preflight check:
 npm run preflight
 ```
 
-`npm run check` validates the Prisma schema, lints the code, and runs the test suite. `npm run check:env` verifies the required database connection settings without printing secrets. `npm run preflight` runs those checks and then creates a production build.
+`npm run check` validates the Prisma schema, generates Next.js route types, checks TypeScript, lints the code, and runs the unit/route tests. Run `npm run typecheck` for type checking alone. `npm run check:env` checks the required database connection settings without printing secrets. `npm run preflight` runs those checks and then creates a production build; it does not prove database connectivity or migration readiness.
+
+Run browser workflow tests separately:
+
+```bash
+npx playwright install chromium
+npm run test:browser
+```
+
+Playwright starts and stops a local test server on port 3100; set `E2E_PORT` if that port is occupied. Avoid running another development server for this checkout at the same time. Tests cover desktop and mobile-sized Chromium with intercepted API responses. They do not write to PostgreSQL or replace live database and iPhone Safari testing. See the [manual checklist](docs/manual-smoke-test.md) for those checks.
+
+The production build downloads Google fonts and requires network access. Recheck dependency advisories with `npm audit` and `npm audit --omit=dev` before release.
 
 After starting the app, run a health smoke test:
 
@@ -128,7 +147,8 @@ For a deployed environment, set `APP_URL`:
 PowerShell:
 
 ```powershell
-$env:APP_URL="https://your-deployed-site.example"; npm run smoke:health
+$env:APP_URL="https://your-deployed-site.example"
+npm run smoke:health
 ```
 
 Bash:
@@ -191,7 +211,7 @@ This enables:
 * Add recipe ingredients to a grocery list
 * Remove recipe ingredients from a grocery list
 * Individual grocery recipe removal from homepage grocery section
-* Persistent grocery list storage
+* Persistent grocery list storage within the same browser and origin
 * Persistent grocery recipe tracking
 * Prevent duplicate grocery recipe entries
 * Grocery ingredient match counting
@@ -252,7 +272,7 @@ Recipe detail pages are generated using dynamic routes:
 
 ### Persistence
 
-The application is currently migrating recipe persistence to PostgreSQL through Prisma and Next.js API routes.
+Recipe create, read, update, delete, and favorite operations use PostgreSQL through Prisma and Next.js API routes. A legacy localStorage bridge remains for older browser data.
 
 Database-backed behavior currently includes:
 
@@ -271,9 +291,11 @@ localStorage still persists:
 
 * Grocery lists
 * Grocery recipe tracking
-* Older custom recipes created before the database migration
+* Older custom recipes and favorite copies retained during migration
 
-Starter recipes are stored in source control as seed data and imported into the database with `npm run db:seed`. During the migration, localStorage recipes can still be imported into the database so existing local data can be preserved.
+Starter recipes are stored in source control as seed data and imported into the database with `npm run db:seed`. Older localStorage recipes can be imported from the homepage, but imported copies are not yet retired from browser storage. This can cause a deleted imported recipe to reappear and is a priority in the [launch todo](docs/launch-todo.md).
+
+Browser storage is tied to a URL's origin. A hosted app cannot read legacy data from localhost. Moving to hosting requires an explicit database transfer or validated export/restore procedure. Grocery lists are not included in the current backup export.
 
 ### Data Modeling
 
@@ -290,6 +312,7 @@ Business logic is separated into reusable service and utility modules rather tha
 * TypeScript
 * Tailwind CSS
 * Vitest
+* Playwright
 * PostgreSQL
 * Prisma ORM
 * Browser localStorage during migration
@@ -300,10 +323,13 @@ Business logic is separated into reusable service and utility modules rather tha
 app/          Application routes and pages
 components/   Reusable React components
 data/         Starter recipe seed data
+docs/         Current status, launch backlog, and operating checklists
+e2e/          Playwright browser workflows with mocked APIs
 hooks/        React hooks for page-level state and behavior
 lib/          Application services, storage, validation, and utilities
 prisma/       Prisma schema and migrations
-tests/        Vitest unit tests
+scripts/      Environment and health checks
+tests/        Vitest unit and API route tests
 types/        Shared TypeScript types
 ```
 
@@ -327,7 +353,7 @@ This separation helps keep components focused, improves testability, and makes b
 
 ## Testing
 
-Recipe Vault includes unit tests written with Vitest. Business logic is tested independently of the UI to make refactoring safer and to help prevent regressions as new features are added.
+Vitest covers business logic, form-to-API contracts, and API routes with mocked database calls. Playwright covers typed create/edit quantities, invalid input, and missing legacy favorites in desktop/mobile browser layouts. These layers catch different failures; neither currently verifies persistence against a real PostgreSQL instance. A CI workflow and isolated database integration suite are still planned.
 
 Current test coverage includes:
 
@@ -355,15 +381,15 @@ Tests verify behaviors such as:
 - API request and response handling
 - Database record mapping
 
-## Future Improvements
+## Development Direction
 
-* Toast notifications
-* Improved measurement conversion and aggregation
-* Hosted deployment with a production PostgreSQL database
-* iPhone Home Screen support
-* Database-backed grocery list
-* User accounts
-* Cloud synchronization
+1. Finish legacy-data migration cleanup and recover safely from malformed browser storage.
+2. Standardize remaining API errors and improve the messages shown to users.
+3. Add CI, live database integration tests, and wider browser coverage.
+4. Implement and verify backup restore and localhost-to-hosted data transfer.
+5. Choose hosting and access protection, then verify a deployment and real iPhone Home Screen use.
+
+Database-backed grocery lists require a scope decision. Multiple accounts, offline editing, measurement conversion, and a visual redesign are deferred. The manifest and Home Screen icons already exist; real-device verification remains.
 
 ## Purpose
 
