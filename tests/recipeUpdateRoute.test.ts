@@ -69,7 +69,7 @@ describe("PUT /api/recipes/[slug]", () => {
         expect(response.status).toBe(400);
         expect(await response.json()).toEqual({
             error:
-                "Recipe title is required Recipe title must contain letters or numbers At least one complete ingredient is required",
+                "Recipe title is required",
         });
         expect(prisma.recipe.findUnique).not.toHaveBeenCalled();
         expect(prisma.recipe.update).not.toHaveBeenCalled();

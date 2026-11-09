@@ -80,7 +80,7 @@ describe("POST /api/recipes/import", () => {
         expect(response.status).toBe(400);
         expect(await response.json()).toEqual({
             error:
-                'Invalid recipe "bad-recipe": Recipe title is required Recipe title must contain letters or numbers At least one complete ingredient is required',
+                'Invalid recipe "bad-recipe": Recipe title is required',
         });
         expect(prisma.$transaction).not.toHaveBeenCalled();
     });

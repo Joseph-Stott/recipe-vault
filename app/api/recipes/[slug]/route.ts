@@ -1,15 +1,5 @@
 import prisma from "@/lib/prisma";
-import { Ingredient, Recipe } from "@/types/recipe";
-import { validateRecipeForm } from "@/lib/recipeValidation";
-
-type UpdateRecipeRequest = {
-    title: string;
-    timeCategory: Recipe["timeCategory"];
-    structuredIngredients: Ingredient[];
-    cookInstructions?: string[];
-    cookBook?: string;
-    pageNumber?: number;
-};
+import { parseUpdateRecipeRequest } from "@/lib/recipeRequest";
 
 type RecipeRouteContext = {
     params: Promise<{
@@ -22,9 +12,9 @@ export async function PUT(
     context: RecipeRouteContext
 ) {
     const { slug } = await context.params;
-    let body: UpdateRecipeRequest;
+    let input: unknown;
     try {
-        body = await request.json();
+        input = await request.json();
     } catch {
         return Response.json(
             { error: "Request body must be valid JSON" },
@@ -32,25 +22,15 @@ export async function PUT(
         );
     }
 
-    const validation = validateRecipeForm({
-        title: body.title ?? "",
-        structuredIngredients: body.structuredIngredients ?? [],
-        currentSlug: slug,
-    });
-
-    if (!validation.valid) {
+    const validation = parseUpdateRecipeRequest(input, slug);
+    if (validation.error !== undefined) {
         return Response.json(
-            { error: validation.messages.join(" ") },
+            { error: validation.error },
             { status: 400 }
         );
     }
 
-    if (!["fast", "medium", "slow"].includes(body.timeCategory)) {
-        return Response.json(
-            { error: "Invalid time category" },
-            { status: 400 }
-        );
-    }
+    const body = validation.recipe;
 
     const existingRecipe = await prisma.recipe.findUnique({
         where: {
@@ -80,7 +60,7 @@ export async function PUT(
             cookInstructions: body.cookInstructions ?? [],
             ingredients: {
                 deleteMany: {},
-                create: validation.filteredIngredients.map((ingredient) => ({
+                create: body.structuredIngredients.map((ingredient) => ({
                     amount:
                         ingredient.amount === ""
                             ? null

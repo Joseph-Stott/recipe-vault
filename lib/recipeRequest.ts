@@ -6,6 +6,23 @@ function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+export function parseUpdateRecipeRequest(body: unknown, slug: string): RecipeRequestResult {
+    if (!isRecord(body)) return { error: "Recipe must be a JSON object" };
+    return parseCreateRecipeRequest({ ...body, slug });
+}
+
+export function parseImportedRecipeRequest(body: unknown): RecipeRequestResult {
+    if (!isRecord(body)) return { error: "Recipe must be a JSON object" };
+    // Older browser recipes stored amounts as text. Coerce only this migration path.
+    const structuredIngredients = Array.isArray(body.structuredIngredients)
+        ? body.structuredIngredients.map((ingredient: unknown) => {
+            if (!isRecord(ingredient) || typeof ingredient.amount !== "string") return ingredient;
+            return { ...ingredient, amount: ingredient.amount.trim() === "" ? "" : Number(ingredient.amount) };
+        })
+        : body.structuredIngredients;
+    return parseCreateRecipeRequest({ ...body, structuredIngredients });
+}
+
 export function parseCreateRecipeRequest(body: unknown): RecipeRequestResult {
     if (!isRecord(body)) return { error: "Recipe must be a JSON object" };
     if (typeof body.title !== "string" || !body.title.trim()) {

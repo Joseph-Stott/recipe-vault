@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { validateRecipeForm } from "@/lib/recipeValidation";
+import { parseImportedRecipeRequest } from "@/lib/recipeRequest";
 import { Recipe } from "@/types/recipe";
 
 export async function POST(request: Request) {
@@ -21,51 +21,21 @@ export async function POST(request: Request) {
         );
     }
 
-    const uniqueRecipes = Array.from(
-        new Map(
-            body.recipes
-                .filter((recipe): recipe is Recipe => {
-                    const candidate = recipe as Partial<Recipe> | null;
-
-                    return (
-                        !!candidate &&
-                        typeof candidate.slug === "string" &&
-                        candidate.slug.trim() !== ""
-                    );
-                })
-                .map((recipe) => [
-                    recipe.slug,
-                    recipe,
-                ])
-        ).values()
-    );
-
-    for (const recipe of uniqueRecipes) {
-        const validation = validateRecipeForm({
-            title: recipe.title ?? "",
-            structuredIngredients: recipe.structuredIngredients ?? [],
-        });
-
-        if (!validation.valid) {
-            const recipeLabel = recipe.title?.trim() || recipe.slug;
-
+    const recipesBySlug = new Map<string, Recipe>();
+    for (const candidate of body.recipes) {
+        // Preserve the migration bridge's skip policy for records without an identity.
+        if (typeof candidate !== "object" || candidate === null ||
+            !("slug" in candidate) || typeof candidate.slug !== "string" || !candidate.slug.trim()) continue;
+        const validation = parseImportedRecipeRequest(candidate);
+        if (validation.error !== undefined) {
             return Response.json(
-                {
-                    error: `Invalid recipe "${recipeLabel}": ${validation.messages.join(" ")}`,
-                },
+                { error: `Invalid recipe "${candidate.slug}": ${validation.error}` },
                 { status: 400 }
             );
         }
-
-        if (!["fast", "medium", "slow"].includes(recipe.timeCategory)) {
-            return Response.json(
-                {
-                    error: `Invalid recipe "${recipe.title}": Invalid time category`,
-                },
-                { status: 400 }
-            );
-        }
+        recipesBySlug.set(validation.recipe.slug, validation.recipe);
     }
+    const uniqueRecipes = [...recipesBySlug.values()];
 
     const createdRecipes = await prisma.$transaction(async (tx) => {
         const existingRecipes = await tx.recipe.findMany({
@@ -89,11 +59,6 @@ export async function POST(request: Request) {
 
         return Promise.all(
             recipesToImport.map((recipe) => {
-                const validation = validateRecipeForm({
-                    title: recipe.title,
-                    structuredIngredients: recipe.structuredIngredients,
-                });
-
                 return tx.recipe.create({
                     data: {
                         slug: recipe.slug,
@@ -103,7 +68,7 @@ export async function POST(request: Request) {
                         pageNumber: recipe.pageNumber ?? null,
                         cookInstructions: recipe.cookInstructions ?? [],
                         ingredients: {
-                            create: validation.filteredIngredients.map((ingredient) => ({
+                            create: recipe.structuredIngredients.map((ingredient) => ({
                                 amount:
                                     ingredient.amount === ""
                                         ? null
