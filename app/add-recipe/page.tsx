@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getSavedRecipes } from "@/lib/recipeStorage";
-import { Recipe, Ingredient } from "@/types/recipe";
+import { Recipe, IngredientDraft } from "@/types/recipe";
 import { useRouter } from "next/navigation";
 import RecipeForm from "@/components/RecipeForm";
 import { validateRecipeForm } from "@/lib/recipeValidation";
@@ -16,7 +16,7 @@ import StatusPanel from "@/components/StatusPanel";
 export default function AddRecipePage() {
     const [title, setTitle] = useState("");
     const [timeCategory, setTimeCategory] = useState<Recipe["timeCategory"]>("medium");
-    const [structuredIngredients, setStructuredIngredients] = useState<Ingredient[]>([
+    const [structuredIngredients, setStructuredIngredients] = useState<IngredientDraft[]>([
         {
             amount: "",
             unit: "",
@@ -124,6 +124,7 @@ export default function AddRecipePage() {
                             title,
                             structuredIngredients,
                             existingSlugs,
+                            pageNumber,
                         });
 
                         if (!validation.valid) {

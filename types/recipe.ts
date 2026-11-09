@@ -4,6 +4,10 @@ export type Ingredient = {
     name: string;
 };
 
+export type IngredientDraft = Omit<Ingredient, "amount"> & {
+    amount: string | number;
+};
+
 export type Recipe = {
     slug: string;
     title: string;

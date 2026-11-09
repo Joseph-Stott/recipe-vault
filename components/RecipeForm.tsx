@@ -1,4 +1,4 @@
-import { Recipe, Ingredient } from "@/types/recipe";
+import { Recipe, IngredientDraft } from "@/types/recipe";
 import BackButton from "./BackButton";
 
 type RecipeFormProps = {
@@ -6,8 +6,8 @@ type RecipeFormProps = {
     setTitle: (title: string) => void;
     timeCategory: Recipe["timeCategory"];
     setTimeCategory: (timeCategory: Recipe["timeCategory"]) => void;
-    structuredIngredients: Ingredient[];
-    setStructuredIngredients: (structuredIngredients: Ingredient[]) => void;
+    structuredIngredients: IngredientDraft[];
+    setStructuredIngredients: (structuredIngredients: IngredientDraft[]) => void;
     cookInstructionsText: string;
     setCookInstructionsText: (cookInstructionsText: string) => void;
     cookBook: string;
@@ -42,7 +42,7 @@ export default function RecipeForm({
 }: RecipeFormProps) {
     function updateStructuredIngredient(
         index: number,
-        field: keyof Ingredient,
+        field: keyof IngredientDraft,
         value: string
     ) {
         const updatedIngredients = [...structuredIngredients];

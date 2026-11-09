@@ -1,9 +1,10 @@
-import { Ingredient } from "@/types/recipe";
+import { Ingredient, IngredientDraft } from "@/types/recipe";
 import { createSlug } from "@/lib/recipeUtils";
 
 type RecipeValidationInput = {
     title: string;
-    structuredIngredients: Ingredient[];
+    structuredIngredients: IngredientDraft[];
+    pageNumber?: string;
     existingSlugs?: string[];
     currentSlug?: string;
 };
@@ -37,14 +38,32 @@ export function validateRecipeForm(input: RecipeValidationInput): RecipeValidati
         messages.push("A recipe with this title already exists");
     }
 
-    const completeIngredients = input.structuredIngredients.filter(
+    const ingredients: Ingredient[] = input.structuredIngredients.map((ingredient) => ({
+        ...ingredient,
+        amount: typeof ingredient.amount === "string" && !ingredient.amount.trim()
+            ? ""
+            : Number(ingredient.amount),
+    }));
+
+    if (ingredients.some(({ amount }) => amount !== "" && (!Number.isFinite(amount) || amount < 0))) {
+        messages.push("Ingredient amounts must be non-negative numbers (use decimals, such as 0.5)");
+    }
+
+    if (input.pageNumber?.trim()) {
+        const page = Number(input.pageNumber);
+        if (!Number.isInteger(page) || page < 1 || page > 2_147_483_647) {
+            messages.push("Page number must be an integer between 1 and 2147483647");
+        }
+    }
+
+    const completeIngredients = ingredients.filter(
         (ingredient) =>
             ingredient.amount !== "" &&
             ingredient.unit.trim() !== "" &&
             ingredient.name.trim() !== ""
     );
 
-    const partialIngredients = input.structuredIngredients.filter((ingredient) => {
+    const partialIngredients = ingredients.filter((ingredient) => {
         const hasAmount = ingredient.amount !== "";
         const hasUnit = ingredient.unit.trim() !== "";
         const hasName = ingredient.name.trim() !== "";

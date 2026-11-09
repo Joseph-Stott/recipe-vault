@@ -5,7 +5,7 @@ import {
     useState,
     useSyncExternalStore,
 } from "react";
-import { Ingredient, Recipe } from "@/types/recipe";
+import { IngredientDraft, Recipe } from "@/types/recipe";
 import { useParams, useRouter } from "next/navigation";
 import {
     deleteSavedRecipe,
@@ -159,7 +159,7 @@ function EditRecipeForm({
         useState<Recipe["timeCategory"]>(recipe.timeCategory);
 
     const [structuredIngredients, setStructuredIngredients] =
-        useState<Ingredient[]>(
+        useState<IngredientDraft[]>(
             recipe.structuredIngredients || []
         );
 
@@ -268,6 +268,7 @@ function EditRecipeForm({
                             structuredIngredients,
                             existingSlugs,
                             currentSlug: recipe.slug,
+                            pageNumber,
                         });
 
                         if (!validation.valid) {

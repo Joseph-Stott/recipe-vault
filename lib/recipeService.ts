@@ -163,6 +163,6 @@ export function buildRecipeFromForm(values: RecipeFormValues): Recipe {
                 .filter((instruction) => instruction !== "")
             : undefined,
         cookBook: values.cookBook,
-        pageNumber: values.pageNumber ? Number(values.pageNumber) : undefined,
+        pageNumber: values.pageNumber.trim() ? Number(values.pageNumber) : undefined,
     };
 }
