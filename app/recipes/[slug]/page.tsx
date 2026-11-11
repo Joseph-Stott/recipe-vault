@@ -6,16 +6,13 @@ import {
     subscribeToSavedRecipes,
 } from "@/lib/recipeStorage";
 import { 
-    useEffect,
-    useState,
     useSyncExternalStore, } from "react";
 import { useParams } from "next/navigation";
 import BackButton from "@/components/BackButton";
 import { getAllRecipes } from "@/lib/recipeService";
-import { getDatabaseRecipes } from "@/lib/recipeApi";
-import { Recipe } from "@/types/recipe";
 import { useFavoriteRecipeSlugs } from "@/hooks/useFavoriteRecipeSlugs";
 import StatusPanel from "@/components/StatusPanel";
+import { useDatabaseRecipes } from "@/hooks/useDatabaseRecipes";
 
 const timeCategoryStyles = {
     fast: "bg-green-600 text-white",
@@ -34,39 +31,11 @@ export default function DetailPage() {
         () => EMPTY_SAVED_RECIPES
     );
 
-    const [databaseRecipes, setDatabaseRecipes] = useState<Recipe[]>([]);
-    const [databaseRecipesLoaded, setDatabaseRecipesLoaded] = useState(false);
-    const [databaseRecipeLoadError, setDatabaseRecipeLoadError] =
-        useState<string | null>(null);
+    const {
+        databaseRecipes, databaseRecipesLoaded, databaseRecipeLoadError, recipeMigrationError,
+    } = useDatabaseRecipes();
 
-    useEffect(() => {
-        let cancelled = false;
 
-        getDatabaseRecipes()
-            .then((recipes) => {
-                if (!cancelled) {
-                    setDatabaseRecipes(recipes);
-                    setDatabaseRecipeLoadError(null);
-                }
-            })
-            .catch((error) => {
-                console.error("Failed to load database recipes", error);
-                if (!cancelled) {
-                    setDatabaseRecipeLoadError(
-                        "Recipes could not be loaded from the database."
-                    );
-                }
-            })
-            .finally(() => {
-                if (!cancelled) {
-                    setDatabaseRecipesLoaded(true);
-                }
-            });
-
-        return () => {
-            cancelled = true;
-        };
-    }, []);
 
     const {
         favoriteRecipeSlugs,
@@ -136,6 +105,11 @@ export default function DetailPage() {
         <main className="flex min-h-screen flex-col items-center justify-start bg-black px-6 py-16 font-sans text-zinc-100">
             <div className="relative w-full max-w-sm overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-900 p-4 text-center text-zinc-100">
                 <div className="flex flex-col gap-4">
+                    {recipeMigrationError && (
+                        <StatusPanel title="Browser cleanup needs attention" tone="warning">
+                            {recipeMigrationError}
+                        </StatusPanel>
+                    )}
                     <button
                     title={isFavorite ? "Remove from favorites" : "Add to favorites"}
                         disabled={isUpdatingFavorite}

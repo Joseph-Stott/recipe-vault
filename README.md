@@ -291,9 +291,12 @@ localStorage still persists:
 
 * Grocery lists
 * Grocery recipe tracking
-* Older custom recipes and favorite copies retained during migration
+* Unimported legacy recipes and favorites
+* Recovery copies retired from the active collection during migration
 
-Starter recipes are stored in source control as seed data and imported into the database with `npm run db:seed`. Older localStorage recipes can be imported from the homepage, but imported copies are not yet retired from browser storage. This can cause a deleted imported recipe to reappear and is a priority in the [launch todo](docs/launch-todo.md).
+Starter recipes are stored in source control as seed data and imported into the database with `npm run db:seed`. Older localStorage recipes can be imported from the homepage. Once a database record is confirmed, its matching browser copy moves to a recovery archive and stops participating in the collection. The database version stays active even if the archived version differs. Failed imports and unconfirmed records keep their local copies.
+
+**Download Legacy Recovery** appears on the homepage when archived copies exist. Save that file outside the browser before clearing site data. It preserves older browser versions and is separate from **Export Backup**, which exports the current database. Neither download currently has a general restore UI; see [backup and recovery notes](docs/backup-restore-notes.md).
 
 Browser storage is tied to a URL's origin. A hosted app cannot read legacy data from localhost. Moving to hosting requires an explicit database transfer or validated export/restore procedure. Grocery lists are not included in the current backup export.
 
@@ -383,7 +386,7 @@ Tests verify behaviors such as:
 
 ## Development Direction
 
-1. Finish legacy-data migration cleanup and recover safely from malformed browser storage.
+1. Complete favorite migration cleanup and recover safely from malformed browser storage.
 2. Standardize remaining API errors and improve the messages shown to users.
 3. Add CI, live database integration tests, and wider browser coverage.
 4. Implement and verify backup restore and localhost-to-hosted data transfer.

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { getSavedRecipes } from "@/lib/recipeStorage";
 import { Recipe, IngredientDraft } from "@/types/recipe";
 import { useRouter } from "next/navigation";
@@ -9,9 +9,9 @@ import { createSlug } from "@/lib/recipeUtils";
 import { buildRecipeFromForm, getAllRecipes } from "@/lib/recipeService";
 import {
     createDatabaseRecipe,
-    getDatabaseRecipes,
 } from "@/lib/recipeApi";
 import StatusPanel from "@/components/StatusPanel";
+import { useDatabaseRecipes } from "@/hooks/useDatabaseRecipes";
 
 export default function AddRecipePage() {
     const [title, setTitle] = useState("");
@@ -27,42 +27,14 @@ export default function AddRecipePage() {
     const [cookBook, setCookBook] = useState("");
     const [pageNumber, setPageNumber] = useState("");
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
-    const [databaseRecipes, setDatabaseRecipes] = useState<Recipe[]>([]);
-    const [databaseRecipesLoaded, setDatabaseRecipesLoaded] = useState(false);
-    const [databaseRecipeLoadError, setDatabaseRecipeLoadError] =
-        useState<string | null>(null);
+    const {
+        databaseRecipes, databaseRecipesLoaded, databaseRecipeLoadError, recipeMigrationError,
+    } = useDatabaseRecipes();
     const [isSaving, setIsSaving] = useState(false);
 
     const router = useRouter();
 
-    useEffect(() => {
-        let cancelled = false;
 
-        getDatabaseRecipes()
-            .then((recipes) => {
-                if (!cancelled) {
-                    setDatabaseRecipes(recipes);
-                    setDatabaseRecipeLoadError(null);
-                }
-            })
-            .catch((error) => {
-                console.error("Failed to load database recipes", error);
-                if (!cancelled) {
-                    setDatabaseRecipeLoadError(
-                        "Recipes could not be loaded from the database. New recipes cannot be saved until the database is available."
-                    );
-                }
-            })
-            .finally(() => {
-                if (!cancelled) {
-                    setDatabaseRecipesLoaded(true);
-                }
-            });
-
-        return () => {
-            cancelled = true;
-        };
-    }, []);
 
     return(
         <main className="flex min-h-screen flex-col items-center justify-start bg-black px-6 py-16 font-sans text-zinc-100">
@@ -78,6 +50,11 @@ export default function AddRecipePage() {
                 {databaseRecipeLoadError && (
                     <StatusPanel title="Cannot save yet" tone="error">
                         {databaseRecipeLoadError}
+                    </StatusPanel>
+                )}
+                {recipeMigrationError && (
+                    <StatusPanel title="Browser cleanup needs attention" tone="warning">
+                        {recipeMigrationError}
                     </StatusPanel>
                 )}
                 <RecipeForm

@@ -1,7 +1,6 @@
 "use client";
 
 import {
-    useEffect,
     useState,
     useSyncExternalStore,
 } from "react";
@@ -10,6 +9,7 @@ import { useParams, useRouter } from "next/navigation";
 import {
     deleteSavedRecipe,
     getSavedRecipes,
+    retireSavedRecipes,
     subscribeToSavedRecipes,
     updateSavedRecipe,
 } from "@/lib/recipeStorage";
@@ -21,10 +21,12 @@ import {
 import { validateRecipeForm } from "@/lib/recipeValidation";
 import {
     deleteDatabaseRecipe,
-    getDatabaseRecipes,
     updateDatabaseRecipe,
 } from "@/lib/recipeApi";
 import StatusPanel from "@/components/StatusPanel";
+import { useDatabaseRecipes } from "@/hooks/useDatabaseRecipes";
+import { getFavoriteRecipeSlugs, retireFavoriteRecipes } from "@/lib/favorites";
+import { preserveLegacyData } from "@/lib/legacyRecovery";
 import BackButton from "@/components/BackButton";
 
 const EMPTY_SAVED_RECIPES: ReturnType<typeof getSavedRecipes> = [];
@@ -44,40 +46,11 @@ export default function EditRecipePage() {
         () => EMPTY_SAVED_RECIPES
     );
 
-    const [databaseRecipes, setDatabaseRecipes] = useState<Recipe[]>([]);
-    const [databaseRecipesLoaded, setDatabaseRecipesLoaded] =
-        useState(false);
-    const [databaseRecipeLoadError, setDatabaseRecipeLoadError] =
-        useState<string | null>(null);
+    const {
+        databaseRecipes, databaseRecipesLoaded, databaseRecipeLoadError, recipeMigrationError,
+    } = useDatabaseRecipes();
 
-    useEffect(() => {
-        let cancelled = false;
 
-        getDatabaseRecipes()
-            .then((recipes) => {
-                if (!cancelled) {
-                    setDatabaseRecipes(recipes);
-                    setDatabaseRecipeLoadError(null);
-                }
-            })
-            .catch((error) => {
-                console.error("Failed to load database recipes", error);
-                if (!cancelled) {
-                    setDatabaseRecipeLoadError(
-                        "Recipes could not be loaded from the database."
-                    );
-                }
-            })
-            .finally(() => {
-                if (!cancelled) {
-                    setDatabaseRecipesLoaded(true);
-                }
-            });
-
-        return () => {
-            cancelled = true;
-        };
-    }, []);
 
     const combinedSavedRecipes = Array.from(
         new Map(
@@ -117,6 +90,16 @@ export default function EditRecipePage() {
                     action={<BackButton />}
                 >
                     {databaseRecipeLoadError} Check the database connection and try again.
+                </StatusPanel>
+            </main>
+        );
+    }
+
+    if (recipeMigrationError) {
+        return (
+            <main className="flex min-h-screen flex-col items-center bg-black px-6 py-16 text-zinc-100">
+                <StatusPanel title="Browser cleanup needs attention" tone="warning" action={<BackButton />}>
+                    {recipeMigrationError}
                 </StatusPanel>
             </main>
         );
@@ -214,13 +197,21 @@ function EditRecipeForm({
 
                         setIsDeleting(true);
                         setErrorMessages([]);
+                        let deleted = false;
 
                         try {
+                            // Preserve pending favorites before deleting their recipe. Do not
+                            // retire them unless deletion actually succeeds.
+                            preserveLegacyData([], getFavoriteRecipeSlugs().filter((slug) => slug.trim() === recipe.slug));
                             if (isDatabaseRecipe) {
+                                // Also catch a copy written by another tab since this page loaded.
+                                retireSavedRecipes([recipe.slug]);
                                 await deleteDatabaseRecipe(recipe.slug);
                             } else {
                                 deleteSavedRecipe(recipe.slug);
                             }
+                            deleted = true;
+                            retireFavoriteRecipes([recipe.slug]);
 
                             router.refresh();
                             router.push("/");
@@ -230,7 +221,9 @@ function EditRecipeForm({
                                 error
                             );
                             setErrorMessages([
-                                "Failed to delete recipe. Please try again.",
+                                deleted
+                                    ? "Recipe was deleted, but browser favorite cleanup could not finish. Check browser storage and return to Recipes."
+                                    : "Deletion could not be confirmed. Check the connection and browser storage, then reload before trying again.",
                             ]);
                         } finally {
                             setIsDeleting(false);

@@ -9,6 +9,7 @@ import GroceryRecipesSection from "@/components/GroceryRecipesSection";
 import RecipeList from "@/components/RecipeList";
 import { useHomeRecipeData } from "@/hooks/useHomeRecipeData";
 import StatusPanel from "@/components/StatusPanel";
+import LegacyRecoveryDownload from "@/components/LegacyRecoveryDownload";
 
 export default function Home() {
   
@@ -23,6 +24,7 @@ export default function Home() {
     groceryList,
     databaseRecipesLoaded,
     databaseRecipeLoadError,
+    recipeMigrationError,
     favoriteRecipeLoadError,
     favoriteRecipeImportError,
     favoriteRecipeUpdateError,
@@ -88,6 +90,7 @@ export default function Home() {
         >
           Export Backup
         </a>
+        <LegacyRecoveryDownload />
         <SearchBar
           searchText={searchText}
           setSearchText={setSearchText}
@@ -111,6 +114,11 @@ export default function Home() {
               favoriteRecipeLoadError}
           </StatusPanel>
         )}
+        {recipeMigrationError && (
+          <StatusPanel title="Browser cleanup needs attention" tone="warning">
+            {recipeMigrationError}
+          </StatusPanel>
+        )}
         {localRecipesToImport.length > 0 && (
           <section className="flex w-full max-w-sm flex-col gap-2 rounded-lg border border-zinc-700 bg-zinc-900 p-3 text-center text-sm text-zinc-300">
             <p>
@@ -119,7 +127,7 @@ export default function Home() {
             <button
               title="Import local recipes"
               className="cursor-pointer rounded-lg border border-zinc-600 px-3 py-2 font-medium text-zinc-100 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
-              disabled={isImportingRecipes}
+              disabled={isImportingRecipes || !databaseRecipesLoaded || Boolean(databaseRecipeLoadError || recipeMigrationError)}
               onClick={importLocalRecipes}
             >
               {isImportingRecipes ? "Importing..." : "Import Local Recipes"}

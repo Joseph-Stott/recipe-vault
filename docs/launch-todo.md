@@ -19,7 +19,8 @@ Scope: single-user MVP, shared recipes and favorites on desktop and iPhone. Host
 
 ## Next: Reliability Without Hosting
 
-- [ ] Retire confirmed legacy copies safely; deleted imported recipes must stay deleted after refresh.
+- [x] Retire confirmed legacy recipe copies safely; deleted imported recipes stay deleted after refresh.
+- [x] Preserve original browser copies in a downloadable recovery archive before retirement.
 - [ ] Complete favorite migration state; old browser favorites must not restore removed database favorites.
 - [ ] Handle malformed/unavailable localStorage without crashing or silently destroying recoverable data.
 - [ ] Fix grocery item ownership after editing/removing a contributing recipe.

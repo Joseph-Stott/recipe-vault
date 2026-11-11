@@ -1,7 +1,6 @@
 "use client";
 
 import { 
-    useEffect,
     useState, 
     useSyncExternalStore,
 } from "react";
@@ -24,6 +23,7 @@ import {
     importDatabaseRecipes,
 } from "@/lib/recipeApi";
 import { useFavoriteRecipeSlugs } from "@/hooks/useFavoriteRecipeSlugs";
+import { useDatabaseRecipes } from "@/hooks/useDatabaseRecipes";
 
 const EMPTY_RECIPES: Recipe[] = [];
 const EMPTY_SLUGS: string[] = [];
@@ -37,42 +37,12 @@ export function useHomeRecipeData(searchText: string) {
         () => EMPTY_RECIPES
     );
 
-    const [databaseRecipes, setDatabaseRecipes] = useState<Recipe[]>([]);
-    const [databaseRecipesLoaded, setDatabaseRecipesLoaded] =
-        useState(false);
-    const [databaseRecipeLoadError, setDatabaseRecipeLoadError] =
-        useState<string | null>(null);
+    const {
+        databaseRecipes, databaseRecipesLoaded, databaseRecipeLoadError,
+        recipeMigrationError, acceptDatabaseRecipes,
+    } = useDatabaseRecipes();
     const [isImportingRecipes, setIsImportingRecipes] = useState(false);
     const [importRecipeMessage, setImportRecipeMessage] = useState<string | null>(null);
-
-    useEffect(() => {
-        let cancelled = false;
-
-        getDatabaseRecipes()
-            .then((recipes) => {
-                if (!cancelled) {
-                    setDatabaseRecipes(recipes);
-                    setDatabaseRecipeLoadError(null);
-                }
-            })
-            .catch((error) => {
-                console.error("Failed to load database recipes", error);
-                if (!cancelled) {
-                    setDatabaseRecipeLoadError(
-                        "Recipes could not be loaded from the database."
-                    );
-                }
-            })
-            .finally(() => {
-                if (!cancelled) {
-                    setDatabaseRecipesLoaded(true);
-                }
-            });
-
-        return () => {
-            cancelled = true;
-        };
-    }, []);
 
     const {
         favoriteRecipeSlugs,
@@ -123,7 +93,8 @@ export function useHomeRecipeData(searchText: string) {
     }
 
     async function importLocalRecipes() {
-        if (localRecipesToImport.length === 0 || isImportingRecipes) {
+        if (localRecipesToImport.length === 0 || isImportingRecipes ||
+            !databaseRecipesLoaded || databaseRecipeLoadError || recipeMigrationError) {
             return;
         }
 
@@ -133,11 +104,11 @@ export function useHomeRecipeData(searchText: string) {
         try {
             const result = await importDatabaseRecipes(localRecipesToImport);
 
-            setDatabaseRecipes((currentRecipes) =>
+            acceptDatabaseRecipes(
                 Array.from(
                     new Map(
                         [
-                            ...currentRecipes,
+                            ...databaseRecipes,
                             ...result.recipes,
                         ].map((recipe) => [
                             recipe.slug,
@@ -147,11 +118,22 @@ export function useHomeRecipeData(searchText: string) {
                 )
             );
 
-            setImportRecipeMessage(
+            let message = (
                 result.importedCount === 1
                     ? "Imported 1 recipe."
                     : `Imported ${result.importedCount} recipes.`
             );
+            if (result.skippedCount > 0) {
+                message += ` ${result.skippedCount} already in the database.`;
+                // Skipped records are not returned by import. Confirm them with a read
+                // before retiring their local copies or replacing the displayed data.
+                try {
+                    acceptDatabaseRecipes(await getDatabaseRecipes());
+                } catch {
+                    message += " Reload to confirm existing recipes and finish browser cleanup.";
+                }
+            }
+            setImportRecipeMessage(message);
         } catch (error) {
             console.error("Failed to import local recipes", error);
             setImportRecipeMessage(
@@ -187,6 +169,7 @@ export function useHomeRecipeData(searchText: string) {
         groceryList,
         databaseRecipesLoaded,
         databaseRecipeLoadError,
+        recipeMigrationError,
         favoriteRecipeLoadError,
         favoriteRecipeImportError,
         favoriteRecipeUpdateError,
