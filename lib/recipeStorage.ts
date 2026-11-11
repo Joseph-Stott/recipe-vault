@@ -1,4 +1,5 @@
 import type { Recipe } from "@/types/recipe";
+import { preserveLegacyData } from "@/lib/legacyRecovery";
 
 const EMPTY_SAVED_RECIPES: Recipe[] = [];
 
@@ -13,9 +14,15 @@ export function subscribeToSavedRecipes(
     listener: SavedRecipeListener
 ) {
     savedRecipeListeners.add(listener);
+    const onStorage = (event: StorageEvent) => {
+        if (event.storageArea === localStorage &&
+            (event.key === "saved-recipes" || event.key === null)) listener();
+    };
+    if (typeof window !== "undefined") window.addEventListener("storage", onStorage);
 
     return () => {
         savedRecipeListeners.delete(listener);
+        if (typeof window !== "undefined") window.removeEventListener("storage", onStorage);
     };
 }
 
@@ -78,5 +85,18 @@ export function deleteSavedRecipe(slug: string) {
     );
 
     localStorage.setItem("saved-recipes", JSON.stringify(updatedRecipes));
+    notifySavedRecipeListeners();
+}
+
+export function retireSavedRecipes(confirmedSlugs: readonly string[]) {
+    const confirmed = new Set(confirmedSlugs);
+    const current = getSavedRecipes();
+    const migrated = current.filter((recipe) => confirmed.has(recipe.slug));
+    if (migrated.length === 0) return;
+
+    preserveLegacyData(migrated);
+    localStorage.setItem("saved-recipes", JSON.stringify(
+        current.filter((recipe) => !confirmed.has(recipe.slug))
+    ));
     notifySavedRecipeListeners();
 }

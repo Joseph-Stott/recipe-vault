@@ -1,3 +1,5 @@
+import { preserveLegacyData } from "@/lib/legacyRecovery";
+
 const EMPTY_FAVORITE_RECIPE_SLUGS: string[] = [];
 
 let cachedFavoriteRecipeSlugsJson: string | null | undefined;
@@ -11,9 +13,15 @@ export function subscribeToFavoriteRecipeSlugs(
     listener: FavoriteRecipeListener
 ) {
     favoriteRecipeListeners.add(listener);
+    const onStorage = (event: StorageEvent) => {
+        if (event.storageArea === localStorage &&
+            (event.key === "favorite-list" || event.key === null)) listener();
+    };
+    if (typeof window !== "undefined") window.addEventListener("storage", onStorage);
 
     return () => {
         favoriteRecipeListeners.delete(listener);
+        if (typeof window !== "undefined") window.removeEventListener("storage", onStorage);
     };
 }
 
@@ -77,4 +85,17 @@ export function isFavoriteRecipe(slug: string) {
     const favoriteSlugs = getFavoriteRecipeSlugs();
     
     return favoriteSlugs.includes(slug);
+}
+
+export function retireFavoriteRecipes(confirmedSlugs: readonly string[]) {
+    const confirmed = new Set(confirmedSlugs);
+    const current = getFavoriteRecipeSlugs();
+    const migrated = current.filter((slug) => confirmed.has(slug.trim()));
+    if (migrated.length === 0) return;
+
+    preserveLegacyData([], migrated);
+    localStorage.setItem("favorite-list", JSON.stringify(
+        current.filter((slug) => !confirmed.has(slug.trim()))
+    ));
+    notifyFavoriteRecipeListeners();
 }
