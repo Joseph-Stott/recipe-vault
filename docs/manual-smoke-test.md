@@ -26,6 +26,16 @@ Use this checklist before calling a local build or deployed environment ready fo
 - [ ] Export Backup downloads JSON from `/api/recipes/export`.
 - [ ] Confirm the export contains the saved recipes, ingredients, and favorite slugs. Follow the [recovery checklist](backup-restore-notes.md) before relying on the backup.
 
+## Legacy Migration
+
+- [ ] Use a disposable browser profile with one legacy recipe matching a database slug and another recipe not yet imported.
+- [ ] Reload and confirm the database version is active, the matching browser copy is retired, and the unimported recipe is still available.
+- [ ] Download Legacy Recovery and verify it preserves the original browser fields. Save this separately from the database backup.
+- [ ] Import the remaining local recipe, delete it, and reload; it must stay deleted.
+- [ ] Verify failed imports retain active local copies, and recovery-write failures show a warning and prevent unsafe deletion.
+- [ ] Verify skipped imports are retired only after a successful database read confirms them.
+- [ ] Complete migration in one tab and verify another open tab stops displaying retired local copies. Reload to fetch current database records.
+
 ## Favorites
 
 - [ ] Favorite a recipe from the detail page.
@@ -33,6 +43,8 @@ Use this checklist before calling a local build or deployed environment ready fo
 - [ ] Favorite recipes appear on the homepage.
 - [ ] Unfavoriting stays effective after reload, including migrated browser favorites.
 - [ ] A missing legacy favorite does not repeatedly call the import endpoint.
+- [ ] Confirmed local favorites retire; favorites for missing recipes remain pending for the next visit.
+- [ ] Favorite controls remain disabled while initial migration is pending or has failed; reload retries a failed migration.
 - [ ] Favorite errors show a user-facing status message if the database is unavailable.
 
 ## Grocery List

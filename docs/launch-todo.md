@@ -19,9 +19,11 @@ Scope: single-user MVP, shared recipes and favorites on desktop and iPhone. Host
 
 ## Next: Reliability Without Hosting
 
+- [ ] Run the complete browser suite for the final favorite migration and cross-tab scenarios.
 - [x] Retire confirmed legacy recipe copies safely; deleted imported recipes stay deleted after refresh.
 - [x] Preserve original browser copies in a downloadable recovery archive before retirement.
-- [ ] Complete favorite migration state; old browser favorites must not restore removed database favorites.
+- [x] Retire confirmed browser favorites so they cannot restore later database unfavorites; retain missing-recipe favorites for a later visit.
+- [x] Serialize initial favorite migration and toggles within a page; add browser tests for cleanup notifications across tabs.
 - [ ] Handle malformed/unavailable localStorage without crashing or silently destroying recoverable data.
 - [ ] Fix grocery item ownership after editing/removing a contributing recipe.
 - [ ] Return consistent JSON errors from remaining database operations; test concurrent writes/deletes.
@@ -29,7 +31,7 @@ Scope: single-user MVP, shared recipes and favorites on desktop and iPhone. Host
 - [ ] Report skipped/rejected import records accurately and bound import/request sizes.
 - [ ] Add CI for checks, production build, and browser workflows.
 - [ ] Add isolated live-Postgres tests for migrations and recipe/favorite persistence.
-- [ ] Extend browser coverage to delete/reload, favorite toggle, grocery flows, export, and unavailable-server states.
+- [ ] Extend browser coverage to grocery flows, database backup export, and remaining unavailable-server states.
 - [ ] Review form semantics, accessible names, long titles, and all mobile pages.
 - [ ] Recheck development-tool advisories when upstream fixes become available.
 

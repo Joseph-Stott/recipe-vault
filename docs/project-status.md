@@ -11,7 +11,7 @@ Use [launch-todo.md](launch-todo.md) for the ordered backlog, [manual-smoke-test
 | Recipes | PostgreSQL-backed create, read, edit, delete; starter seed data | Live database/browser integration is not automated |
 | Validation | Shared runtime validation for create, update, and import; malformed JSON returns 400 | Update/import database failures still need consistent JSON responses |
 | Form | Typed amounts convert to numbers; invalid quantities and cookbook pages are rejected | Use decimal quantities; fractions such as `1/2` are not parsed |
-| Favorites | Database-backed toggle plus legacy browser import | Concurrent toggles/imports and stale local copies need further work |
+| Favorites | Database-backed toggle; confirmed legacy copies retire after one import attempt per visit | Concurrent requests across devices still need server-side handling; missing-recipe favorites stay pending |
 | Grocery list | Browser-local selection, aggregation, purchased-item tracking | No cross-device sync; ownership and corrupt-storage recovery need work |
 | Search | Title, ingredients, time category; case/spacing normalization | All recipes load client-side, appropriate for current small scope |
 | Backup | JSON export of recipes and favorite slugs | No general restore; grocery state is not included |
@@ -21,9 +21,13 @@ Use [launch-todo.md](launch-todo.md) for the ordered backlog, [manual-smoke-test
 
 Pages/components collect input. Hooks load data and coordinate browser storage. `lib/recipeService.ts` handles grouping and form conversion; `lib/recipeValidation.ts` validates typed form drafts. `lib/recipeRequest.ts` validates untrusted API input. API routes use Prisma with PostgreSQL.
 
-Recipes, ingredients, and favorites live in the database. Grocery items, grocery recipe slugs, pending legacy records, and migration recovery copies live in localStorage. After a successful database read or import acknowledgement, matching recipe copies are archived and removed from the active browser store. Unconfirmed recipes remain available for import. The database version wins slug matches; different browser versions remain in the archive.
+Recipes, ingredients, and favorites live in the database. Grocery items, grocery recipe slugs, pending legacy records, and migration recovery copies live in localStorage. After a successful database read or import acknowledgement, matching recipe/favorite copies are archived and removed from the active browser store. Unconfirmed recipes remain available for import. The database version wins slug matches; different browser versions remain in the archive.
 
 Cleanup saves recovery data before removing active copies and stops if that save fails. The homepage offers a recovery download. Edit/delete is blocked when recipe cleanup fails, preventing a retained copy from reappearing after deletion. Browser storage events notify other open tabs about retirement; database changes still require a fresh load.
+
+Favorite migration runs once per visit, with toggles disabled until it finishes. Missing-recipe favorites remain pending for a later visit, including after their recipe is imported. A pending local-only favorite can be explicitly removed without a database toggle. Cleanup applies only to the current browser/origin; an untouched browser's legacy copies still need migration. Changing the database behind the same URL also requires an explicit data-transfer plan, because retired copies do not automatically become active again.
+
+Historical deletions cannot be inferred from absence alone. A browser copy whose database record was deleted before this cleanup existed is indistinguishable from a never-imported recipe. It remains pending for explicit review/import or deletion; cleanup does not automatically import it.
 
 localStorage belongs to an origin as well as a browser/device. A hosted URL cannot read recipes stored under localhost. Deployment needs an explicit export/restore or database transfer procedure, not just the existing homepage import button.
 
@@ -36,7 +40,7 @@ localStorage belongs to an origin as well as a browser/device. A hosted URL cann
 - Updated Next.js and compatible dependencies to address reported runtime advisories.
 - Added explicit type checking to the standard verification command.
 
-The November 11 follow-up added recipe retirement, recovery downloads, shared database loading across recipe pages, and browser tests for deletion/reload, failed imports, skipped imports, and storage-write failures. Database schemas and migration files were not changed.
+The migration-cleanup follow-up added recipe/favorite retirement, recovery downloads, shared database loading across recipe pages, and browser tests for deletion/reload, unfavorite/reload, failed/skipped imports, storage-write failures, and cross-tab notifications. Database schemas and migration files were not changed.
 
 ## Verification And Its Limits
 
@@ -48,13 +52,14 @@ The November 11 follow-up added recipe retirement, recovery downloads, shared da
 
 There is no committed CI workflow yet. The build downloads Google fonts and needs network access. No production environment, real-device session, live migration, or restore drill was verified in this review. See the release checklist before declaring the app ready.
 
+Migration-cleanup verification: preflight passed with 267 unit/route tests and a production build. The recipe migration browser scenarios passed on desktop/mobile Chromium. The added favorite migration and cross-tab scenarios compile but still need an execution of the complete browser suite.
+
 ## Findings Still To Address
 
 ### Data Lifecycle
 
-1. **Local favorites can override later database changes.** The transition merges both sources; it needs a defined completion state, not permanent fallback copies.
-2. **Malformed browser storage can break rendering.** JSON errors are still thrown from external-store snapshots. Grocery caches also mark data as cached before parsing succeeds. Add recovery that preserves the raw data and offers a deliberate reset/export.
-3. **Grocery ownership is inferred from current ingredients.** Editing a recipe after adding it can leave old ingredients behind when removing it. Track source recipe identity on grocery items before changing persistence.
+1. **Malformed browser storage can break rendering.** JSON errors are still thrown from external-store snapshots. Grocery caches also mark data as cached before parsing succeeds. Add recovery that preserves the raw data and offers a deliberate reset/export. Migration write failures are handled, but this does not yet cover all storage reads.
+2. **Grocery ownership is inferred from current ingredients.** Editing a recipe after adding it can leave old ingredients behind when removing it. Track source recipe identity on grocery items before changing persistence.
 
 ### API And User Experience
 
@@ -79,7 +84,7 @@ Single-user scope avoids account administration and multi-tenant ownership, but 
 
 ## Recommended Development Order
 
-1. Complete favorite migration cleanup and browser-storage recovery.
+1. Complete browser-storage recovery, then fix grocery ownership after recipe edits.
 2. Standardize remaining API errors and concurrency handling, then expose useful messages in the UI.
 3. Add CI and a disposable-Postgres integration suite covering create/edit/delete/import/export. Keep mock-based browser tests as the faster separate layer.
 4. Implement a validated restore/transfer path and demonstrate recovery. Keep schema/import changes in their own reviewable commits.

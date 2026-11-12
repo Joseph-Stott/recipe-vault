@@ -40,7 +40,7 @@ localStorage is tied to the browser and origin. The homepage import on a hosted 
 
 ## Legacy Migration Recovery
 
-Confirmed recipe copies are removed from the active browser store only after their original contents have been saved under `recipe-vault:legacy-recovery:v1`. A matching database slug remains authoritative; recovery preserves different local versions without automatically restoring them. Failed or unconfirmed imports stay in the active local store.
+Confirmed recipe and favorite copies are removed from the active browser stores only after their original contents have been saved under `recipe-vault:legacy-recovery:v1`. A matching database slug remains authoritative; recovery preserves different local versions without automatically restoring them. Failed or unconfirmed imports stay in the active local stores. Favorite slugs whose recipes do not yet exist remain pending for a later page visit.
 
 The homepage's **Download Legacy Recovery** button saves the archive as JSON. Download it before clearing browser/site data and keep it outside the project folder. It contains a version, original recipe copies, and archived favorite slugs. It does not contain the current database collection or groceries and is not a substitute for **Export Backup**.
 

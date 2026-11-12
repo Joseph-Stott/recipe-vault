@@ -149,3 +149,156 @@ test("a recovery write failure preserves the local recipe and blocks deletion un
     await expect(page.getByRole("button", { name: "Delete recipe", exact: true })).toBeEnabled();
     expect(await savedRecipes(page)).toEqual([]);
 });
+
+test("confirmed local favorites cannot restore a later database unfavorite", async ({ page }) => {
+    await seedLegacy(page, [], ["rice"]);
+    let favorites = ["rice"];
+    let imports = 0;
+    await page.route("**/api/recipes", (route) => route.fulfill({ json: [databaseRice] }));
+    await page.route("**/api/favorites", (route) => route.fulfill({ json: { favoriteRecipeSlugs: favorites } }));
+    await page.route("**/api/favorites/import", (route) => {
+        imports++;
+        return route.fulfill({ json: { favoriteRecipeSlugs: ["rice"] } });
+    });
+    await page.goto("/recipes/rice");
+    await expect(page.getByTitle("Remove from favorites")).toBeEnabled();
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem("favorite-list")!))).toEqual([]);
+    favorites = []; // Simulate an unfavorite from another device.
+    await page.reload();
+    await expect(page.getByTitle("Add to favorites")).toBeEnabled();
+    expect(imports).toBe(0);
+    expect(await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).favoriteRecipeSlugs, archiveKey)).toEqual(["rice"]);
+});
+
+test("favorite import retires only confirmed slugs and unfavoriting survives reload", async ({ page }) => {
+    await seedLegacy(page, [], ["rice", "missing-recipe"]);
+    let favorites: string[] = [];
+    const importedBatches: string[][] = [];
+    await page.route("**/api/recipes", (route) => route.fulfill({ json: [databaseRice] }));
+    await page.route("**/api/favorites", (route) => {
+        if (route.request().method() === "POST") favorites = [];
+        return route.fulfill({ json: { favoriteRecipeSlugs: favorites } });
+    });
+    await page.route("**/api/favorites/import", (route) => {
+        const slugs: string[] = route.request().postDataJSON().recipeSlugs;
+        importedBatches.push(slugs);
+        if (slugs.includes("rice")) favorites = ["rice"];
+        return route.fulfill({ json: { favoriteRecipeSlugs: favorites } });
+    });
+    await page.goto("/recipes/rice");
+    await expect(page.getByTitle("Remove from favorites")).toBeEnabled();
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem("favorite-list")!))).toEqual(["missing-recipe"]);
+    await page.getByTitle("Remove from favorites").click();
+    await expect(page.getByTitle("Add to favorites")).toBeEnabled();
+    await page.reload();
+    await expect(page.getByTitle("Add to favorites")).toBeEnabled();
+    expect(importedBatches).toEqual([["rice", "missing-recipe"], ["missing-recipe"]]);
+});
+
+test("failed favorite loads and imports retain pending slugs and can recover on reload", async ({ page }) => {
+    await seedLegacy(page, [], ["rice"]);
+    let failLoad = true;
+    let failImport = true;
+    let imports = 0;
+    await page.route("**/api/recipes", (route) => route.fulfill({ json: [databaseRice] }));
+    await page.route("**/api/favorites", (route) => route.fulfill(
+        failLoad ? { status: 503, json: { error: "Unavailable" } } : { json: { favoriteRecipeSlugs: [] } }
+    ));
+    await page.route("**/api/favorites/import", (route) => {
+        imports++;
+        return route.fulfill(failImport ? { status: 503, json: { error: "Unavailable" } } : { json: { favoriteRecipeSlugs: ["rice"] } });
+    });
+    await page.goto("/recipes/rice");
+    await expect(page.getByText("Favorites could not be loaded from the database.", { exact: true })).toBeVisible();
+    expect(imports).toBe(0);
+    failLoad = false;
+    await page.reload();
+    await expect(page.getByText(/Local favorites could not be copied/)).toBeVisible();
+    await expect(page.getByTitle("Remove from favorites")).toBeDisabled();
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem("favorite-list")!))).toEqual(["rice"]);
+    expect(await page.evaluate((key) => localStorage.getItem(key), archiveKey)).toBeNull();
+    failImport = false;
+    await page.reload();
+    await expect(page.getByTitle("Remove from favorites")).toBeEnabled();
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem("favorite-list")!))).toEqual([]);
+});
+
+test("favorite toggles wait for the initial migration to finish", async ({ page }) => {
+    await seedLegacy(page, [], ["rice"]);
+    let releaseImport!: () => void;
+    const gate = new Promise<void>((resolve) => { releaseImport = resolve; });
+    let imports = 0;
+    let writes = 0;
+    await page.route("**/api/recipes", (route) => route.fulfill({ json: [databaseRice] }));
+    await page.route("**/api/favorites", (route) => {
+        if (route.request().method() === "POST") writes++;
+        return route.fulfill({ json: { favoriteRecipeSlugs: [] } });
+    });
+    await page.route("**/api/favorites/import", async (route) => {
+        imports++;
+        await gate;
+        await route.fulfill({ json: { favoriteRecipeSlugs: ["rice"] } });
+    });
+    await page.goto("/recipes/rice");
+    await expect.poll(() => imports).toBe(1);
+    await expect(page.getByTitle("Remove from favorites")).toBeDisabled();
+    expect(writes).toBe(0);
+    releaseImport();
+    await expect(page.getByTitle("Remove from favorites")).toBeEnabled();
+    await page.getByTitle("Remove from favorites").click();
+    await expect(page.getByTitle("Add to favorites")).toBeEnabled();
+    expect(writes).toBe(1);
+});
+
+test("favorite archive failures retain local copies and block toggles", async ({ page }) => {
+    await seedLegacy(page, [], ["rice"]);
+    await page.addInitScript((key) => {
+        const setItem = Storage.prototype.setItem;
+        Storage.prototype.setItem = function (name, value) {
+            if (name === key) throw new DOMException("Full", "QuotaExceededError");
+            return setItem.call(this, name, value);
+        };
+    }, archiveKey);
+    await page.route("**/api/recipes", (route) => route.fulfill({ json: [databaseRice] }));
+    await page.route("**/api/favorites", (route) => route.fulfill({ json: { favoriteRecipeSlugs: ["rice"] } }));
+    await page.goto("/recipes/rice");
+    await expect(page.getByText(/Favorites are in the database, but browser cleanup could not finish/)).toBeVisible();
+    await expect(page.getByTitle("Remove from favorites")).toBeDisabled();
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem("favorite-list")!))).toEqual(["rice"]);
+});
+
+test("a favorite for an unimported recipe can be removed without a database toggle", async ({ page }) => {
+    await seedLegacy(page, [localRice], ["rice"]);
+    let writes = 0;
+    await page.route("**/api/recipes", (route) => route.fulfill({ json: [] }));
+    await page.route("**/api/favorites", (route) => {
+        if (route.request().method() === "POST") writes++;
+        return route.fulfill({ json: { favoriteRecipeSlugs: [] } });
+    });
+    await page.route("**/api/favorites/import", (route) => route.fulfill({ json: { favoriteRecipeSlugs: [] } }));
+    await page.goto("/recipes/rice");
+    await expect(page.getByTitle("Remove from favorites")).toBeEnabled();
+    await page.getByTitle("Remove from favorites").click();
+    await expect(page.getByTitle("Add to favorites")).toBeEnabled();
+    expect(writes).toBe(0);
+    expect(await savedRecipes(page)).toEqual([localRice]);
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem("favorite-list")!))).toEqual([]);
+});
+
+test("retirement in another tab removes stale local recipes and favorites from an open page", async ({ page, context }) => {
+    await seedLegacy(page, [localRice], ["rice"]);
+    await page.route("**/api/recipes", (route) => route.fulfill({ status: 503, json: { error: "Unavailable" } }));
+    await page.route("**/api/favorites", (route) => route.fulfill({ status: 503, json: { error: "Unavailable" } }));
+    await page.goto("/");
+    await expect(page.getByText("1 recipe available", { exact: true })).toBeVisible();
+    await expect(page.getByText("Favorite Recipes (1)", { exact: false })).toBeVisible();
+    const other = await context.newPage();
+    await other.route("**/api/**", (route) => route.abort());
+    await other.route("**/api/recipes", (route) => route.fulfill({ json: [databaseRice] }));
+    await other.route("**/api/favorites", (route) => route.fulfill({ json: { favoriteRecipeSlugs: ["rice"] } }));
+    await other.goto("/");
+    await expect(other.getByRole("button", { name: "Download Legacy Recovery" })).toBeVisible();
+    await expect(page.getByText("0 recipes available", { exact: true })).toBeVisible();
+    await expect(page.getByText("Favorite Recipes (0)", { exact: false })).toBeVisible();
+    await other.close();
+});

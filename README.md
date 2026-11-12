@@ -296,6 +296,8 @@ localStorage still persists:
 
 Starter recipes are stored in source control as seed data and imported into the database with `npm run db:seed`. Older localStorage recipes can be imported from the homepage. Once a database record is confirmed, its matching browser copy moves to a recovery archive and stops participating in the collection. The database version stays active even if the archived version differs. Failed imports and unconfirmed records keep their local copies.
 
+Legacy favorites follow the same retirement rule after a successful read/import. Missing-recipe favorites remain pending and retry on a later page visit. Favorite controls wait for migration to finish so a delayed import cannot undo a toggle made during that migration. Cleanup applies to each browser/origin separately; database changes on another device appear after reload.
+
 **Download Legacy Recovery** appears on the homepage when archived copies exist. Save that file outside the browser before clearing site data. It preserves older browser versions and is separate from **Export Backup**, which exports the current database. Neither download currently has a general restore UI; see [backup and recovery notes](docs/backup-restore-notes.md).
 
 Browser storage is tied to a URL's origin. A hosted app cannot read legacy data from localhost. Moving to hosting requires an explicit database transfer or validated export/restore procedure. Grocery lists are not included in the current backup export.
@@ -356,7 +358,7 @@ This separation helps keep components focused, improves testability, and makes b
 
 ## Testing
 
-Vitest covers business logic, form-to-API contracts, and API routes with mocked database calls. Playwright covers typed create/edit quantities, invalid input, and missing legacy favorites in desktop/mobile browser layouts. These layers catch different failures; neither currently verifies persistence against a real PostgreSQL instance. A CI workflow and isolated database integration suite are still planned.
+Vitest covers business logic, form-to-API contracts, recovery archive/retirement helpers, and API routes with mocked database calls. Playwright covers typed create/edit quantities, invalid input, migration and deletion/reload, favorites, recovery downloads, request/storage failures, and retirement notifications between tabs in desktop/mobile Chromium. These layers catch different failures; neither currently verifies persistence against a real PostgreSQL instance. A CI workflow and isolated database integration suite are still planned.
 
 Current test coverage includes:
 
@@ -386,7 +388,7 @@ Tests verify behaviors such as:
 
 ## Development Direction
 
-1. Complete favorite migration cleanup and recover safely from malformed browser storage.
+1. Recover safely from malformed or unavailable browser storage, then fix grocery item ownership after recipe edits.
 2. Standardize remaining API errors and improve the messages shown to users.
 3. Add CI, live database integration tests, and wider browser coverage.
 4. Implement and verify backup restore and localhost-to-hosted data transfer.
