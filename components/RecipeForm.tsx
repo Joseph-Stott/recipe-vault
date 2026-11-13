@@ -81,6 +81,7 @@ export default function RecipeForm({
                 autoComplete="off"
                 spellCheck={false}
                 title="Recipe title"
+                aria-label="Recipe title"
                 onFocus={(event)=> event.target.select()}
                 className="w-full max-w-sm rounded-lg border border-zinc-400 bg-zinc-900 p-2 text-zinc-100 placeholder:text-center placeholder:text-zinc-500"
                 type="text"
@@ -94,6 +95,7 @@ export default function RecipeForm({
             <section className="flex flex-row justify-center gap-2">
                 <button
                     title="Quick recipe"
+                    aria-pressed={timeCategory === "fast"}
                     className={`cursor-pointer rounded-lg border px-3 py-2 text-sm font-medium ${
                         timeCategory === "fast"
                             ? "bg-green-600 border-green-500"
@@ -107,6 +109,7 @@ export default function RecipeForm({
                 </button>
                 <button
                     title="Moderate preparation time"
+                    aria-pressed={timeCategory === "medium"}
                     className={`cursor-pointer rounded-lg border px-3 py-2 text-sm font-medium ${
                         timeCategory === "medium"
                             ? "bg-yellow-600 border-yellow-500"
@@ -120,6 +123,7 @@ export default function RecipeForm({
                 </button>
                 <button
                     title="Longer cooking time"
+                    aria-pressed={timeCategory === "slow"}
                     className={`cursor-pointer rounded-lg border px-3 py-2 text-sm font-medium ${
                         timeCategory === "slow"
                             ? "bg-red-600 border-red-500"
@@ -161,6 +165,8 @@ export default function RecipeForm({
                             className="min-w-0 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm text-zinc-100 placeholder:text-zinc-500"
                             type="text"
                             placeholder="Amt"
+                            aria-label={`Ingredient ${index + 1} amount`}
+                            inputMode="decimal"
                             value={ingredient.amount}
                             onChange={(event) =>
                                 updateStructuredIngredient(index, "amount", event.target.value)
@@ -173,6 +179,7 @@ export default function RecipeForm({
                             className="min-w-0 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm text-zinc-100 placeholder:text-zinc-500"
                             type="text"
                             placeholder="Unit"
+                            aria-label={`Ingredient ${index + 1} unit`}
                             value={ingredient.unit}
                             onChange={(event) =>
                                 updateStructuredIngredient(index, "unit", event.target.value)
@@ -185,6 +192,7 @@ export default function RecipeForm({
                             className="min-w-0 rounded-lg border border-zinc-600 bg-zinc-900 p-2 text-sm text-zinc-100 placeholder:text-zinc-500"
                             type="text"
                             placeholder="Ingredient"
+                            aria-label={`Ingredient ${index + 1} name`}
                             value={ingredient.name}
                             onChange={(event) =>
                                 updateStructuredIngredient(index, "name", event.target.value)
@@ -193,6 +201,7 @@ export default function RecipeForm({
 
                         <button
                             title="Remove ingredient row"
+                            aria-label={`Remove ingredient ${index + 1}`}
                             className="w-10 rounded-lg border border-red-600 text-red-400 hover:bg-red-950 disabled:cursor-not-allowed disabled:opacity-40"
                             disabled={structuredIngredients.length === 1}
                             onClick={() => removeStructuredIngredient(index)}
@@ -204,6 +213,7 @@ export default function RecipeForm({
             </section>
             <textarea
                 title="Recipe cooking instructions"
+                aria-label="Cooking instructions"
                 className="w-full max-w-sm rounded-lg border border-zinc-400 bg-zinc-900 p-2 text-zinc-100 placeholder:text-center placeholder:text-zinc-500"
                 placeholder="Cook Instructions"
                 value={cookInstructionsText}
@@ -213,6 +223,7 @@ export default function RecipeForm({
                 autoComplete="off"
                 spellCheck={false}
                 title="Cookbook title"
+                aria-label="Cookbook title"
                 onFocus={(event)=> event.target.select()}
                 className="w-full max-w-sm rounded-lg border border-zinc-400 bg-zinc-900 p-2 text-zinc-100 placeholder:text-center placeholder:text-zinc-500"
                 type="text"
@@ -224,6 +235,8 @@ export default function RecipeForm({
                 autoComplete="off"
                 spellCheck={false}
                 title="Cookbook page number"
+                aria-label="Cookbook page number"
+                inputMode="numeric"
                 onFocus={(event)=> event.target.select()}
                 className="w-full max-w-sm rounded-lg border border-zinc-400 bg-zinc-900 p-2 text-zinc-100 placeholder:text-center placeholder:text-zinc-500"
                 type="text"
@@ -232,7 +245,7 @@ export default function RecipeForm({
                 onChange={(event) => setPageNumber(event.target.value)}
             />
             {errorMessages.length > 0 && (
-                <ul className="text-sm text-red-400">
+                <ul role="alert" className="text-sm text-red-400">
                     {errorMessages.map((message) => (
                         <li key={message}>{message}</li>
                     ))}
