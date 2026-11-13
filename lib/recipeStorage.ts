@@ -1,5 +1,6 @@
 import type { Recipe } from "@/types/recipe";
 import { preserveLegacyData } from "@/lib/legacyRecovery";
+import { isStoredRecipeList, parseBrowserValue, readBrowserValue } from "@/lib/browserStorage";
 
 const EMPTY_SAVED_RECIPES: Recipe[] = [];
 
@@ -31,19 +32,19 @@ function notifySavedRecipeListeners() {
 }
 
 export function getSavedRecipes(): Recipe[] {
-    const storedRecipes = localStorage.getItem("saved-recipes");
+    const storedRecipes = readBrowserValue("saved-recipes");
 
     if (storedRecipes === cachedSavedRecipesJson) {
         return cachedSavedRecipes;
     }
 
-    if (!storedRecipes) {
+    if (storedRecipes === null) {
         cachedSavedRecipes = EMPTY_SAVED_RECIPES;
         cachedSavedRecipesJson = storedRecipes;
         return cachedSavedRecipes;
     }
 
-    cachedSavedRecipes = JSON.parse(storedRecipes);
+    cachedSavedRecipes = parseBrowserValue<Recipe[]>("saved-recipes", storedRecipes, isStoredRecipeList);
     cachedSavedRecipesJson = storedRecipes;
 
     return cachedSavedRecipes;

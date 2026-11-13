@@ -1,4 +1,5 @@
 import { preserveLegacyData } from "@/lib/legacyRecovery";
+import { isStoredSlugList, parseBrowserValue, readBrowserValue } from "@/lib/browserStorage";
 
 const EMPTY_FAVORITE_RECIPE_SLUGS: string[] = [];
 
@@ -30,19 +31,19 @@ function notifyFavoriteRecipeListeners() {
 }
 
 export function getFavoriteRecipeSlugs(): string[] {
-    const storedFavoriteList = localStorage.getItem("favorite-list");
+    const storedFavoriteList = readBrowserValue("favorite-list");
 
     if (storedFavoriteList === cachedFavoriteRecipeSlugsJson) {
         return cachedFavoriteRecipeSlugs;
     }
 
-    if (!storedFavoriteList) {
+    if (storedFavoriteList === null) {
         cachedFavoriteRecipeSlugs = EMPTY_FAVORITE_RECIPE_SLUGS;
         cachedFavoriteRecipeSlugsJson = storedFavoriteList;
         return cachedFavoriteRecipeSlugs;
     }
 
-    cachedFavoriteRecipeSlugs = JSON.parse(storedFavoriteList);
+    cachedFavoriteRecipeSlugs = parseBrowserValue<string[]>("favorite-list", storedFavoriteList, isStoredSlugList);
     cachedFavoriteRecipeSlugsJson = storedFavoriteList;
 
     return cachedFavoriteRecipeSlugs;

@@ -1,3 +1,5 @@
+import { readBrowserValue } from "@/lib/browserStorage";
+
 export const LEGACY_RECOVERY_KEY = "recipe-vault:legacy-recovery:v1";
 
 type LegacyRecovery = {
@@ -22,7 +24,7 @@ export function subscribeToLegacyRecovery(listener: () => void) {
 }
 
 export function getLegacyRecoveryJson(): string | null {
-    return localStorage.getItem(LEGACY_RECOVERY_KEY);
+    return readBrowserValue(LEGACY_RECOVERY_KEY);
 }
 
 function readRecovery(): LegacyRecovery {

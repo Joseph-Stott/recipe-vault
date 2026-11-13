@@ -7,6 +7,7 @@ import {
     updateSavedRecipe,
 } from "@/lib/recipeStorage";
 import { Recipe } from "@/types/recipe";
+import { BrowserStorageError } from "@/lib/browserStorage";
 
 const storage = new Map<string, string>();
 
@@ -32,8 +33,8 @@ describe("recipeStorage", () => {
         expect(getSavedRecipes()).toEqual([recipe]);
 
         storage.set("saved-recipes", "{broken");
-        expect(() => getSavedRecipes()).toThrow(SyntaxError);
-        expect(() => getSavedRecipes()).toThrow(SyntaxError);
+        expect(() => getSavedRecipes()).toThrow(BrowserStorageError);
+        expect(() => getSavedRecipes()).toThrow(BrowserStorageError);
         expect(storage.get("saved-recipes")).toBe("{broken");
 
         storage.set("saved-recipes", "[]");

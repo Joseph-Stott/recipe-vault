@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { BrowserStorageError } from "@/lib/browserStorage";
 import {
     getFavoriteRecipeSlugs,
     removeFavoriteRecipe,
@@ -27,8 +28,8 @@ describe("favorites", () => {
         expect(getFavoriteRecipeSlugs()).toEqual(["rice"]);
 
         storage.set("favorite-list", "{broken");
-        expect(() => getFavoriteRecipeSlugs()).toThrow(SyntaxError);
-        expect(() => getFavoriteRecipeSlugs()).toThrow(SyntaxError);
+        expect(() => getFavoriteRecipeSlugs()).toThrow(BrowserStorageError);
+        expect(() => getFavoriteRecipeSlugs()).toThrow(BrowserStorageError);
         expect(storage.get("favorite-list")).toBe("{broken");
 
         storage.set("favorite-list", "[]");

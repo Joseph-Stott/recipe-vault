@@ -1,4 +1,5 @@
 import { Ingredient } from "@/types/recipe";
+import { isStoredGroceryList, isStoredSlugList, parseBrowserValue, readBrowserValue } from "@/lib/browserStorage";
 
 export type GroceryListItem = Ingredient & {
     id: string;
@@ -52,21 +53,22 @@ function notifyGroceryRecipeListeners() {
 }
 
 export function getGroceryList(): GroceryListItem[] {
-    const storedGroceryList = localStorage.getItem("grocery-list");
+    const storedGroceryList = readBrowserValue("grocery-list");
 
     // Reuse the previous snapshot until the stored data actually changes.
     if (storedGroceryList === cachedGroceryListJson) {
         return cachedGroceryList;
     }
 
-    cachedGroceryListJson = storedGroceryList;
-
-    if (!storedGroceryList) {
+    if (storedGroceryList === null) {
         cachedGroceryList = EMPTY_GROCERY_LIST;
+        cachedGroceryListJson = storedGroceryList;
         return cachedGroceryList;
     }
 
-    const parsedGroceryList = JSON.parse(storedGroceryList);
+    const parsedGroceryList = parseBrowserValue<(Ingredient & { id?: string; checked?: boolean })[]>(
+        "grocery-list", storedGroceryList, isStoredGroceryList
+    );
 
     cachedGroceryList = parsedGroceryList.map(
         (
@@ -84,6 +86,7 @@ export function getGroceryList(): GroceryListItem[] {
         })
     );
 
+    cachedGroceryListJson = storedGroceryList;
     return cachedGroceryList;
 }
 
@@ -152,20 +155,20 @@ export function clearGroceryList () {
 };
 
 export function getGroceryRecipeSlugs(): string[] {
-    const storedGroceryList = localStorage.getItem("grocery-recipe-slugs");
+    const storedGroceryList = readBrowserValue("grocery-recipe-slugs");
 
     if (storedGroceryList === cachedGroceryRecipeSlugsJson) {
         return cachedGroceryRecipeSlugs;
     }
 
-    cachedGroceryRecipeSlugsJson = storedGroceryList;
-
-    if (!storedGroceryList) {
+    if (storedGroceryList === null) {
         cachedGroceryRecipeSlugs = EMPTY_GROCERY_RECIPE_SLUGS;
+        cachedGroceryRecipeSlugsJson = storedGroceryList;
         return cachedGroceryRecipeSlugs;
     }
 
-    cachedGroceryRecipeSlugs = JSON.parse(storedGroceryList);
+    cachedGroceryRecipeSlugs = parseBrowserValue<string[]>("grocery-recipe-slugs", storedGroceryList, isStoredSlugList);
+    cachedGroceryRecipeSlugsJson = storedGroceryList;
 
     return cachedGroceryRecipeSlugs;
 }
