@@ -61,6 +61,10 @@ Use this checklist before calling a local build or deployed environment ready fo
 ## Failure And Accessibility Checks
 
 - [ ] On a disposable browser profile, malformed localStorage shows a recoverable state without silently discarding data.
+- [ ] Download the original entry and confirm its contents match the damaged data exactly.
+- [ ] Cancel a reset and confirm the data remains; then confirm a reset and verify only the affected entry is removed.
+- [ ] Repair the entry while the recovery screen is open; a stale reset must be refused and Retry must load the repaired data.
+- [ ] Block storage access and confirm Retry is available without offering reset or showing a falsely empty collection.
 - [ ] Network/database failures show useful messages and allow retry without losing a form draft.
 - [ ] Keyboard users can reach and identify form controls, ingredient removal, and favorite actions.
 - [ ] Long titles and ingredient names fit on narrow screens; text remains readable with light and dark system preferences.

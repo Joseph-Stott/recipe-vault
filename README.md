@@ -300,6 +300,8 @@ Legacy favorites follow the same retirement rule after a successful read/import.
 
 **Download Legacy Recovery** appears on the homepage when archived copies exist. Save that file outside the browser before clearing site data. It preserves older browser versions and is separate from **Export Backup**, which exports the current database. Neither download currently has a general restore UI; see [backup and recovery notes](docs/backup-restore-notes.md).
 
+If active browser data cannot be read, a recovery screen offers the original contents as a download, Retry, and a confirmed reset of only the damaged entry. Blocked storage offers Retry without a reset. Nothing is silently replaced with an empty list. General handling of failed grocery writes remains planned.
+
 Browser storage is tied to a URL's origin. A hosted app cannot read legacy data from localhost. Moving to hosting requires an explicit database transfer or validated export/restore procedure. Grocery lists are not included in the current backup export.
 
 ### Data Modeling
@@ -388,7 +390,7 @@ Tests verify behaviors such as:
 
 ## Development Direction
 
-1. Recover safely from malformed or unavailable browser storage, then fix grocery item ownership after recipe edits.
+1. Handle remaining grocery write failures and fix grocery item ownership after recipe edits.
 2. Standardize remaining API errors and improve the messages shown to users.
 3. Add CI, live database integration tests, and wider browser coverage.
 4. Implement and verify backup restore and localhost-to-hosted data transfer.

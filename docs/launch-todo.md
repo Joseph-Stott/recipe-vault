@@ -19,12 +19,14 @@ Scope: single-user MVP, shared recipes and favorites on desktop and iPhone. Host
 
 ## Next: Reliability Without Hosting
 
-- [ ] Run the complete browser suite for the final favorite migration and cross-tab scenarios.
+- [x] Run the complete browser suite for favorite migration and cross-tab scenarios.
 - [x] Retire confirmed legacy recipe copies safely; deleted imported recipes stay deleted after refresh.
 - [x] Preserve original browser copies in a downloadable recovery archive before retirement.
 - [x] Retire confirmed browser favorites so they cannot restore later database unfavorites; retain missing-recipe favorites for a later visit.
 - [x] Serialize initial favorite migration and toggles within a page; add browser tests for cleanup notifications across tabs.
-- [ ] Handle malformed/unavailable localStorage without crashing or silently destroying recoverable data.
+- [x] Handle malformed/unavailable browser-storage reads with raw download, retry, and confirmed single-entry reset.
+- [x] Cache only valid snapshots and reject resets when the stored data has changed.
+- [ ] Handle grocery write failures consistently, including partial multi-entry updates.
 - [ ] Fix grocery item ownership after editing/removing a contributing recipe.
 - [ ] Return consistent JSON errors from remaining database operations; test concurrent writes/deletes.
 - [ ] Display actionable validation/conflict messages from API clients.

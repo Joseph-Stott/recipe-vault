@@ -1,6 +1,6 @@
 # Recipe Vault Project Status
 
-Updated November 11, 2026 following migration cleanup. Scope: single-user recipe collection shared between desktop and iPhone. This is a working local app, not a verified production deployment.
+Updated November 13, 2026 following browser verification and storage recovery. Scope: single-user recipe collection shared between desktop and iPhone. This is a working local app, not a verified production deployment.
 
 Use [launch-todo.md](launch-todo.md) for the ordered backlog, [manual-smoke-test.md](manual-smoke-test.md) for release checks, and [backup-restore-notes.md](backup-restore-notes.md) for recovery limitations.
 
@@ -12,7 +12,7 @@ Use [launch-todo.md](launch-todo.md) for the ordered backlog, [manual-smoke-test
 | Validation | Shared runtime validation for create, update, and import; malformed JSON returns 400 | Update/import database failures still need consistent JSON responses |
 | Form | Typed amounts convert to numbers; invalid quantities and cookbook pages are rejected | Use decimal quantities; fractions such as `1/2` are not parsed |
 | Favorites | Database-backed toggle; confirmed legacy copies retire after one import attempt per visit | Concurrent requests across devices still need server-side handling; missing-recipe favorites stay pending |
-| Grocery list | Browser-local selection, aggregation, purchased-item tracking | No cross-device sync; ownership and corrupt-storage recovery need work |
+| Grocery list | Browser-local selection, aggregation, purchased-item tracking; unreadable-data recovery | No cross-device sync; ownership and write-failure handling need work |
 | Search | Title, ingredients, time category; case/spacing normalization | All recipes load client-side, appropriate for current small scope |
 | Backup | JSON export of recipes and favorite slugs | No general restore; grocery state is not included |
 | iPhone | Manifest, icons, dark presentation, responsive layouts | No offline support; real Safari/Home Screen verification remains |
@@ -31,6 +31,8 @@ Historical deletions cannot be inferred from absence alone. A browser copy whose
 
 localStorage belongs to an origin as well as a browser/device. A hosted URL cannot read recipes stored under localhost. Deployment needs an explicit export/restore or database transfer procedure, not just the existing homepage import button.
 
+Unreadable active browser data opens a recovery screen identifying the affected entry. The screen offers an untouched-data download, a local retry, and an explicitly confirmed reset of that entry. Reset checks that the entry has not changed since the error. Blocked storage offers retry without pretending the data is empty or allowing a reset. This handles rendering-time reads; it does not make multi-step browser writes atomic.
+
 ## Changes From This Review
 
 - Fixed typed quantities being sent as strings and rejected by the creation API.
@@ -42,6 +44,8 @@ localStorage belongs to an origin as well as a browser/device. A hosted URL cann
 
 The migration-cleanup follow-up added recipe/favorite retirement, recovery downloads, shared database loading across recipe pages, and browser tests for deletion/reload, unfavorite/reload, failed/skipped imports, storage-write failures, and cross-tab notifications. Database schemas and migration files were not changed.
 
+The latest follow-up verified those browser scenarios, added storage recovery and snapshot validation, improved recipe-form accessible names and numeric keyboard hints, removed homepage search autofocus, and made the Vitest configuration an ES module.
+
 ## Verification And Its Limits
 
 - `npm run check`: schema validation, generated Next.js route types, TypeScript checking, ESLint, and unit/route tests.
@@ -52,13 +56,13 @@ The migration-cleanup follow-up added recipe/favorite retirement, recovery downl
 
 There is no committed CI workflow yet. The build downloads Google fonts and needs network access. No production environment, real-device session, live migration, or restore drill was verified in this review. See the release checklist before declaring the app ready.
 
-Migration-cleanup verification: preflight passed with 267 unit/route tests and a production build. The recipe migration browser scenarios passed on desktop/mobile Chromium. The added favorite migration and cross-tab scenarios compile but still need an execution of the complete browser suite.
+The November 13 verification passed preflight, including the production build, 296 unit/route tests, and 48 browser checks across desktop/mobile Chromium. Browser coverage includes migration, cross-tab retirement, raw recovery downloads, reset confirmation, blocked reads, and stale-reset protection. The browser tests use mocked APIs.
 
 ## Findings Still To Address
 
 ### Data Lifecycle
 
-1. **Malformed browser storage can break rendering.** JSON errors are still thrown from external-store snapshots. Grocery caches also mark data as cached before parsing succeeds. Add recovery that preserves the raw data and offers a deliberate reset/export. Migration write failures are handled, but this does not yet cover all storage reads.
+1. **Browser write failures still need consistent handling.** Migration failures and explicit recovery resets report errors, but grocery mutations can still fail midway through separate storage writes. Preserve useful state and show actionable errors before expanding persistence.
 2. **Grocery ownership is inferred from current ingredients.** Editing a recipe after adding it can leave old ingredients behind when removing it. Track source recipe identity on grocery items before changing persistence.
 
 ### API And User Experience
@@ -84,7 +88,7 @@ Single-user scope avoids account administration and multi-tenant ownership, but 
 
 ## Recommended Development Order
 
-1. Complete browser-storage recovery, then fix grocery ownership after recipe edits.
+1. Handle remaining grocery write failures and fix grocery ownership after recipe edits.
 2. Standardize remaining API errors and concurrency handling, then expose useful messages in the UI.
 3. Add CI and a disposable-Postgres integration suite covering create/edit/delete/import/export. Keep mock-based browser tests as the faster separate layer.
 4. Implement a validated restore/transfer path and demonstrate recovery. Keep schema/import changes in their own reviewable commits.

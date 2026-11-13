@@ -46,7 +46,17 @@ The homepage's **Download Legacy Recovery** button saves the archive as JSON. Do
 
 The archive is browser-local, not synchronized or protected against clearing site data. There is no automatic restore UI. To recover a specific older version, inspect the downloaded file and re-enter the needed fields through the recipe form, or use a separately reviewed import procedure. Do not replace the active browser stores with the whole archive: it can contain intentionally deleted recipes and old versions.
 
-If the recovery archive is unreadable or cannot be saved, cleanup stops and retains active copies. Download the existing archive if available, preserve the active data, and resolve the storage issue before retrying. Corrupt active localStorage still needs a general recovery flow; do not clear it as a routine troubleshooting step.
+If the recovery archive is unreadable or cannot be saved, cleanup stops and retains active copies. Download the existing archive if available, preserve the active data, and resolve the storage issue before retrying.
+
+## Unreadable Browser Data
+
+Unreadable recipe, favorite, grocery-item, or grocery-selection data opens **Browser data needs attention**. This is separate from the legacy migration archive.
+
+1. Use **Download original data** to save the exact affected entry as a text file, including malformed JSON. The download is a recovery source, not a validated restore file.
+2. Use **Retry** after correcting the entry or restoring browser-storage access. It re-reads local state without requiring a server refresh.
+3. If the local entry cannot be repaired, **Reset damaged entry** asks for confirmation and removes only that entry. Records not saved to the database must be recovered from the downloaded file. Other local entries, the legacy archive, and database records are not reset.
+
+Reset refuses to remove data that changed since the recovery screen opened; retry to inspect the current value. A failed reset leaves the original entry in place and shows an error. When browser access is blocked, download and reset are unavailable because the app cannot read the contents. Restore access and retry instead of clearing all site data.
 
 ## Recommended Manual Backup Routine
 

@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import { getSavedRecipes } from "@/lib/recipeStorage";
+import { useState, useSyncExternalStore } from "react";
+import { getSavedRecipes, subscribeToSavedRecipes } from "@/lib/recipeStorage";
 import { Recipe, IngredientDraft } from "@/types/recipe";
 import { useRouter } from "next/navigation";
 import RecipeForm from "@/components/RecipeForm";
@@ -13,7 +13,10 @@ import {
 import StatusPanel from "@/components/StatusPanel";
 import { useDatabaseRecipes } from "@/hooks/useDatabaseRecipes";
 
+const EMPTY_RECIPES: Recipe[] = [];
+
 export default function AddRecipePage() {
+    const savedRecipes = useSyncExternalStore(subscribeToSavedRecipes, getSavedRecipes, () => EMPTY_RECIPES);
     const [title, setTitle] = useState("");
     const [timeCategory, setTimeCategory] = useState<Recipe["timeCategory"]>("medium");
     const [structuredIngredients, setStructuredIngredients] = useState<IngredientDraft[]>([
@@ -82,7 +85,7 @@ export default function AddRecipePage() {
                         const combinedSavedRecipes = Array.from(
                             new Map(
                                 [
-                                    ...getSavedRecipes(),
+                                    ...savedRecipes,
                                     ...databaseRecipes,
                                 ].map((recipe) => [
                                     recipe.slug,
