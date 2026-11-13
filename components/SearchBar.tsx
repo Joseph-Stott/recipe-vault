@@ -6,8 +6,8 @@ type SearchBarProps = {
 export default function SearchBar(props: SearchBarProps) {
     return (
         <input
-            autoFocus
             title="Search recipes by title, ingredient, or time category"
+            aria-label="Search recipes by title, ingredient, or time category"
             type="search"
             spellCheck={false}
             autoComplete="off"
