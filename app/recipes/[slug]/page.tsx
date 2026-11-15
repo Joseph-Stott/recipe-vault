@@ -111,7 +111,9 @@ export default function DetailPage() {
                         </StatusPanel>
                     )}
                     <button
-                    title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                        title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                        aria-label="Favorite recipe"
+                        aria-pressed={isFavorite}
                         disabled={isUpdatingFavorite}
                         className={`
                             absolute right-4 top-4 cursor-pointer text-2xl
@@ -144,6 +146,7 @@ export default function DetailPage() {
                         <span>{recipe.title}</span>
                         <Link
                             title="Edit recipe"
+                            aria-label="Edit recipe"
                             href={`/edit-recipe/${recipe.slug}`}
                             className="cursor-pointer text-lg"
                             >

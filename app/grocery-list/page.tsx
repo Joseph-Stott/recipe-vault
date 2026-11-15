@@ -97,6 +97,8 @@ export default function GroceryListPage() {
                 )}
                 
                 <button
+                    title="Clear grocery list"
+                    aria-label="Clear grocery list"
                     className={`
                         absolute right-4 top-4 cursor-pointer text-base
                         transition-all duration-300
